@@ -1,0 +1,105 @@
+
+<div class="container pt-4">
+
+    <h1>Pagos de compras</h1>
+
+
+    <!-- <div class="text-end mb-4">
+        <a routerLink="new" class="btn btn-primary"><i class="fa-solid fa-plus me-2"></i>Crear nuevo</a>
+    </div> -->
+
+
+    <div class="bg-light px-2 py-4 row">
+      
+      <div class="col-md-8">
+        <input-search 
+          placeholder="Buscar compra..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+      </div>
+      <div class="col-md-4 mt-2 mt-md-0">
+        <angular2-multiselect 
+            [data]="purchases" 
+            class="form-control p-0"
+            [(ngModel)]="purchaseSelected"
+            [settings]="dropdownSettingsSingle" 
+            (onSelect)="onItemSelect($event)" 
+            (onDeSelect)="OnItemDeSelect($event)"
+            (onSelectAll)="onSelectAll($event)"
+            (onDeSelectAll)="onDeSelectAll($event)">
+        </angular2-multiselect>
+      </div>
+
+
+      <div class="col-md-12" *ngIf="purchaseDetails">
+
+        <span class="fw-bold text-primary">Datos de la compra</span>
+
+        <div class="row mt-3">
+            <p class="col-md-3 d-flex flex-column"><small>Folio</small><span>{{ purchaseDetails.folio }}</span></p>
+            <p class="col-md-4 d-flex flex-column"><small>Proveedor</small><span>{{ purchaseDetails.supplier.rfc }} | {{ purchaseDetails.supplier.name }}</span></p>
+            <p class="col-md-4 d-flex flex-column fw-bold"><small>TOTAL</small><span>$ {{ purchaseDetails.totalWithIva | number : '1.2-2' }}</span></p>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templatePayments">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templatePayments>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay pagos por mostar.</p>
+      
+      <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+
+        <span class="fw-bold">Total de resultados: {{totalResults}}</span>
+
+        <table class="table table-light table-striped table-hover mt-3">
+          <thead>
+            <tr>
+                <th scope="col">Fecha de emisión</th>
+                <th scope="col">Proveedor</th>
+                <th scope="col">Compra</th>
+                <th scope="col">Concepto</th>
+                <th scope="col">Cantidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let payment of payments">
+              <td>{{ payment.createdAt | date: 'MMM d, y, H:mm a' }}</td>
+              <td>{{ payment.purchase?.supplier?.rfc }} | {{ payment.purchase?.supplier?.name }}</td>
+              <td>{{ payment.purchase?.folio }}</td>
+              <td>{{ payment.concept }}</td>
+              <td>$ {{ payment.amount | number : '1.2-2' }}</td>
+            </tr>
+          </tbody>
+          <tfoot class="fw-bold">
+            <td colspan="4">TOTAL</td>
+            <td>$ {{ totalAmmount | number : '1.2-2' }}</td>
+          </tfoot>
+        </table>
+      </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+
+    </ng-template>
+
+  
+
+</div>
+

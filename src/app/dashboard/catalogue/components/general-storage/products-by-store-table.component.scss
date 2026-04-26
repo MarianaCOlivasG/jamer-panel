@@ -1,0 +1,198 @@
+/* Estilos generales */
+:host {
+  display: block;
+  min-height: 100%;
+}
+
+/* Animaciones y efectos */
+.card, .btn, .badge, .icon-box, .store-header, .quantity-badge, .total-badge {
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+}
+
+/* Tarjetas y contenedores */
+.card {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.card:hover {
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08) !important;
+}
+
+/* Iconos y elementos visuales */
+.icon-box {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.icon-sm {
+  width: 28px;
+  height: 28px;
+}
+
+/* Estilos para la tabla */
+.table {
+  margin-bottom: 0;
+}
+
+.table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+  white-space: nowrap;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+/* Estilos para las cantidades */
+.quantity-badge {
+  display: inline-block;
+  padding: 0.4em 0.6em;
+  border-radius: 0.25rem;
+  min-width: 40px;
+  font-weight: 500;
+}
+
+.quantity-badge small {
+  display: block;
+  font-size: 0.7em;
+  opacity: 0.8;
+}
+
+.total-badge {
+  display: inline-block;
+  padding: 0.4em 0.85em;
+  border-radius: 0.25rem;
+  background-color: #e9ecef;
+  min-width: 50px;
+  font-weight: 600;
+}
+
+.total-badge small {
+  display: block;
+  font-size: 0.7em;
+  opacity: 0.8;
+}
+
+/* Estilos para encabezados de almacenes */
+.store-header {
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+}
+
+.store-header:hover {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+
+/* Miniaturas de productos */
+.product-img-wrapper {
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+}
+
+.product-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Spinner de carga */
+.spinner-grow {
+  animation-duration: 1.5s;
+}
+
+/* Colores para los badges */
+.bg-danger-subtle {
+  background-color: rgba(220, 53, 69, 0.15);
+}
+
+.bg-warning-subtle {
+  background-color: rgba(255, 193, 7, 0.15);
+}
+
+.bg-success-subtle {
+  background-color: rgba(25, 135, 84, 0.15);
+}
+
+/* Mejoras para dispositivos móviles */
+@media (max-width: 767.98px) {
+  .table-responsive {
+    max-height: 70vh;
+  }
+  
+  .icon-box {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  
+  .icon-box i {
+    font-size: 1.25rem !important;
+  }
+  
+  .quantity-badge {
+    min-width: 30px;
+    padding: 0.2em 0.4em;
+  }
+}
+
+/* Estilos para impresión */
+@media print {
+  .btn-group, .card-header h5 i, .form-label, .input-group-text,
+  button, .form-control, .form-select, .card-footer {
+    display: none !important;
+  }
+  
+  .container-fluid {
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  .card {
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  .table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+  
+  .table th, .table td {
+    border: 1px solid #dee2e6 !important;
+  }
+  
+  .table thead th {
+    background-color: #f8f9fa !important;
+    color: #000 !important;
+  }
+  
+  .bg-light, .bg-white, .table-light {
+    background-color: transparent !important;
+  }
+  
+  .quantity-badge, .total-badge {
+    background-color: transparent !important;
+    color: #000 !important;
+  }
+  
+  a {
+    text-decoration: none !important;
+    color: #000 !important;
+  }
+  
+  .icon-sm, .store-header div {
+    display: none !important;
+  }
+}

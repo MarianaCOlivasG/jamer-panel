@@ -1,0 +1,23 @@
+.back-modal {
+    background-color: rgba(0,0,0,0.2);
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 1030 !important;
+}
+
+.modal-content {
+    border: none !important;
+    border-radius: 0px !important;
+
+}
+
+img {
+    object-fit: cover;
+}
+
+img.ico {
+    height: 40px;
+}

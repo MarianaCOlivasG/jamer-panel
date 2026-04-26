@@ -1,0 +1,55 @@
+<form autocomplete="off"
+      [formGroup]="form"
+      (ngSubmit)="login()">
+
+    <div class="mb-3">
+      <label for="inputUsername" class="form-label">Usuario</label>
+      <input type="text" 
+        class="form-control" 
+        id="inputUsername"
+        placeholder="Usuario"
+        [ngClass]="{'border-danger': inputInvalid('userName') }" 
+        formControlName="userName">
+      <div *ngIf="inputInvalid('userName')" class="text-danger">
+        <span><small>{{ errorMessage('userName') }}</small></span>
+      </div>
+    </div>
+
+
+    <div class="mb-3 position-relative">
+      <label for="inputPassword" class="form-label">Contraseña</label>
+      <div class="input-group">
+        <input type="password"
+          style="border-top-right-radius: 0px !important; border-bottom-right-radius: 0px !important;"
+          class="form-control"
+          placeholder="Contraseña"
+          id="inputPassword"
+          [ngClass]="{'border-danger': inputInvalid('password') }"
+          formControlName="password">
+        <button type="button" 
+          class="btn btn-light" 
+          style="border-top-left-radius: 0px !important; border-bottom-left-radius: 0px !important;"
+          (click)="togglePasswordVisibility()" 
+          style="border-left: 0;">
+          <i [ngClass]="showPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
+        </button>
+      </div>
+      <div *ngIf="inputInvalid('password')" class="text-danger">
+        <span><small>{{ errorMessage('password') }}</small></span>
+      </div>
+    </div>
+
+
+    <div class="mb-3 form-check">
+      <input type="checkbox" 
+          class="form-check-input" 
+          id="checkRemember"
+          formControlName="remember">
+      <label class="form-check-label" for="checkRemember">Recordarme</label>
+    </div>
+
+    <div class="d-grid">
+        <button type="submit" class="btn btn-primary">{{ !isLoading  ? 'Iniciar sesión' : 'Cargando...' }}</button>
+    </div>
+      
+  </form>

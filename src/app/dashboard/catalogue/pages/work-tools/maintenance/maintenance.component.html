@@ -1,0 +1,96 @@
+
+
+<maintenance-modal 
+    *ngIf="modalService.show"
+    (newMaintenance)="newMaintenance()"
+    [maintenance]="maintenanceSelected!"
+/>
+
+<div class="row p-3 mb-5">
+
+    <h5>Mantenimientos</h5>
+
+    <div class="text-end my-4">
+        <button (click)="openModalCreate()"
+            class="btn btn-secondary"><i class="fa-solid fa-plus me-2"></i>Agregar</button>
+    </div>
+
+    <!-- <div class="bg-light p-4">
+        <input-search 
+          placeholder="Buscar sede..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+    </div> -->
+
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateMaintenance">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templateMaintenance>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay mantenimientos por mostar.</p>
+      
+      <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+        <table class="table table-light table-striped table-hover mt-3">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Fecha salida</th>
+              <th scope="col">Fecha entrada</th>
+              <th scope="col">Observaciones</th>
+              <th scope="col">Herramientas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let m of maintenance; let idx = index;">
+              <td>{{ idx + 1 }}</td>
+              <td>{{ m.departureDate | date: 	'dd-MMM-yy' }}</td>
+              <td *ngIf="!m.isCurrent">{{ m.entryDate | date: 	'dd-MMM-yy'}}</td>
+              <td *ngIf="m.isCurrent">-</td>
+              <td>{{ m.observations.length > 20 ? m.observations.slice(0, 20) + '...' : m.observations }}</td>
+              <td>
+                  <button 
+                  (click)="openModalUpdate( m )"
+                  class="btn btn-sm btn-outline-secondary me-2">
+                  <i class="fa-solid fa-pen"></i> Editar
+                  </button>
+                  <button 
+                    *ngIf="!m.isCurrent"
+                    (click)="handleDelete( m.id, idx )" 
+                    class="btn btn-sm btn-outline-danger me-2">
+                    <i class="fa-solid fa-trash"></i> Eliminar
+                  </button>
+                  <button
+                    *ngIf="m.isCurrent"
+                    (click)="handleEntry( m.id )" 
+                    class="btn btn-sm btn-outline-success">
+                    <i class="fa-solid fa-door-open"></i> Entrada
+                  </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+
+    </ng-template>
+
+
+</div>
+
+
+
+

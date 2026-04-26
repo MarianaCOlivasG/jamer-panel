@@ -1,0 +1,81 @@
+<contact-modal 
+    *ngIf="modalService.show"
+    (newContact)="newContact()"
+    /> 
+    <!-- [addressSelected]="addressSelected!" -->
+
+<div class="row p-3 mb-5">
+
+    <h5>Personas de contacto</h5>
+
+    <!-- <div class="text-end my-4">
+        <button (click)="openModalCreate()"
+            class="btn btn-secondary"><i class="fa-solid fa-plus me-2"></i>Agregar sede</button>
+    </div> -->
+
+    <!-- <div class="bg-light p-4">
+        <input-search 
+          placeholder="Buscar sede..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+    </div> -->
+
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateContacts">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templateContacts>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay contactos por mostar.</p>
+      
+      <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+        <table class="table table-light table-striped table-hover mt-3">
+          <thead>
+            <tr>
+              <th scope="col">Nombre</th>
+              <th scope="col">Correo electrónico</th>
+              <th scope="col">Teléfono</th>
+              <th scope="col">Posición</th>
+              <!-- <th scope="col">Herramientas</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let contact of contacts">
+              <td>{{contact?.name}}</td>
+              <td>{{contact?.email ? contact?.email : '-'}}</td>
+              <td>{{contact?.phone}}</td>
+              <td>{{contact?.position}}</td>
+              <!-- <td>
+                  <button 
+                    (click)="openModalUpdate( address )"
+                    class="btn btn-sm btn-outline-secondary me-2">
+                    <i class="fa-solid fa-pen"></i> Editar
+                  </button>
+              </td> -->
+            </tr>
+          </tbody>
+        </table>
+      </div>
+<!-- 
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container> -->
+
+
+    </ng-template>
+
+
+</div>
+
+
+
+

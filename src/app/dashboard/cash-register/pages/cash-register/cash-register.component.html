@@ -1,0 +1,103 @@
+
+
+
+
+<cash-register-modal
+  *ngIf="modalService.show && modalSelected == 'create'"
+  [registerSelected]="registerSelected"
+  (newRegister)="newRegister( $event )"
+/> 
+
+<cash-register-valid-modal
+  *ngIf="modalService.show && modalSelected == 'validate'"
+  [registerSelected]="registerSelected"
+  (newRegister)="newRegister( $event )"
+/> 
+
+
+<div class="container pt-4">
+
+
+    <h1>Caja</h1>
+    
+    <div *ngIf="create" class="text-end my-4">
+        <button (click)="createOrUpdate( null )"
+            class="btn btn-secondary"><i class="fa-solid fa-plus me-2"></i>Agregar</button>
+    </div>
+
+    <div>
+        
+      <div class="mt-4 text-center"  *ngIf="isLoading; else templateCashRegister">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+  
+      <ng-template #templateCashRegister>
+  
+        <p class="text-center text-muted mt-4" *ngIf="registers.length == 0">No hay registros por mostrar.</p>
+        
+        <div class="table-responsive mt-5" *ngIf="registers.length > 0">
+
+          <div class="d-flex justify-content-between">
+            <span span class="fw-bold">Total de resultados: {{registers.length}}</span>
+            <!-- <button (click)="exportToExcel()" class="btn btn-outline-success btn-sm"><i class="fa-regular fa-file-excel me-2"></i>Exportar Excel</button> -->
+          </div>
+  
+          
+          <table class="table table-hover mt-3">
+            <thead>
+              <tr>
+                <th scope="col">Empleado</th>
+                <th scope="col">Fecha y hora registro</th>
+                <th scope="col">Concepto</th>
+                <th scope="col">Abono/Entrada</th>
+                <th scope="col">Cargo/Salida</th>
+                <th scope="col">Total</th>
+                <th *ngIf="edit||validated" scope="col">Herramientas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of registers; let i = index;" [ngClass]="{'bg-purple': item.isValidated}">
+                <td>{{ item.employee.name }} {{ item.employee.lastName }}</td>
+                <td>{{ item.createdAt | date: 'dd-MMM-yy' }}</td>
+                <td>{{ item.concept }}</td>
+                <td><span *ngIf="item.movement == 'E'">$ {{ item.amount | number : '1.2-2' }}</span></td>
+                <td><span *ngIf="item.movement == 'S'">$ {{ item.amount | number : '1.2-2' }}</span></td>
+                <td>$ {{ item.total | number : '1.2-2' }}</td>
+                <td *ngIf="edit||create" >
+                  <button *ngIf="!item.isValidated&&edit" class="btn btn-sm btn-secondary me-2" (click)="createOrUpdate( item )">Editar</button>
+                  <button *ngIf="!item.isValidated&&validated" class="btn btn-sm btn-primary" (click)="validate( item )">Validar</button>
+                </td>
+              </tr> 
+            </tbody>
+            <tfoot>
+              <tr>
+                <td></td>
+                <td></td>
+                <td class="fw-bold"></td>
+                <td class="fw-bold"></td>
+                <td class="fw-bold">Totales</td>
+                <td class="fw-bold">$ {{ registers[ registers.length - 1].total | number : '1.2-2' }}</td>
+                <td></td>
+              </tr>
+            </tfoot> 
+          </table>
+        </div>
+  
+        <ng-container *ngIf="totalResults > limit">
+          <paginator 
+            [limit]="limit"
+            [totalResults]="totalResults"
+            [currentPage]="currentPage"
+            (chageCurrentPage)="changePage( $event )"
+          />
+        </ng-container>
+  
+  
+      </ng-template>
+
+    </div>
+
+
+</div>

@@ -1,0 +1,194 @@
+
+
+<div class="container pt-4">
+
+    <input style="display: none;" type="file" accept="application/pdf" #fileInput (change)="onChangeFileInput(fileInput.files)" >
+
+
+    <ng-container *ngIf="isLoading; else employeeTemplate">
+        <div class="text-center">
+            <p class="text-muted mt-4">Cargando información del empleado</p>
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-template #employeeTemplate>
+
+        <h1>Detalle del cliente</h1>
+
+
+        <div class="d-flex justify-content-between my-4">
+            <a class="btn btn-outline-success" routerLink="/customers"><i class="fa-solid fa-arrow-left me-2"></i>Atrás</a>
+            <div class="d-flex">
+              <a *ngIf="customer.csfFile" target="_blank" [href]="fileUrl + '/uploads/file/customers/' + customer.csfFile" class="btn btn-primary me-2"><i class="fa-solid  fa-file-pdf me-2"></i>CSF</a>
+              <button class="btn btn-secondary me-2" (click)="openSelectFile()"><i class="fa-solid fa-upload me-2"></i>CSF</button>
+              <button *ngIf="edit" class="btn btn-secondary" [routerLink]="['/customers','edit', customer.id]"><i class="fa-solid fa-pen me-2"></i>Editar</button>
+            </div>
+        </div>
+    
+        <div class="row p-3">
+
+            <div class="col-md-8 mt-4 mt-md-0">
+
+                <h6 class="text-primary fw-bold">Datos Generales</h6>
+                <div class="row">
+                    <p class="col-md-12 d-flex flex-column"><small>Tipo de cliente</small><span>{{ customer.type.value }}</span></p>
+                </div>
+                
+                <!-- TODO: SI ES PARTICULAR -->
+                <h6 class="text-primary fw-bold mt-2">Datos Personales</h6>
+                <div class="row">
+                    <p class="col-md-3 d-flex flex-column"><small>{{ customer.type.id == 1 ? 'Nombre(s)' : 'Nombre'}}</small><span>{{ customer.name }}</span></p>
+                    <p class="col-md-3 d-flex flex-column" *ngIf="customer.type.id == 1"><small>Apellidos(s)</small><span>{{ customer.lastName ? customer.lastName : '-'}}</span></p>
+                    <p class="col-md-3 d-flex flex-column" *ngIf="customer.type.id != 1"><small>Representante legal</small><span>{{ customer.representative }}</span></p>
+                    <p class="col-md-3 d-flex flex-column"><small>Teléfono</small><span>{{ customer.phone ? customer.phone : '-' }}</span></p>
+                    <p class="col-md-3 d-flex flex-column"><small>Celular</small><span>{{ customer.cellPhone }}</span></p>
+                    <p class="col-md-4 d-flex flex-column"><small>Correo electrónico</small><span>{{ customer.email }}</span></p>
+                    <p class="col-md-8 d-flex flex-column"><small>Dirección</small><span>{{ customer.address ? customer.address : '-' }}</span></p>
+                </div>
+
+                <div class="row mt-2">
+                    <p class="col-md-8 d-flex flex-column"><small>Observaciones</small><span>{{ customer.observations ? customer.observations : 'Sin observaciones' }}</span></p>
+                </div>
+
+
+            </div>
+    
+        </div>
+
+
+        <hr>
+
+        <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button 
+              class="nav-link active" 
+              id="pills-addresses-tab" 
+              data-bs-toggle="pill" 
+              data-bs-target="#pills-addresses" 
+              type="button" 
+              role="tab" 
+              aria-controls="pills-addresses" 
+              aria-selected="true"><span class="badge bg-info">{{ totals['addresses'] > 99 ? '99 +' : totals['addresses'] }}</span> Sedes</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button 
+              class="nav-link" 
+              id="pills-budgets-tab" 
+              data-bs-toggle="pill" 
+              data-bs-target="#pills-budgets" 
+              type="button" 
+              role="tab" 
+              aria-controls="pills-budgets" 
+              aria-selected="false"><span class="badge bg-info">{{ totals['budgets'] > 99 ? '99 +' : totals['budgets'] }}</span> Cotizaciones</button>
+          </li>
+
+          <li class="nav-item" role="presentation">
+            <button 
+              class="nav-link" 
+              id="pills-contracts-tab" 
+              data-bs-toggle="pill" 
+              data-bs-target="#pills-workOrders" 
+              type="button" 
+              role="tab" 
+              aria-controls="pills-contracts" 
+              aria-selected="false"><span class="badge bg-info">{{ totals['workOrders'] > 99 ? '99 +' : totals['workOrders'] }}</span> Ordenes de trabajo</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button 
+              class="nav-link" 
+              id="pills-sales-tab" 
+              data-bs-toggle="pill" 
+              data-bs-target="#pills-sales" 
+              type="button" 
+              role="tab" 
+              aria-controls="pills-sales" 
+              aria-selected="false"><span class="badge bg-info">{{ totals['sales'] > 99 ? '99 +' : totals['sales'] }}</span> Ventas</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button 
+              class="nav-link" 
+              id="pills-contact-person-tab" 
+              data-bs-toggle="pill" 
+              data-bs-target="#pills-contact-person" 
+              type="button" 
+              role="tab" 
+              aria-controls="pills-contact-person" 
+              aria-selected="false"><span class="badge bg-info">{{ totals['contacts'] > 99 ? '99 +' : totals['contacts'] }}</span> Personas de contacto</button>
+          </li>
+          <li class="nav-item" role="presentation">
+        </ul>
+
+        <div class="tab-content" id="pills-tabContent">
+          <div 
+            class="tab-pane fade show active" 
+            id="pills-addresses" 
+            role="tabpanel" 
+            aria-labelledby="pills-addresses-tab" 
+            tabindex="0">
+              <addresses-table 
+                (totalResultsEvent)="getTotals( $event, 'addresses' )"
+              />
+          </div>
+          <div 
+            class="tab-pane fade" 
+            id="pills-budgets" 
+            role="tabpanel" 
+            aria-labelledby="pills-budgets-tab" 
+            tabindex="0">
+              <budgets-table 
+                (totalResultsEvent)="getTotals( $event, 'budgets' )"
+              />
+          </div>
+          <div
+            class="tab-pane fade" 
+            id="pills-contracts" 
+            role="tabpanel" 
+            aria-labelledby="pills-contracts-tab" 
+            tabindex="0">
+              <contracts-table 
+                (totalResultsEvent)="getTotals( $event, 'contracts' )"
+              />
+          </div>
+          <div
+          class="tab-pane fade" 
+          id="pills-workOrders" 
+          role="tabpanel" 
+          aria-labelledby="pills-workOrders-tab" 
+          tabindex="0">
+          <workorders-table
+            (totalResultsEvent)="getTotals( $event, 'workOrders' )"></workorders-table>
+        </div>
+        <div
+        class="tab-pane fade" 
+        id="pills-sales" 
+        role="tabpanel" 
+        aria-labelledby="pills-sales-tab" 
+        tabindex="0">
+        <workorders-table
+          (totalResultsEvent)="getTotals( $event, 'sales' )"
+          [isBudget]= true
+          ></workorders-table>
+      </div>
+          <div
+            class="tab-pane fade" 
+            id="pills-contact-person" 
+            role="tabpanel" 
+            aria-labelledby="pills-contact-person-tab" 
+            tabindex="0">
+              <contacts-table
+                (totalResultsEvent)="getTotals( $event, 'contacts' )"
+              />
+          </div>
+
+        </div>
+
+
+    </ng-template>
+
+
+</div>
+
+

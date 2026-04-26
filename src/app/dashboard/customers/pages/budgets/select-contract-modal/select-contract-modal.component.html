@@ -1,0 +1,87 @@
+<div class="back-modal">
+    <div class="modal" style="display: block;" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content shadow">
+          <div class="modal-header">
+            <h5 class="modal-title">Seleccione un contrato</h5>
+            <button
+              type="button"
+              (click)="closeModal()"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              *ngIf="componentName != 'ContractFormComponent'">
+            </button>
+          </div>
+  
+          <div class="modal-body">
+  
+            <div class="mt-4 text-center" *ngIf="isLoading; else templateContracts">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+  
+            <ng-template #templateContracts>
+              <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">
+                No hay contratos para mostrar.
+              </p>
+  
+              <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+                <span class="fw-bold">Total de resultados: {{ totalResults }}</span>
+  
+                <table class="table table-light table-striped table-hover mt-3">
+                  <thead>
+                    <tr>
+                      <th scope="col">Folio</th>
+                      <th scope="col">Cliente</th>
+                      <th scope="col">Fecha de Creación</th>
+                      <th scope="col">Creado por</th>
+                      <th scope="col">Herramientas</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let contract of contracts">
+                      <td>{{ contract.folio }}</td>
+                      <td>{{ contract.customer.name }} {{ contract.customer.lastName }}</td>
+                      <td>{{ contract.createdAt | date: 'dd-MMM-yy' }}</td>
+                      <td>{{ contract.createdBy.name }} {{ contract.createdBy.lastName }}</td>
+                      <td>
+                        <button
+                          (click)="selectContract(+contract.id)"
+                          class="btn btn-sm btn-outline-secondary me-2">
+                          Seleccionar
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+  
+              <ng-container *ngIf="totalResults > limit">
+                <paginator
+                  [limit]="limit"
+                  [totalResults]="totalResults"
+                  [currentPage]="currentPage"
+                  (chageCurrentPage)="changePage($event)">
+                </paginator>
+              </ng-container>
+            </ng-template>
+  
+          </div>
+  
+          <div class="modal-footer" *ngIf="componentName != 'ContractFormComponent'">
+            <button
+              type="button"
+              (click)="closeModal()"
+              class="btn btn-danger"
+              data-bs-dismiss="modal">
+              Cancelar
+            </button>
+          </div>
+  
+        </div>
+      </div>
+    </div>
+  </div>
+  

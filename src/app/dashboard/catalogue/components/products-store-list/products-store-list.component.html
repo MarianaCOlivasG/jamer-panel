@@ -1,0 +1,256 @@
+<!-- Modal para agregar productos -->
+<add-product-store 
+  *ngIf="modalService.show"
+  (onAddSuccess)="onAddSuccess()"
+/>
+
+<div class="container pt-4">
+  <!-- Encabezado mejorado con badge para indicar tipo de almacén -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center">
+      <h4 class="mb-0 text-primary fw-bold">
+        <i class="fa-solid fa-warehouse me-2"></i>
+        {{ isGeneralStore ? 'Productos en Almacén General' : 'Productos de este Almacén' }}
+      </h4>
+      <span class="badge rounded-pill ms-3 {{ isGeneralStore ? 'bg-info' : 'bg-success' }}">
+        {{ isGeneralStore ? 'General' : 'Específico' }}
+      </span>
+    </div>
+    
+    <!-- Botón para agregar productos con efecto hover mejorado -->
+    <button 
+      *ngIf="create && !isGeneralStore" 
+      (click)="openModal()" 
+      class="btn btn-primary btn-lg shadow-sm rounded-3 d-flex align-items-center"
+      style="transition: all 0.3s ease;"
+      onmouseover="this.style.transform='translateY(-2px)'" 
+      onmouseout="this.style.transform='translateY(0px)'">
+      <i class="fa-solid fa-plus me-2"></i>
+      <span>Agregar Producto</span>
+    </button>
+  </div>
+  
+  <!-- Filtros de búsqueda en una tarjeta con sombra -->
+  <div class="card shadow-sm rounded-3 border-0 mb-4">
+    <div class="card-header bg-white border-0 pt-4">
+      <h5 class="text-muted mb-0">
+        <i class="fa-solid fa-filter me-2"></i>
+        Filtros de búsqueda
+      </h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <!-- Buscador mejorado -->
+        <div class="col-md-12 mb-3">
+          <div class="input-group shadow-sm rounded-3 overflow-hidden">
+        
+            <input-search 
+              placeholder="Buscar producto por nombre, código o descripción..."
+              (onEnter)="search( $event )"
+              (onDebounce)="search( $event )"
+              class="w-100"
+            />
+          </div>
+        </div>
+        
+        <!-- Selectores mejorados -->
+        <div class="col-md-4">
+          <label class="form-label small text-muted">Línea de Negocio</label>
+          <div class="input-group shadow-sm rounded-3 overflow-hidden">
+            <span class="input-group-text bg-white border-end-0">
+              <i class="fa-solid fa-sitemap text-primary"></i>
+            </span>
+            <select
+                class="form-select border-start-0"
+                [(ngModel)]="businessLineId"
+                (ngModelChange)="changeModel('businessLineId')"
+                >
+                <option [value]="0">TODAS LAS LÍNEAS DE NEGOCIO</option>
+                <option *ngFor="let line of businessLines" [value]="line.id">{{ line.name }}</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <label class="form-label small text-muted">Familia</label>
+          <div class="input-group shadow-sm rounded-3 overflow-hidden">
+            <span class="input-group-text bg-white border-end-0">
+              <i class="fa-solid fa-tags text-primary"></i>
+            </span>
+            <select
+                class="form-select border-start-0"
+                [(ngModel)]="businessFamilyId"
+                (ngModelChange)="changeModel('businessFamilyId')"
+                >
+                <option [value]="0">TODAS LAS FAMILIAS</option>
+                <option *ngFor="let family of businessFamilies" [value]="family.id">{{ family.name }}</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <label class="form-label small text-muted">Tipo de Producto</label>
+          <div class="input-group shadow-sm rounded-3 overflow-hidden">
+            <span class="input-group-text bg-white border-end-0">
+              <i class="fa-solid fa-box text-primary"></i>
+            </span>
+            <select
+                class="form-select border-start-0"
+                [(ngModel)]="productTypeId"
+                (ngModelChange)="changeModel('productTypeId')"
+            >
+                <option [value]="0">TODOS LOS TIPOS DE PRODUCTOS</option>
+                <option *ngFor="let type of productTypes" [value]="type.id">{{ type.value }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spinner de carga con animación mejorada -->
+  <div class="d-flex justify-content-center my-5" *ngIf="isLoading; else templateProducts">
+    <div class="spinner-grow text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Contenido principal -->
+  <ng-template #templateProducts>
+    <!-- Mensaje cuando no hay productos -->
+    <div class="alert alert-info d-flex align-items-center rounded-3 shadow-sm" *ngIf="totalResults == 0">
+      <i class="fa-solid fa-info-circle me-3 fs-4"></i>
+      <div>No hay productos disponibles con los filtros seleccionados.</div>
+    </div>
+    
+    <!-- Tabla de productos con diseño mejorado -->
+    <div class="card shadow-sm rounded-3 border-0 mt-4" *ngIf="totalResults > 0">
+      <div class="card-header bg-white pt-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 text-muted">
+          <i class="fa-solid fa-list me-2"></i>
+          Listado de Productos
+        </h5>
+        <span class="badge bg-primary rounded-pill">{{ totalResults }} productos</span>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" class="border-0">Imagen</th>
+                <th scope="col" class="border-0">Nombre</th>
+                <th scope="col" class="border-0">Línea de negocio</th>
+                <th scope="col" class="border-0">Familia</th>
+                <!-- Columnas específicas para almacén general -->
+                <ng-container *ngIf="isGeneralStore">
+                  <th scope="col" class="border-0">Existencias totales</th>
+                  <th scope="col" class="border-0">Existencias disponibles</th>
+                </ng-container>
+                <!-- Columnas específicas para otros almacenes -->
+                <ng-container *ngIf="!isGeneralStore">
+                  <th scope="col" class="border-0" *ngIf="edit">Cantidad disponible</th>
+                  <th scope="col" class="border-0" *ngIf="edit">Acciones</th>
+                </ng-container>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Filas de productos con diseño mejorado -->
+              <tr *ngFor="let product of products" 
+                  [ngClass]="{'bg-danger-subtle': isGeneralStore && product.availableStock <= 0}"
+                  style="transition: all 0.2s ease;"
+                  onmouseover="this.style.backgroundColor='#f8f9fa'" 
+                  onmouseout="this.style.backgroundColor=''">
+                <td style="width: 80px;">
+                  <div class="product-img-container rounded overflow-hidden shadow-sm" style="width: 60px; height: 60px;">
+                    <a *ngIf="product.image" [routerLink]="['details', product.id]">
+                      <img class="img-fluid"
+                          [src]="product.image | image:'products'"
+                          [alt]="product.name"
+                          style="width: 100%; height: 100%; object-fit: cover;">
+                    </a>
+                    <a *ngIf="!product.image" [routerLink]="['details', product.id]">
+                      <img class="img-fluid"
+                          src="assets/images/no-image.jpeg"
+                          [alt]="product.name"
+                          style="width: 100%; height: 100%; object-fit: cover;">
+                    </a>
+                  </div>
+                </td>
+                <td>
+                  <div *ngIf="!isGeneralStore && product.productStores && product.productStores[0]?.isReported" 
+                       class="badge bg-danger mb-2">
+                    <i class="fa-solid fa-exclamation-circle me-1"></i>
+                    Reportado como agotado
+                  </div>
+                  <div class="fw-medium">{{ product.name }}</div>
+                </td>
+                <td><span class="badge bg-light text-dark">{{ product.businessLine.name }}</span></td>
+                <td><span class="badge bg-light text-dark">{{ product.businessFamily.name }}</span></td>
+                
+                <!-- Columnas para almacén general -->
+                <ng-container *ngIf="isGeneralStore">
+                  <td>
+                    <span class="badge bg-secondary">{{ product.totalStock }} Uds</span>
+                  </td>
+                  <td>
+                    <span [ngClass]="product.availableStock <= 0 ? 'badge bg-danger' : 'badge bg-success'">
+                      {{ product.availableStock }} Uds
+                      <i *ngIf="product.availableStock <= 0" class="fa-solid fa-triangle-exclamation ms-1"></i>
+                    </span>
+                  </td>
+                </ng-container>
+                
+                <!-- Columnas para otros almacenes -->
+                <ng-container *ngIf="!isGeneralStore && product.productStores">
+                  <td *ngIf="edit">
+                    <div class="input-group input-group-sm">
+                      <input 
+                          type="number"
+                          class="form-control shadow-sm"
+                          [(ngModel)]="product.productStores[0].amount"
+                          min="1"
+                        >
+                      <button 
+                        [disabled]="isSaving" 
+                        class="btn btn-primary" 
+                        (click)="updateAmout(product.id, product.productStores[0].amount, product.productStores[0].id)">
+                        <i class="fa-solid fa-save me-1"></i> Actualizar
+                      </button>
+                    </div>
+                  </td>
+                  <td *ngIf="edit">
+                    <div class="btn-group">
+                      <button
+                        [disabled]="isSaving"
+                        (click)="removeProductToStore(+product.productStores[0].id)"
+                        class="btn btn-outline-danger btn-sm me-2">
+                        <i class="fa-solid fa-trash me-1"></i> Remover
+                      </button>
+                      <button
+                        [disabled]="isSaving"
+                        (click)="assingProductSpent(+product.productStores[0].id)"
+                        class="btn btn-danger btn-sm">
+                        <i class="fa-solid fa-ban me-1"></i> Marcar Agotado
+                      </button>
+                    </div>
+                  </td>
+                </ng-container>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Paginador mejorado con sombra -->
+      <div class="card-footer bg-white py-3" *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage($event)"
+          class="d-block"
+        />
+      </div>
+    </div>
+  </ng-template>
+</div>

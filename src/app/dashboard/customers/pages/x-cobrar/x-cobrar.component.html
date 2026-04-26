@@ -1,0 +1,133 @@
+
+
+
+
+
+<div class="container pt-4">
+
+  
+  
+    <div class="d-flex justify-content-between">
+      <h1>Cuentas por cobrar</h1>
+    </div>
+
+    <div>
+
+      <div class="mt-5">
+        <div class="row">
+          <div class="col-md-6">
+            <label>Selecciona un cliente</label>
+            <angular2-multiselect 
+              [data]="customers" 
+              class="form-control p-0 mt-2"
+              [(ngModel)]="customerSelected"
+              [settings]="dropdownSettingsSingle" 
+              (onSelect)="onItemSelect($event)" 
+              (onDeSelect)="OnItemDeSelect($event)"
+              (onSelectAll)="onSelectAll($event)"
+              (onDeSelectAll)="onDeSelectAll($event)">
+            </angular2-multiselect>
+          </div>
+          <div class="col-md-3">
+            <label>Tipo de documento</label>
+            <select 
+              class="form-control mt-2"
+              [(ngModel)]="documentType"
+              (ngModelChange)="onYearChange()">
+              <option value="F">Factura</option>
+              <option value="R">Remisión</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label>Año</label>
+            <select 
+              class="form-control mt-2"
+              [(ngModel)]="yearSelected"
+              (ngModelChange)="onYearChange()">
+              <option value="0">TODOS</option>
+              <option *ngFor="let y of years.reverse()" [value]="y">{{ y }}</option>
+            </select>
+          </div>
+          <!-- <div class="col-md-3">
+            <label>Selecciona un mes</label>
+            <select 
+              class="form-control mt-2"
+              [(ngModel)]="monthSelected"
+              (ngModelChange)="filterByMonth( )">
+              <option *ngFor="let m of months" [value]="m.sigla">{{ m.label }}</option>
+            </select>
+          </div> -->
+        </div>
+      </div>
+        
+      <div class="mt-4 text-center"  *ngIf="isLoading; else templatePayments">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+  
+      <ng-template #templatePayments>
+  
+        <p class="text-center text-muted mt-4" *ngIf="balance.length == 0">No hay cuentas por mostar.</p>
+        
+        <div class="table-responsive mt-5" *ngIf="balance.length > 0">
+
+          <div class="d-flex justify-content-between">
+            <span span class="fw-bold">Total de resultados: {{balance.length}}</span>
+            <!-- <button (click)="exportToExcel()" class="btn btn-outline-success btn-sm"><i class="fa-regular fa-file-excel me-2"></i>Exportar Excel</button> -->
+          </div>
+  
+          
+          <table class="table table-hover mt-3">
+            <thead>
+              <tr>
+                <th scope="col">Fecha de servicio</th>
+                <th scope="col">Folio servicio</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Crédito</th>
+                <th scope="col">{{  documentType == 'F' ? 'No. Factura' : 'No. Remisión' }}</th>
+                <th scope="col">Importe</th>
+                <th scope="col">Vencimiento</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of balance; let i = index;">
+                <td>{{ item.createdAt | date: 	'dd-MMM-yy' }}</td>
+                <td>{{ item.workOrder.folio }}</td>
+                <td>{{ item.customer.name + item.customer?.lastName }}</td>
+                <td>{{ item.customer.creditDays }} días</td>
+                <td>{{ item.workOrder?.noFactura }}</td>
+                <td>{{ '$ ' + (item.amount | number : '1.2-2') }}</td>
+                <td class="text-danger">{{ item.expired | date: 	'dd-MMM-yy' }}</td>
+              </tr> 
+            </tbody>
+            <!-- <tfoot>
+              <tr>
+                <td></td>
+                <td></td>
+                <td class="fw-bold">Totales</td>
+                <td class="fw-bold">$ {{ getTotalImporte() | number : '1.2-2' }}</td>
+                <td class="fw-bold">$ {{ getTotalAcuenta() | number : '1.2-2' }}</td>
+                <td class="fw-bold">$ {{ balance[ balance.length - 1].balance | number : '1.2-2' }}</td>
+                <td></td>
+              </tr>
+            </tfoot> -->
+          </table>
+        </div>
+  
+        <ng-container *ngIf="totalResults > limit">
+          <!-- <paginator 
+            [limit]="limit"
+            [totalResults]="totalResults"
+            [currentPage]="currentPage"
+            (chageCurrentPage)="changePage( $event )"
+          /> -->
+        </ng-container>
+  
+  
+      </ng-template>
+
+    </div>
+
+
+</div>

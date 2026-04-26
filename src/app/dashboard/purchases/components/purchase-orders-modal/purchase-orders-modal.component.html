@@ -1,0 +1,82 @@
+
+
+<div class="back-modal">
+  <div class="modal" style="display: block;" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content shadow">
+          <div class="modal-header">
+            <h5 class="modal-title">Ordenes de compra</h5> 
+            <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+              <div class="bg-light px-2 py-4 row">
+                <div class="col-md-12">
+                  <input-search 
+                    placeholder="Buscar orden de compra..."
+                    (onEnter)="search( $event )"
+                    (onDebounce)="search( $event )"
+                  />
+                </div>
+              </div>
+          
+          
+              <div class="mt-4 text-center"  *ngIf="isLoading; else templatePurchaseOrder">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+          
+              <ng-template #templatePurchaseOrder>
+          
+                <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay ordenes de compra por mostar.</p>
+                
+                <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+          
+                  <span class="fw-bold">Total de resultados: {{totalResults}}</span>
+          
+                  <table class="table table-light table-striped table-hover mt-3">
+                    <thead>
+                      <tr>
+                        <th scope="col">Folio</th>
+                        <th scope="col">Proveedor</th>
+                        <th scope="col">Fecha</th>
+                        <th scope="col">Creado por</th>
+                        <th scope="col">Seleccionar</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let purchaseOrder of purchaseOrders; let idx = index;">
+                        <td>{{purchaseOrder.folio}}</td>
+                        <td>{{purchaseOrder.supplier.rfc}} | {{purchaseOrder.supplier.name}}</td>
+                        <td>{{purchaseOrder.createdAt | date: 	'dd-MMM-yy' }}</td>
+                        <td>{{purchaseOrder.createdBy.name}} {{purchaseOrder.createdBy.lastName}}</td>
+                        <td>
+                          <button class="btn btn-outline-primary btn-sm"  (click)="handleSelected( idx )">Seleccionar</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+          
+                <ng-container *ngIf="totalResults > limit">
+                  <paginator 
+                    [limit]="limit"
+                    [totalResults]="totalResults"
+                    [currentPage]="currentPage"
+                    (chageCurrentPage)="changePage( $event )"
+                  />
+                </ng-container>
+          
+          
+              </ng-template>
+          
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" (click)="closeModal()" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>

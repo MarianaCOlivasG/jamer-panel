@@ -1,0 +1,79 @@
+<div class="container pt-4">
+  <h5 *ngIf="!isBudget">Órdenes de Trabajo</h5>
+  <h5 *ngIf="isBudget">Ventas</h5>
+
+  <!-- <div  class="text-end mb-4">
+    <button (click)="goToCreateWorkOrder()" class="btn btn-secondary">
+      <i class="fa-solid fa-plus me-2"></i>Crear nuevo
+    </button>
+  </div> -->
+  <div *ngIf="isBudget" class="text-end mb-4">
+  <a 
+  [routerLink]="['/work-orders/new']"  
+  [queryParams]="{ clientId:customerId, typeWork: 'contract-sale' }"
+  class="btn btn-secondary"
+  title="Convertir cotización a Orden de trabajo"
+>
+  Crear Venta               
+</a>
+  </div>
+  <div class="bg-light px-2 py-4 row">
+    <div class="col-md-8">
+      <input-search 
+        placeholder="Buscar orden de trabajo..."
+        (onEnter)="search($event)"  
+        (onDebounce)="search($event)"
+      />
+    </div>
+  </div>
+
+  <div class="mt-4 text-center" *ngIf="isLoading; else templateWorkorders">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+
+  <ng-template #templateWorkorders>
+    <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">
+      No hay órdenes de trabajo por mostrar.
+    </p>
+
+    <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+      <span class="fw-bold">Total de resultados: {{ totalResults }}</span>
+      <table class="table table-light table-striped table-hover mt-3">
+        <thead>
+          <tr>
+            <th scope="col">Folio</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Estatus</th>
+            <th scope="col">Herramientas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let workorder of workOrders">
+            <td>{{ workorder.folio }}</td>
+            <td>{{ workorder.startDate | date:'dd-MMM-yy' }}</td>
+            <td>{{ workorder.status.value }}</td>
+            <td>
+              <a [routerLink]="[ '/work-orders', 'details', workorder.id]" class="btn btn-sm btn-outline-secondary me-2">
+                Ver
+              </a>
+              <a [routerLink]="[ '/work-orders', 'edit', workorder.id]" class="btn btn-sm btn-outline-secondary">
+                <i class="fa-solid fa-pen"></i> Editar
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-container *ngIf="totalResults > limit">
+      <paginator 
+        [limit]="limit"
+        [totalResults]="totalResults"
+        [currentPage]="currentPage"
+        (chageCurrentPage)="changePage($event)"
+      />
+    </ng-container>
+  </ng-template>
+</div>

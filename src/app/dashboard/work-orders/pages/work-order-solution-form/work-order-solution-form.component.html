@@ -1,0 +1,165 @@
+<div class="container pt-4">
+
+  <ng-container *ngIf="isLoading; else workOrderTemplate">
+      <div class="text-center">
+          <p class="text-muted mt-4">Cargando información de la orden de trabajo</p>
+          <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+          </div>
+      </div>
+  </ng-container>
+
+  <ng-template #workOrderTemplate>
+      <div class="text-start my-4">
+          <a class="btn btn-outline-success" (click)="goToBack()">
+              <i class="fa-solid fa-arrow-left me-2"></i>Atrás
+          </a>
+      </div> 
+
+      <form autocomplete="off"
+          [formGroup]="form"
+          class="bg-light p-4"
+          (ngSubmit)="handleSubmit()"> 
+
+          <span class="text-danger"><small>Campos requeridos *</small></span>
+
+          <div class="row mt-3">
+              <div class="col-md-12 mb-2">
+                  <label>Descripción detallada trabajos realizados<span class="text-danger">*</span></label>
+                  <textarea 
+                      type="text"
+                      class="form-control mt-2"
+                      placeholder="Escribe aquí...."
+                      [rows]="6"
+                      formControlName="description"></textarea>
+                  <div *ngIf="inputInvalid('description')" class="text-danger">
+                      <small>{{ errorMessage('description') }}</small>
+                  </div> 
+              </div>
+
+              <div class="col-md-12 mb-2">
+                  <label>Evaluación de la instalación<span class="text-danger">*</span></label>
+                  <textarea 
+                      type="text"
+                      class="form-control mt-2"
+                      placeholder="Escribe aquí...."
+                      [rows]="6"
+                      formControlName="evaluation"></textarea>
+                  <div *ngIf="inputInvalid('evaluation')" class="text-danger">
+                      <small>{{ errorMessage('evaluation') }}</small>
+                  </div> 
+              </div>
+
+              <div class="col-md-12 mb-2">
+                  <label>Deficiencias<span class="text-danger">*</span></label>
+                  <textarea 
+                      type="text"
+                      class="form-control mt-2"
+                      placeholder="Escribe aquí...."
+                      [rows]="6"
+                      formControlName="deficiencies"></textarea>
+                  <div *ngIf="inputInvalid('deficiencies')" class="text-danger">
+                      <small>{{ errorMessage('deficiencies') }}</small>
+                  </div> 
+              </div>
+
+              <div class="col-md-12 mb-2">
+                  <label>Plaga detectada<span class="text-danger">*</span></label>
+                  <textarea 
+                      type="text"
+                      class="form-control mt-2"
+                      placeholder="Escribe aquí...."
+                      [rows]="6"
+                      formControlName="pest_detected"></textarea>
+                  <div *ngIf="inputInvalid('pest_detected')" class="text-danger">
+                      <small>{{ errorMessage('pest_detected') }}</small>
+                  </div>
+              </div>
+
+              <div class="col-md-12 mb-2">
+                  <label>Recomendaciones para el cliente<span class="text-danger">*</span></label>
+                  <textarea 
+                      type="text"
+                      class="form-control mt-2"
+                      placeholder="Escribe aquí...."
+                      [rows]="6"
+                      formControlName="work_done"></textarea>
+                  <div *ngIf="inputInvalid('work_done')" class="text-danger">
+                      <small>{{ errorMessage('work_done') }}</small>
+                  </div>
+              </div>
+          </div>
+
+          <div class="mt-4">
+              <h6 class="fw-bold">Productos</h6>
+              <app-product-search-add 
+                  placeholder="Buscar producto..." 
+                  (onProductAdd)="addProduct($event)">
+              </app-product-search-add>
+
+              <div formArrayName="products" class="mt-3">
+                  <table class="table table-striped">
+                      <thead>
+                          <tr>
+                              <th>Nombre</th>
+                              <th>Línea de negocio</th>
+                              <th>Familia</th>
+                              <th>Cantidad utilizada</th>
+                              <th>Unidad utilizada</th>
+                              <th>Acciones</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr *ngFor="let productCtrl of productsArray.controls; let i = index" [formGroupName]="i">
+                              <td>
+                                  <span class="form-control-plaintext">{{ productCtrl.get('name')?.value }}</span>
+                              </td>
+                              <td>
+                                  <span class="form-control-plaintext">{{ productCtrl.get('businessLine')?.value }}</span>
+                              </td>
+                              <td>
+                                  <span class="form-control-plaintext">{{ productCtrl.get('businessFamily')?.value }}</span>
+                              </td>
+                              <td>
+                                  <input type="number" class="form-control" formControlName="amount" placeholder="Cantidad">
+                                  <div *ngIf="productCtrl.get('amount')?.invalid && formSubmitted" class="text-danger">
+                                      <small>La cantidad debe ser mayor que 0</small>
+                                  </div>
+                              </td>
+                              <td>
+                                  <select class="form-control" formControlName="unit">
+                                      <option value="">-- Seleccione unidad --</option>
+                                      <option value="lt">lt | litro(s)</option>
+                                      <option value="ml">ml | mililitro(s)</option>
+                                      <option value="l">l | litro(s)</option>
+                                      <option value="kg">kg | kilogramo(s)</option>
+                                      <option value="g">g | gramo(s)</option>
+                                      <option value="mg">mg | miligramo(s)</option>
+                                      <option value="pza">pza | pieza(s)</option>
+                                      <option value="pack">pack | paquete(s)</option>
+                                      <option value="uni">uni | unidad(es)</option>
+                                      <option value="caja">caja | caja(s)</option>
+                                  </select>
+                                  <div *ngIf="productCtrl.get('unit')?.invalid && formSubmitted" class="text-danger mt-1">
+                                      <small>Seleccione una unidad de medida</small>
+                                  </div>
+                              </td>
+                              <td>
+                                  <button type="button" class="btn btn-danger btn-sm" (click)="removeProduct(i)">Eliminar</button>
+                              </td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+
+          <div class="text-end mt-4">
+              <button class="btn btn-secondary" type="submit" [disabled]="isSaving">
+                  {{ isSaving ? 'Guardando...' : 'Guardar'}}
+              </button>
+          </div>
+
+      </form>
+  </ng-template>
+
+</div>

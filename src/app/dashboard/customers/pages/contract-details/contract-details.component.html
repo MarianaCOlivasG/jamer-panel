@@ -1,0 +1,197 @@
+
+
+
+<emails-modal 
+  [customerEmail]="contract.customer.email"
+  [entityId]="contract.id"
+  [entity]="'contract'"
+  *ngIf="modalService.show"
+/>
+
+<div class="container py-4">
+
+        <ng-container *ngIf="isLoading; else contractTemplate">
+            <div class="text-center">
+                <p class="text-muted mt-4">Cargando información del contrato.</p>
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </ng-container>
+    
+        <ng-template #contractTemplate>
+    
+                <h1>Detalle del contrato</h1>
+    
+                <div class="d-flex justify-content-between my-4">
+                    <a class="btn btn-outline-success" routerLink="/customers/contracts"><i class="fa-solid fa-arrow-left me-2"></i>Atrás</a>
+
+                    
+                    <div *ngIf="createWorkOrder" class="d-flex ">
+                      <a [routerLink]="['/work-orders/new']"  
+                         [queryParams]="{ contractId: contract.id, typeWork: 'contract' }" 
+                         class="btn btn-outline-primary me-2  d-flex align-items-center">
+                        <i class="fa fa-file-text me-2"></i> Convertir a Orden de trabajo
+                      </a>
+                      <!-- <a [routerLink]="['/work-orders/new']"  
+                         [queryParams]="{ contractId: contract.id, typeWork: 'contract-sale' }" 
+                         class="btn btn-outline-success  d-flex align-items-center">
+                        <i class="fa fa-shopping-cart me-2"></i> Convertir a Venta
+                      </a> -->
+                    </div>
+                    <!-- <a class="btn btn-secondary" [routerLink]="['/customers', 'contracts','edit', contract.id]"><i class="fa-solid fa-pen me-2"></i>Editar</a> -->
+                </div>
+
+                <div class="row px-3">
+
+                  <div class="col-12">
+                    <h6 class="text-secondary fw-bold">Herramientas</h6>
+                    <div>
+                      <!-- [href]="fileUrl + '/uploads/docs/contracts/' + contract.file" -->
+                      <button 
+                        (click)="downloadPDF()"
+                        class="btn btn-outline-info me-3"><i class="fa-regular fa-file-pdf"></i> Descargar PDF</button>
+                      <button 
+                        class="btn btn-outline-info"
+                        (click)="openModal()"><i class="fa-regular fa-envelope"></i> Enviar</button>
+                    </div>
+                  </div>
+                  
+                </div>
+
+                <hr>
+
+                <div class="row px-3">
+            
+            
+                    <div class="col-md-12 mt-4 mt-md-0">
+    
+                        <h6 class="text-primary fw-bold">Datos Generales</h6>
+                        <div class="row">
+                            <div class="col-md-3 d-flex flex-column mb-2"><small>Folio</small><span>{{ contract.folio }}</span></div>
+                            <div class="col-md-4 d-flex flex-column mb-2"><small>Creado por</small><span>{{ contract.createdBy.name }} {{ contract.createdBy.lastName }}</span></div>
+                            <div class="col-md-4 d-flex flex-column mb-2"><small>Fecha</small><span>{{ contract.createdAt | date: 	'dd-MMM-yy' }}</span></div>
+                        </div>
+
+
+
+                        <h6 class="text-primary fw-bold">Datos Cliente</h6>
+                        <div class="row">
+                            <div class="col-md-6 d-flex flex-column mb-2"><small>Cliente</small><span>{{ contract.customer.name }} {{ contract.customer.lastName }}</span></div>
+                            <div class="col-md-6 d-flex flex-column mb-2"><small>Correo electrónico</small><span>{{ contract.customer.email }}</span></div>
+                        </div>
+
+                        <h6 class="text-primary fw-bold">Instalaciones donde se realiza el servicio</h6>
+                        <div class="table-responsive" >
+
+                          <table class="table table-light table-striped table-hover mt-3">
+                            <thead>
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Dirección</th>
+                                <th scope="col">Referencias</th>
+                              </tr> 
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let address of contract.addresses; let i = index;">
+                                <td># {{ i + 1 }}</td>
+                                <td>{{ address.name }}</td>
+                                <td>{{ address.address }}</td>
+                                <td>{{ address.references }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                      </div>
+
+
+
+                        <!-- <h6 class="text-primary fw-bold">Instalaciones donde se realiza el servicio</h6>
+                        <div class="table-responsive" >
+
+                            <table class="table">
+                              <thead>
+                                <tr>
+                                  <th scope="col">#</th>
+                                  <th scope="col">Dirección</th>
+                                  <th scope="col">Referencias</th>
+                                </tr> 
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let address of budget.addresses; let i = index;">
+                                  <td># {{ i + 1 }}</td>
+                                  <td>{{ address.address }}</td>
+                                  <td>{{ address.references }}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                        </div> -->
+
+
+
+                        <h6 class="text-primary fw-bold">Artículos/Tratamientos</h6>
+                        <div class="table-responsive" >
+
+                            <table class="table table-light table-striped table-hover mt-3">
+                              <thead>
+                                <tr>
+                                  <th scope="col">Cantidad</th>
+                                  <th scope="col">Artículos/Tratamientos</th>
+                                  <th scope="col">Precio unitario</th>
+                                  <th scope="col">Importe</th>
+                                  <th scope="col">Impuesto</th>
+                                  <th scope="col">Total</th>
+                                </tr> 
+                              </thead>
+                              <tbody>
+                                <ng-container *ngFor="let cp of contract.contractsProducts">
+                                  <tr>
+                                    <td>{{ cp.amount}}</td>
+                                    <td>{{ cp.product.name }}</td>
+                                    <td>$ {{ cp.unitPrice | number : '1.2-2' }}</td>
+                                    <td>$ {{ cp.totalWithoutIva | number : '1.2-2' }}</td>
+                                    <td>$ {{ cp.iva | number : '1.2-2' }}</td>
+                                    <td>$ {{ cp.totalWithIva | number : '1.2-2' }}</td>
+                                  </tr>
+                                  <tr *ngIf="cp.htmlDescription">
+                                    <td colspan="7">
+                                      <div [innerHTML]="cp.htmlDescription"></div>
+                                    </td>
+                                  </tr>
+                                </ng-container>
+                                <tr>
+                                    <th rowspan="2" colspan="2">Totales:</th>
+                                    <th>Impuestos</th>
+                                    <th>Total sin IVA</th>
+                                    <th>Impuesto(IVA)</th>
+                                    <th>TOTAL</th>
+                                </tr>
+                                <tr>
+                                  <td>IVA Regular</td>
+                                  <td>$ {{ contract.totalWithoutIva | number : '1.2-2' }}</td>
+                                  <td>$ {{ contract.iva | number : '1.2-2' }}</td>
+                                  <th>$ {{ contract.totalWithIva | number : '1.2-2' }}</th>
+                                </tr>
+                              </tbody>
+                            </table>
+                        </div>
+ 
+                        
+                        <h6 class="text-primary fw-bold">Datos de pago</h6>
+                        <div class="row">
+                            <div class="col-md-3 d-flex flex-column mb-2"><small>Método de pago</small><span>{{ contract.paymentMethod }}</span></div>
+                            <div class="col-md-3 d-flex flex-column mb-2"><small>Tipo de trabajo a realizar</small><span>{{ contract.typeWork }}</span></div>
+                            <div *ngIf="contract.htmlDescription" class="col-md-12 d-flex flex-column mb-2"><small>Descripciones / Cláusulas / Anexos de la cotización</small><div [innerHTML]="contract.htmlDescription"></div></div>
+                        </div>
+
+                    </div>
+            
+                </div>
+
+    
+        </ng-template>
+    
+</div>
+    
+    
+    

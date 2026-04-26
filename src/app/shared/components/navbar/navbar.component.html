@@ -1,0 +1,66 @@
+<nav class="navbar navbar-expand shadow navbar-light bg-white fixed-top shadow-sm">
+    <div class="container-fluid">
+
+      <a class="d-lg-none" data-bs-toggle="offcanvas" href="#offcanvasExample" aria-controls="offcanvasExample">
+        <i class="fa-solid fa-bars"></i>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+
+
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+
+         
+          <li *ngIf="viewCashRegister" class="nav-item me-3 mt-1" routerLink="/cash-register">
+            <a type="button" class="nav-link">
+              <i class="fa-solid fa-cash-register fa-xl"></i> Caja
+            </a>
+          </li>
+
+
+          <li class="nav-item me-3 mt-1" routerLink="/profile">
+            <a type="button" class="nav-link position-relative">
+              <i class="fa-regular fa-bell fa-xl"></i>
+              <span *ngIf="no > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: #3298ec;">
+                {{ no > 99 ? '99+' : no }}
+                <span class="visually-hidden">unread messages</span>
+              </span>
+            </a>
+          </li>
+
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img 
+                style="border-radius: 100%; 
+                      object-fit: cover;"
+                width="30"
+                height="30"
+                [src]="user.picture | image:'employees'"
+                alt="User image">
+              {{ user.name }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li routerLinkActive="active"><a routerLink="/profile" class="dropdown-item" >Mi Perfil</a></li>
+              <li routerLinkActive="active"><a routerLink="/info" class="dropdown-item" >Empresa</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li ><button  class="dropdown-item" (click)="logout()"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Cerrar sesión</button></li>
+            </ul>
+          </li>
+
+        
+        </ul>
+        
+      </div>
+
+
+
+    </div>
+  </nav>

@@ -1,0 +1,99 @@
+
+<div class="bg-light px-2 py-4 row">
+    <div class="col-md-12 mb-3">
+      <input-search 
+        placeholder="Buscar herramienta/equipo.."
+        (onEnter)="search( $event )"
+        (onDebounce)="search( $event )"
+      />
+    </div>
+  </div>
+
+  <div class="mt-4 text-center"  *ngIf="isLoading; else workToolTemplate">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <ng-template #workToolTemplate>
+
+    <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay herramientas/equipos por mostar.</p>
+    
+
+      <div class="mt-4" *ngIf="totalResults > 0">
+
+          <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+            <table class="table table-light table-striped table-hover mt-3">
+                <thead>
+                  <tr>
+                    <th scope="col">Ver</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Marca</th>
+                    <th scope="col">Modelo</th>
+                    <th scope="col">Existencia</th>
+                    <th scope="col">Cantidad disponible</th>
+                    <th scope="col" *ngIf="authService.isAdmin()">Herramientas</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let workTool of workTools" [ngClass]="{ 'text-muted': !workTool.isActive }">
+                    <td>
+                      <a *ngIf="workTool.image" [routerLink]="['details', workTool.id]">
+                        <img class="product-image"
+                            [src]="workTool.image | image:'products'"
+                            [alt]="workTool.name">
+                      </a>
+                      <a *ngIf="!workTool.image" [routerLink]="['details', workTool.id]">
+                        <img class="product-image"
+                            src="assets/images/no-image.jpeg"
+                            [alt]="workTool.name">
+                      </a>
+                    </td>
+                    <td>{{ workTool.name }}</td>
+                    <td>{{ workTool.brand }}</td>
+                    <td>{{ workTool.model }}</td>
+                    <td>{{ workTool.totalStock }}</td>
+                    <td>{{ workTool.availableStock }}</td>
+                    <td>
+                      <div class="d-flex" *ngIf="authService.isAdmin()">
+  
+                          <a 
+                            [routerLink]="['edit', workTool.id]"
+                            class="btn btn-sm btn-outline-secondary me-2">
+                            <i class="fa-solid fa-pen"></i> Editar
+                          </a>
+                          
+                          <div class="dropdown">
+                            <button 
+                              class="btn btn-sm btn-outline-secondary" 
+                              type="button" 
+                              data-bs-toggle="dropdown" 
+                              aria-expanded="false">
+                              <i class="fa-solid fa-ellipsis-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                              <li><a class="dropdown-item" type="button" (click)="disableOrEnable( workTool )">{{!workTool.isActive ? 'Habilitar' : 'Deshabilitar'}}</a></li>
+                            </ul>
+                          </div>
+        
+                        </div>
+
+                      </td>
+                  </tr>
+                </tbody>
+              </table>
+          </div>
+
+      </div>
+
+    <ng-container *ngIf="totalResults > limit">
+      <paginator 
+        [limit]="limit"
+        [totalResults]="totalResults"
+        [currentPage]="currentPage"
+        (chageCurrentPage)="changePage( $event )"
+      />
+    </ng-container>
+
+  </ng-template>
+

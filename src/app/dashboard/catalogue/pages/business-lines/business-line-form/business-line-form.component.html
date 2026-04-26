@@ -1,0 +1,97 @@
+<div class="container pt-4">
+
+    <ng-container *ngIf="isLoading; else businessLineTemplate">
+        <div class="text-center">
+            <p class="text-muted mt-4">Cargando información de la línea de negocio</p>
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-template #businessLineTemplate>
+
+        <h1>{{ isEdit ? 'Actualizar' : 'Crear' }} línea de negocio</h1>
+        
+        
+
+        <div class="text-start my-4">
+            <a class="btn btn-outline-success" (click)="goToBack()"><i class="fa-solid fa-arrow-left me-2"></i>Atrás</a>
+        </div>
+
+
+        <div class="bg-light p-4">
+            <form autocomplete="off"
+                    [formGroup]="form"> 
+
+                <span class="text-danger"><small>Campos requeridos *</small></span>
+
+
+                <div class="row mt-3">
+                    <h6 class="text-primary fw-bold">Datos de la línea de negocio</h6>
+
+                    <div class="col-md-4 mb-2">
+                        <label>Nombre<span class="text-danger">*</span></label>
+                        <input 
+                            type="text"
+                            class="form-control mt-2"
+                            placeholder="Nombre"
+                            formControlName="name">
+                        <div *ngIf="inputInvalid('name')" class="text-danger">
+                            <span><small>{{ errorMessage('name') }}</small></span>
+                        </div> 
+                    </div>
+
+
+                    <div class="col-md-4 mb-2">
+                        <label>Icono<span class="text-danger">*</span></label>
+                        <!-- <select 
+                            class="form-control mt-2"
+                            formControlName="icon">
+                            <option value="">Seleccione un icono</option>
+                            <option *ngFor="let item of icons" [value]="item.value" [innerHtml]="item.icon"></option>
+                        </select> -->
+                        <div class="d-flex"> 
+                            <div [ngClass]="{ 'selected': form.get('icon')?.value == ico['value'] }" class="ico-container selected mx-1" (click)="selectIcon( ico['value'] )" *ngFor="let ico of icons">
+                                <img [src]="'/assets/ico/' + ico['value']" alt="">
+                            </div>
+                        </div>
+                        <div *ngIf="inputInvalid('icon')" class="text-danger">
+                            <span><small>{{ errorMessage('icon') }}</small></span>
+                        </div> 
+                    </div>
+
+                    
+
+                    <div class="col-md-12 mb-2">
+                        <label>Descripción</label>
+                        <textarea 
+                            class="form-control mt-2"
+                            placeholder="Escribe aquí..."
+                            formControlName="description"></textarea>
+                        <div *ngIf="inputInvalid('description')" class="text-danger">
+                            <span><small>{{ errorMessage('description') }}</small></span>
+                        </div> 
+                    </div>
+
+                </div>
+
+               
+            </form>
+
+
+            <div class="text-end mt-4">
+                <button 
+                    class="btn btn-secondary" 
+                    type="button" 
+                    (click)="handleSubmit()"
+                    [disabled]="isSaving">{{ isSaving ? 'Guardando...' : 'Guardar'}}</button>
+            </div>
+
+
+        </div>
+
+
+    </ng-template>
+
+</div>

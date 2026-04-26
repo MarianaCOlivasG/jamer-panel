@@ -1,0 +1,38 @@
+.workorder-reprogram {
+    padding: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Open Sans', sans-serif;
+  }
+  
+  .summary-panel {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #e9ecef;
+    border-radius: 4px;
+  }
+  
+  .summary-panel h2 {
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  .summary-panel p {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: #555;
+  }
+  
+  .workorder-reprogram h2 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .workorder-reprogram .form-label {
+    font-weight: 600;
+  }
+  
+  .workorder-reprogram input {
+    margin-bottom: 10px;
+  }

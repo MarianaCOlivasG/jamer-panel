@@ -1,0 +1,32 @@
+
+
+<diary-event-modal 
+  *ngIf="modalService.show"
+  (newDiaryEvent)="newDiaryEvent()"
+  [diaryEventId]="diaryEventIdSelected"
+  [diaryId]="calendarId"
+/>
+
+
+<div class="container pt-4 pb-5">
+
+  <h1>Agenda General</h1>
+
+
+  <div class="text-end my-4" *ngIf="authService.isAdmin()">
+    <button (click)="addDiaryEvent()" class="btn btn-secondary"><i class="fa-solid fa-plus me-2"></i> Añadir evento</button>
+  </div>
+
+
+  <div class='calendar' *ngIf="!isLoading">
+    <full-calendar 
+      *ngIf='calendarVisible' 
+      [options]='calendarOptions'>
+      <ng-template #eventContent let-arg>
+        <b>{{ arg.timeText }}</b>
+        <i>{{ arg.event.title }}</i>
+      </ng-template>
+    </full-calendar>
+  </div>
+
+</div>

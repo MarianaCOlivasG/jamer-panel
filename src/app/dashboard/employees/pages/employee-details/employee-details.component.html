@@ -1,0 +1,118 @@
+
+
+<employee-modal 
+    *ngIf="modalService.show && modalSelected == 'image'"
+    [employee]="employeeSelected"
+    (newPictureEvent)="changePicture($event)" />
+
+
+<employee-files-modal
+    *ngIf="modalService.show && modalSelected == 'files'"
+    [employee]="employeeSelected"
+    (newPictureEvent)="changePicture($event)" />
+
+<div class="container pt-4">
+
+    <ng-container *ngIf="isLoading; else employeeTemplate">
+        <div class="text-center">
+            <p class="text-muted mt-4">Cargando información del empleado</p>
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-template #employeeTemplate>
+
+
+
+            <h1>Detalle de empleado</h1>
+
+
+            <div class="d-flex justify-content-between my-4">
+                <a class="btn btn-outline-success" routerLink="/employees"><i class="fa-solid fa-arrow-left me-2"></i>Atrás</a>
+                <button *ngIf="editUser" class="btn btn-secondary" [routerLink]="['/employees','edit', employee.id]"><i class="fa-solid fa-pen me-2"></i>Editar</button>
+            </div>
+        
+            <div class="row mt-3 p-3">
+
+                <div class="col-md-4 d-flex justify-content-center align-items-center">
+                    <img 
+                        [ngClass]="{'user-img': authService.user.role.key == 'admin'}"
+                        [src]="employee.picture | image:'employees'"
+                        [alt]="employee.name"
+                        (click)="openModal(employee, 'image')">
+                </div>
+        
+        
+                <div class="col-md-8 mt-4 mt-md-0">
+
+                    <h6 class="text-primary fw-bold">Datos Personales</h6>
+
+                    <div class="row">
+                        <p class="col-md-4 d-flex flex-column"><small>No.</small><span>{{ employee.no ? employee.no : '-' }}</span></p>
+                        <p class="col-md-4 d-flex flex-column"><small>Nombre</small><span>{{ employee.name }}</span></p>
+                        <p class="col-md-4 d-flex flex-column"><small>Apellidos</small><span>{{ employee.lastName }}</span></p>    
+                        <p class="col-md-4 d-flex flex-column"><small>Teléfono</small><span>{{ employee.phone ? employee.phone : '-' }}</span></p>   
+                        <p class="col-md-4 d-flex flex-column"><small>Celular</small><span>{{ employee.cellPhone }}</span></p>
+                        <p class="col-md-4 d-flex flex-column"><small>Contacto de emergencia</small><span>{{ employee.emergencyPhone ? employee.emergencyPhone : '-' }}</span></p>
+                        <p class="col-md-9 d-flex flex-column"><small>Dirección</small><span>{{ employee.address ? employee.address : '-' }}</span></p>    
+                        <p class="col-md-4 d-flex flex-column"><small>CURP</small><span>{{ employee.curp }}</span></p>    
+                        <p class="col-md-4 d-flex flex-column"><small>RFC</small><span>{{ employee.rfc }}</span></p>    
+                        <p class="col-md-4 d-flex flex-column"><small>NSS</small><span>{{ employee.nss }}</span></p>    
+                        
+                    </div>
+
+
+                    <h6 class="text-primary fw-bold">Datos Laborales</h6>
+
+                    <div class="row">
+                        <p class="col-md-3 d-flex flex-column"><small>No. ó folio</small><span>{{ employee.no ? employee.no : '-' }}</span></p>  
+
+                        <p class="col-md-4 d-flex flex-column"><small>Puesto</small><span>{{ employee.workstation }}</span></p> 
+                        
+                        <p class="col-md-3 d-flex flex-column"><small>Fecha de ingreso</small><span>{{ employee.admissionDate | date }}</span></p>    
+                        
+                    </div>
+
+                    
+                </div>
+        
+            </div>
+   
+
+
+            <div class="row mt-3 p-3">
+
+                
+                
+                <div class="col-12 mt-4 mt-md-0 d-flex justify-content-between align-items-center">
+                    <h6 class="text-primary fw-bold">Expediente</h6>
+                    <button class="btn btn-outline-primary btn-sm" (click)="openModal(employee, 'files')">Añadir archivos</button>
+                </div>
+
+                <div class="col-12 mt-4 mt-md-0"  *ngIf="employee.pFiles.length == 0">
+                    <p class="text-muted text-center">No hay archivos por mostar.</p>
+                </div>
+
+                <div class="col-12 mt-4"  *ngIf="employee.pFiles.length > 0">
+                    <div class="row">
+                        <div class="col-md-2 my-1" *ngFor="let file of employee.pFiles">
+                            <a  class="nav-link"
+                                [href]="fileUrl + '/uploads/file/employees/' + file.fileName"
+                                target="_blank"> 
+                                <img class="ico" src="assets/images/pdf-logo.svg" alt="LOGO PNG">
+                                <span>VER</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+    </ng-template>
+
+
+</div>
+
+

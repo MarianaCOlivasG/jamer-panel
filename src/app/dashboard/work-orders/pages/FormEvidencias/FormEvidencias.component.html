@@ -1,0 +1,82 @@
+<div class="container py-4 px-2">
+
+  <h1 class="mb-4 text-center">Subir Evidencias</h1>
+
+  <!-- Selector de archivos -->
+  <div class="card shadow-sm mb-3">
+    <div class="card-body text-center">
+
+      <input 
+        style="display: none;" 
+        type="file" 
+        accept="image/*" 
+        #file 
+        multiple 
+        (change)="onSelectFiles(file.files)"
+      >
+
+      <button class="btn btn-primary px-4 py-2" (click)="file.click()">
+        <i class="fa fa-upload me-2"></i>Seleccionar Imágenes
+      </button>
+
+      <p class="mt-3 mb-0 text-muted small">
+        Puedes subir hasta <strong>5 imágenes</strong>.
+      </p>
+    </div>
+  </div>
+
+  <!-- Vista previa de imágenes -->
+  <div *ngIf="tempFiles.length > 0" class="mb-3">
+
+    <p class="text-center">Total de Imágenes: <strong>{{ tempFiles.length }}</strong></p>
+    <p class="text-danger text-center" *ngIf="tempFiles.length > 5">
+      Máximo 15 imágenes permitidas.
+    </p>
+
+    <div class="row g-3">
+      <div class="col-6 col-md-3" *ngFor="let item of tempFiles; let i = index;">
+        <div class="position-relative border rounded shadow-sm overflow-hidden">
+
+          <!-- Botón eliminar -->
+          <button type="button" 
+                  class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 z-1"
+                  (click)="deleteImage(i)">
+            <i class="fa fa-times"></i>
+          </button>
+
+          <!-- Imagen -->
+          <img 
+            [src]="item" 
+            [alt]="'Imagen ' + (i + 1)" 
+            class="img-fluid w-100 h-100 object-fit-cover rounded"
+            style="aspect-ratio: 1 / 1;"
+          >
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje si no hay imágenes -->
+  <p class="text-muted text-center" *ngIf="tempFiles.length === 0">
+    No hay evidencias por mostrar.
+  </p>
+
+  <!-- Mensaje de error -->
+  <p class="text-danger text-center mt-2" *ngIf="errorMessageText">
+    {{ errorMessageText }}
+  </p>
+
+  <!-- Botón de Finalizar -->
+  <div class="text-end mt-4">
+    <button 
+      class="btn btn-primary px-4 py-2" 
+      type="button" 
+      (click)="handleSubmit($event)"
+      [disabled]="isSaving || clickDisabled"
+    >
+      {{ isSaving ? 'Guardando...' : 'Finalizar' }}
+    </button>
+  </div>
+
+</div>

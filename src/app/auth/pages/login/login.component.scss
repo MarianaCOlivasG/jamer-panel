@@ -1,0 +1,82 @@
+
+
+
+
+.auth-container {
+    width: 100vw; 
+    height: 100vh; 
+    padding: 5% 10%;
+
+    .auth-content {
+        width: 100%; 
+        height: 100%; 
+        border-radius: 20px; 
+        border: .3rem solid #305E5D;
+
+
+        .backDescription {
+            border-top-left-radius: 15px; 
+            border-bottom-left-radius: 15px;
+        }
+
+        .form-container {
+            border-top-right-radius: 15px; 
+            border-bottom-right-radius: 15px;
+        }
+
+
+    }
+ 
+}
+
+@media (max-width: 768px) {
+    .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .auth-content {
+            height: auto;
+            width: auto;
+
+            .backDescription, .form-container {
+                border-radius: 15px;
+                padding: 20px
+            }
+        }
+    }
+}
+
+
+
+
+h5, i {
+    color: #5e6c91;
+}
+
+.myFooter {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+
+i {
+    font-size: 20px;
+}
+
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+img.logo {
+    width: 70%;
+}
+
+img.cancun {
+    height: 50px;
+    width: 30px;
+    object-fit: contain;
+}

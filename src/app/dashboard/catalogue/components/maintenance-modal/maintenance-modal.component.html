@@ -1,0 +1,59 @@
+
+
+
+
+
+<div class="back-modal">
+    <div class="modal" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
+          <div class="modal-content shadow">
+            <div class="modal-header">
+              <h5 class="modal-title">Mantenimiento</h5> 
+              <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+                <form autocomplete="off"
+                  [formGroup]="form"
+                  class="row">
+
+                  <span class="text-danger"><small>Campos requeridos *</small></span>
+
+                  <div class="col-md-12 my-2">
+                    <label>Fecha salida de herramienta/equipo<span class="text-danger">*</span></label>
+                    <input 
+                      type="date"
+                      class="form-control mt-2"
+                      formControlName="departureDate" />
+                    <div *ngIf="inputInvalid('departureDate')" class="text-danger">
+                        <span><small>{{ errorMessage('departureDate') }}</small></span>
+                    </div> 
+                  </div>
+
+                  <div class="col-md-12 my-2">
+                    <label>Observaciones<span class="text-danger">*</span></label>
+                    <textarea 
+                      class="form-control mt-2"
+                      placeholder="Escribe aquí..."
+                      formControlName="observations"></textarea>
+                    <div *ngIf="inputInvalid('observations')" class="text-danger">
+                        <span><small>{{ errorMessage('observations') }}</small></span>
+                    </div> 
+                  </div>
+
+                </form>
+
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" (click)="closeModal()" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+              <button 
+                type="button"
+                (click)="handleSubmit()" 
+                class="btn btn-primary"
+                [disabled]="isLoading">{{ isLoading ? 'Guardando...' : 'Guardar'}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>

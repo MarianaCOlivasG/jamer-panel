@@ -1,0 +1,139 @@
+
+<assign-to-modal 
+  *ngIf="modalService.show && vehicleSelected"
+  (assingToEvent)="assingToEvent()"
+  [vehicleSelected]="vehicleSelected!"
+/>
+
+<div class="container pt-4">
+
+    <h1>Mis vehículos</h1>
+
+
+    <div *ngIf="create" class="text-end mb-4">
+        <a routerLink="/catalogue/vehicles/new" class="btn btn-primary"><i class="fa-solid fa-plus me-2"></i>Crear nuevo</a>
+    </div>
+
+
+    <div class="bg-light px-2 py-4 row">
+
+      <div class="col-md-12 mb-3">
+        <input-search 
+          placeholder="Buscar vehículos..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+      </div>
+      <!-- <div class="col-md-3">
+        <select
+            class="form-control mb-3 mb-md-0"
+            [(ngModel)]="status"
+            (ngModelChange)="changeModel('status')"
+            >
+            <option [value]="1">DISPONIBLES</option>
+            <option [value]="0">NO DISPONIBLES</option>
+        </select>
+      </div> -->
+    </div>
+
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateVehicles">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templateVehicles>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay vehículos por mostar.</p>
+      
+
+        <div class="mt-4" *ngIf="totalResults > 0">
+
+            <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+                <table class="table table-light table-striped table-hover mt-3">
+                  <thead>
+                    <tr>
+                      <th scope="col">Ver</th>
+                      <th scope="col">Marca</th>
+                      <th scope="col">Modelo</th>
+                      <th scope="col">Año</th>
+                      <th scope="col"><i class="fa-solid fa-car-side"></i> Conductor</th>
+                      <th scope="col" *ngIf="edit||deleted">Herramientas</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let vehicle of vehicles" [ngClass]="{ 'text-muted': !vehicle.isActive }">
+                      <td>
+                        <a *ngIf="vehicle.image" [routerLink]="['details', vehicle.id]">
+                          <img class="product-image"
+                              [src]="vehicle.image | image:'vehicles'"
+                              [alt]="vehicle.registration">
+                        </a>
+                        <a *ngIf="!vehicle.image" [routerLink]="['details', vehicle.id]">
+                          <img class="product-image"
+                              src="assets/images/no-image.jpeg"
+                              [alt]="vehicle.registration">
+                        </a>
+                      </td>
+                      <td>{{ vehicle.brand }}</td>
+                      <td>{{ vehicle.model }}</td>
+                      <td>{{ vehicle.year }}</td>
+                      <td *ngIf="vehicle.employee">
+                        <div class="bg-technical">
+                          <img class="me-2" [src]="vehicle.employee.picture | image:'employees'" [alt]="vehicle.employee.name">
+                          <span>{{ vehicle.employee.name }} {{ vehicle.employee.lastName }}</span>
+                          <button [disabled]="vehiculeId == vehicle.id" (click)="removeAssignTo( vehicle.id )" class="btn btn-sm btn-outline-danger ms-2"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                      </td>
+                      <td *ngIf="!vehicle.employee">
+                        <button class="btn btn-sm btn-outline-primary" (click)="openModal( vehicle )" ><i class="fa-solid fa-car"></i></button>
+                      </td>
+                      <td>
+                        <div class="d-flex" *ngIf="edit||deleted">
+    
+                            <a 
+                            *ngIf="edit"
+                              [routerLink]="['edit', vehicle.id]"
+                              class="btn btn-sm btn-outline-secondary me-2">
+                              <i class="fa-solid fa-pen"></i> Editar
+                            </a>
+                            
+                            <div class="dropdown" *ngIf="deleted">
+                              <button 
+                                class="btn btn-sm btn-outline-secondary" 
+                                type="button" 
+                                data-bs-toggle="dropdown" 
+                                aria-expanded="false">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                              </button>
+                              <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" type="button" (click)="disableOrEnable( vehicle )">{{!vehicle.isActive ? 'Habilitar' : 'Deshabilitar'}}</a></li>
+                              </ul>
+                            </div>
+          
+                          </div>
+
+                        </td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+
+        </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+    </ng-template>
+
+  
+
+</div>
+

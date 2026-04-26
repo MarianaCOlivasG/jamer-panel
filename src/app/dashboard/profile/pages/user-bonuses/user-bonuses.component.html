@@ -1,0 +1,81 @@
+
+
+<bonus-confirm 
+  *ngIf="modalService.show && modalService.name == 'bonuses'"
+  [bonusSelected]="bonusSelected"
+  (newBonusConfirm)="newBonusConfirm()"
+  (markAsRead)="markAsRead( $event )"
+/>
+
+<div class="pt-4">
+
+    <h5>Mis bonos</h5>
+
+
+    <div class="bg-light p-4">
+        <input-search 
+          placeholder="Buscar bono..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+    </div>
+
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateBonuses">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templateBonuses>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay bonos por mostar.</p>
+      
+      <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+        <table class="table table-light table-striped table-hover mt-3">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Titulo</th>
+              <th scope="col">Descripción</th>
+              <th scope="col">Status</th>
+              <th scope="col">Herramientas</th>
+            </tr> 
+          </thead>
+          <tbody>
+            <tr *ngFor="let bonus of bonuses"  [ngClass]="{ 'text-muted': !bonus.isActive }">
+              <td><i *ngIf="!bonus.isRead" style="font-size: 8px; color: #3298ec;" class="fa-solid fa-circle"></i></td>
+              <td>{{bonus.createdAt | date:'dd-MMM-yy' }}</td>
+              <td>{{ bonus.title }}</td>
+              <td>{{ bonus.description }}</td>
+              <td>{{ bonus.isValidated ? 'Confirmado' : 'Por confirmar'}}</td>
+              <td>
+                  <button 
+                    class="btn btn-sm btn-outline-secondary me-2"
+                    (click)="openModal( bonus )">
+                    {{bonus.isValidated ? 'Ver' : 'Confirmar'}}
+                  </button>
+                  
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+
+    </ng-template>
+
+  
+
+</div>
+

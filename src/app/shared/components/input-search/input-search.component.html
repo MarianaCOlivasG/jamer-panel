@@ -1,0 +1,14 @@
+
+<form autocomplete="off"
+    (ngSubmit)="search()">
+
+    <!-- style="width: 100%;"  -->
+    <input  
+        class="form-control me-2"
+        type="search" 
+        aria-label="Search"
+        name="query"
+        [(ngModel)]="query"
+        (input)="keyPress()"
+        [placeholder]="placeholder"  >
+</form>

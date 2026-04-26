@@ -1,0 +1,102 @@
+
+
+
+
+
+<div class="back-modal">
+    <div class="modal" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+          <div class="modal-content shadow">
+            <div class="modal-header">
+              <h5 class="modal-title">{{ isEdit ? 'Actualizar' : 'Crear'}} Sede</h5> 
+              <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+              <form class="row"
+                    [formGroup]="form">
+
+                <span class="text-danger"><small>Campos requeridos *</small></span>
+
+
+                <h6 class="text-primary fw-bold mt-2">Datos generales</h6>
+
+                <div class="col-md-12 my-2">
+                  <label>Nombre<span class="text-danger">*</span></label>
+                  <input 
+                    class="form-control mt-2"
+                    placeholder="Ej: Pastelería Villas del Arte"
+                    formControlName="name">
+                  <div *ngIf="inputInvalid('name')" class="text-danger">
+                      <span><small>{{ errorMessage('name') }}</small></span>
+                  </div> 
+                </div>
+
+                <div class="col-md-12 my-2">
+                  <label>Dirección completa<span class="text-danger">*</span></label>
+                  <textarea 
+                    class="form-control mt-2"
+                    placeholder="Ej: Avenida 135, Supermanzana 325, lote 60, Villas del Arte, 77535 Cancún, Q.R."
+                    formControlName="address"></textarea>
+                  <div *ngIf="inputInvalid('address')" class="text-danger">
+                      <span><small>{{ errorMessage('address') }}</small></span>
+                  </div> 
+                </div>
+
+                <div class="col-md-12 mb-2">
+                  <label>Referencias</label>
+                  <textarea 
+                    class="form-control mt-2"
+                    placeholder="Ej: Casa color azul, junto a área verde."
+                    formControlName="references"></textarea>
+                  <div *ngIf="inputInvalid('references')" class="text-danger">
+                      <span><small>{{ errorMessage('references') }}</small></span>
+                  </div> 
+                </div>
+
+                <div class="col-md-8 mb-2">
+                  <label>Nombre de la persona de contacto<span class="text-danger">*</span></label>
+                  <input type="text"
+                    placeholder="Nombre completo"
+                    class="form-control mt-2"
+                    formControlName="contactName">
+                  <div *ngIf="inputInvalid('contactName')" class="text-danger">
+                    <span><small>{{ errorMessage('contactName') }}</small></span>
+                  </div>
+                </div>
+
+                <div class="col-md-4 mb-2">
+                  <label>Teléfono de contacto<span class="text-danger">*</span></label>
+                  <input type="text"
+                    placeholder="(999) 999 9999"
+                    class="form-control mt-2"
+                    formControlName="phone">
+                  <div *ngIf="inputInvalid('phone')" class="text-danger">
+                    <span><small>{{ errorMessage('phone') }}</small></span>
+                  </div>
+                </div>
+
+                <div class="col-12 my-2">
+                  <label>Arrastra el marcador hasta la ubicación exacta</label>
+                  <google-map
+                    [position]="position"
+                    (newLatLng)="newLatLng( $event )"
+                  />
+                </div>
+
+              </form>
+
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" (click)="closeModal()" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+              <button 
+                  type="button"
+                  (click)="handleSubmit()" 
+                  class="btn btn-primary"
+                  [disabled]="isLoading">{{ isLoading ? 'Guardando...' : 'Guardar'}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>

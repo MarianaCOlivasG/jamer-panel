@@ -1,0 +1,52 @@
+
+
+
+
+ 
+<div class="back-modal">
+    <div class="modal" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+          <div class="modal-content shadow">
+            <div class="modal-header">
+              <h5 class="modal-title">Mi incidencia</h5> 
+              <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+              <div class="mt-4 text-center"  *ngIf="!incidence; else templateIncidence">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+
+              <ng-template #templateIncidence>
+
+                <h6 class="text-primary fw-bold">Datos Generales</h6>
+                <div class="row">
+                    <p class="col-md-12 d-flex flex-column"><small>Fecha</small><span>{{ incidence.createdAt | date: 	'dd-MMM-yy' }}</span></p>
+                    <p class="col-md-12 d-flex flex-column"><small>Titulo</small><span>{{ incidence.title }}</span></p>
+                    <p class="col-md-12 d-flex flex-column"><small>Descripción</small><span>{{ incidence.title }}</span></p>
+                    <p *ngIf="incidence.file" class="col-md-12 d-flex flex-column"><small>Archivo</small><a [href]="fileUrl" target="_blank">Descargar</a></p>
+                </div>
+
+                  <div class="text-center">
+                    <img 
+                      class="signatureImage"
+                      [src]="incidence.signature | image:'signatures'" 
+                      [alt]="incidence.employee.name"
+                    >
+                  </div>
+
+              </ng-template>
+
+            </div>
+
+
+            <div class="modal-footer">
+              <button type="button" (click)="closeModal()" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>

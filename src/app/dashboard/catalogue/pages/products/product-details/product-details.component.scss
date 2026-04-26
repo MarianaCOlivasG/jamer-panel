@@ -1,0 +1,19 @@
+
+
+
+img.user-img {
+    border-radius: 10px;
+    height: 200px;
+    width: 200px;
+    object-fit: cover;
+}
+
+img.user-img:hover {
+    cursor: pointer;
+    opacity: .5;
+}
+
+
+img.ico {
+    height: 40px;
+}

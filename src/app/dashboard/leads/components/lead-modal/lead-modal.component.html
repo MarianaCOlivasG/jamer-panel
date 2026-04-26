@@ -1,0 +1,32 @@
+
+
+
+
+
+<div class="back-modal">
+    <div class="modal" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+          <div class="modal-content shadow">
+            <div class="modal-header">
+              <h5 class="modal-title">Detalle lead</h5> 
+              <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+                <div class="row">
+                    <p class="col-md-12 d-flex flex-column"><small>Fecha</small><span>{{ lead.createdAt | date:'medium' }}</span></p>    
+                    <p class="col-md-4 d-flex flex-column"><small>Nombre</small><span>{{ lead.fullName }}</span></p>
+                    <p class="col-md-4 d-flex flex-column"><small>Teléfono</small><span>{{ lead.phone  }}</span></p>   
+                    <p class="col-md-4 d-flex flex-column"><small>Correo electrónico</small><span>{{ lead.email }}</span></p>
+                    <p class="col-md-12 d-flex flex-column"><small>Mensaje</small><span>{{ lead.message }}</span></p>
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" (click)="closeModal()" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>

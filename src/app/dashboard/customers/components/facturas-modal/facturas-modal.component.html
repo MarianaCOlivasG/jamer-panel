@@ -1,0 +1,98 @@
+
+
+
+
+
+<div class="back-modal">
+    <div class="modal" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+          <div class="modal-content shadow">
+            <div class="modal-header">
+              <h5 class="modal-title">Facturas de {{ customerSelected.name }}</h5> 
+              <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+              <div *ngIf="facturas.length == 0; else elseBlock" class="text-center text-muted">
+                <span>No hay facturas</span>
+              </div>
+
+              <ng-template #elseBlock>
+                <div class="row">
+
+                  <table class="table table-light table-striped table-hover mt-3">
+                    <thead>
+                      <tr>
+                        <th scope="col">Ver</th>
+                        <th scope="col">Herramientas</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let factura of facturas">
+                        <td>
+                          <a [href]="fileUrl + '/uploads/docs/facturas/' + factura.file">
+                            <img height="35" src="assets/images/pdf-logo.svg" alt="LOGO PDF">
+                            <span>{{ factura.file }}</span>
+                          </a>
+                        </td>
+                        <td>
+                          <button 
+                          (click)="deleteFactura( factura.id )"
+                          class="ms-3 btn btn-sm btn-secondary"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                </div>
+              </ng-template>
+
+
+              <hr>
+
+
+              <table class="table table-light table-striped table-hover mt-3" *ngIf="tempFiles.length > 0">
+                <thead>
+                  <tr>
+                    <th scope="col">Ver</th>
+                    <th scope="col">Herramientas</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of tempFiles; let i = index;">
+                    <td>
+                      <img height="35" src="assets/images/pdf-logo.svg" alt="LOGO PDF">
+                    </td>
+                    <td>
+                      <button class="btn btn-danger btn-sm" (click)="deleteFile( i )"><i class="fa-solid fa-xmark"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <input 
+                style="display: none;" 
+                type="file" 
+                accept="application/pdf" 
+                #file 
+                multiple
+                (change)="onSelectFiles(file.files)"
+              >
+
+              <button class="btn btn-outline-secondary" (click)="file.click()">Examinar archivos</button>
+          
+
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" (click)="closeModal()" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+              <button 
+                  type="button"
+                  (click)="handleSubmit()" 
+                  class="btn btn-primary"
+                  [disabled]="isLoading || files.length == 0">{{ isLoading ? 'Subiendo...' : 'Subir'}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>

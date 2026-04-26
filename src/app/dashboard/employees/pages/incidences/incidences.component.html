@@ -1,0 +1,128 @@
+
+
+
+
+
+<incidence-form-modal
+  *ngIf="modalSelected == 'form' && modalService.show"
+  [incidence]="incidenceSelected!"
+  (newIncidence)="newIncidence()"
+/>
+
+<incidence-details-modal
+  *ngIf="modalSelected == 'details' && modalService.show"
+  [incidenceId]="incidenceSelected!.id"
+/>
+
+<div class="container pt-4">
+
+    <h1>Incidencias</h1>
+
+    <div *ngIf="createIncidence" class="text-end my-4" >
+        <button (click)="openModalCreate()" class="btn btn-primary"><i class="fa-solid fa-plus me-2"></i> Crear nuevo</button>
+    </div>
+
+    <div class="bg-light p-4">
+        <input-search 
+          placeholder="Buscar incidencia..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+    </div>
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateIncidences">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templateIncidences>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay incidencias por mostar.</p>
+      
+      <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+
+        <span class="fw-bold">Total de resultados: {{totalResults}}</span>
+
+        
+        <table class="table table-light table-striped table-hover mt-3">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Empleado</th>
+              <th scope="col">Titulo</th>
+              <th scope="col">Status</th>
+              <th scope="col" *ngIf="createIncidence || deleteIncidence">Herramientas</th>
+            </tr> 
+          </thead>
+          <tbody>
+            <tr *ngFor="let incidence of incidences"  [ngClass]="{ 'text-muted': !incidence.isActive }">
+              <td>
+                <i [ngClass]="{'isRead': incidence.isRead}" class="fa-solid fa-check-double"></i>
+              </td>
+
+              <td>{{incidence.createdAt | date:'dd-MMM-yy' }}</td>
+
+              <td>{{incidence.employee.name }} {{incidence.employee.lastName }}</td>
+
+              <td>{{incidence.title}}</td>
+
+              <td>{{incidence.isValidated ? 'Confirmado' : 'Por confirmar'}}</td>
+
+              <td *ngIf="authService.isAdmin()">
+                <div class="d-flex">
+
+                  <button 
+                    *ngIf="!incidence.isValidated && editIncidence"
+                    class="btn btn-sm btn-outline-secondary me-2"
+                    (click)="openModalEdit( incidence )">
+                    <i class="fa-solid fa-pen"></i> Editar
+                  </button>
+
+                  <button 
+                    *ngIf="!incidence.isValidated && deleteIncidence"
+                    class="btn btn-sm btn-outline-danger me-2"
+                    [disabled]="isDeleting && (incidence.id == deletingId)"
+                    (click)="deleteById( incidence )">
+                    <i class="fa-solid fa-trash"></i> Eliminar
+                  </button>
+
+                  <button
+                    *ngIf="incidence.isValidated"
+                    (click)="openModalDetails(incidence)"
+                    class="btn btn-sm btn-outline-secondary">Ver
+                  </button>
+
+                  <a
+                  *ngIf="incidence.file"
+                  [href]="fileUrl + '/uploads/docs/incidences/' + incidence.file"
+                  target="_blank"
+                  class="btn btn-sm btn-outline-secondary ms-2"><i class="fa-regular fa-file-pdf"></i> PDF
+                  </a>
+                  
+
+                </div>
+
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+
+    </ng-template>
+
+  
+
+</div>
+

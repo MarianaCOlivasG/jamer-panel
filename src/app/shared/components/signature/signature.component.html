@@ -1,0 +1,19 @@
+
+
+<signature-pad 
+    #signaturePad 
+    [options]="signaturePadOptions" 
+    (drawStart)="drawStart($event)" 
+    (drawEnd)="drawComplete($event)">
+</signature-pad>
+
+<div class="text-center mt-3" *ngIf="!hasSaved">
+    <button 
+        class="btn btn-danger me-2" 
+        (click)="clear()"
+        [disabled]="signature.length == 0">Limpiar</button>
+    <button 
+        class="btn btn-primary" 
+        (click)="confirm()"
+        [disabled]="signature.length == 0">Guardar</button>
+</div>

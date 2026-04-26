@@ -1,0 +1,257 @@
+ 
+<emails-modal 
+  *ngIf="modalService.show && workOrderSelected && modalSelected == 'emails'"
+ [entity]="'workOrder'"
+ [entityId]="workOrderSelected!.id"
+ (onFinishEvent)="onFinishEvent()"
+ [customerEmail]="workOrderSelected.customer.email"
+/>
+
+<assign-to-modal
+  *ngIf="modalService.show && workOrderSelected && modalSelected == 'assign'"
+  (assingToEvent)="assingToEvent()"
+  [currentTechnicals]="currentTechnicals"
+  [workOrderSelected]="workOrderSelected!"
+/>
+
+
+<cancel-modal 
+  *ngIf="modalService.show && workOrderSelected && modalSelected == 'cancel'"
+  [workOrderSelected]="workOrderSelected!"
+/>
+
+<div class="container pt-4">
+
+    <h1>Ordenes de trabajo<small> | {{ statusId == 3 ? 'Pendientes por revisar' :'' }}</small></h1>
+
+
+    <div *ngIf="create" class="text-end mb-4">
+        <a routerLink="/work-orders/new" class="btn btn-primary"><i class="fa-solid fa-plus me-2"></i>Crear nuevo</a>
+    </div>
+
+
+    <div class="bg-light px-2 py-4 row">
+      <div class="col-md-10 mb-3">
+        <label>Buscar</label>
+        <input-search 
+          placeholder="Buscar orden de trabajo..."
+          (onEnter)="search($event)"
+          (onDebounce)="search($event)"
+        />
+      </div>
+        <div class="col-md-2 mt-4">
+          <div class="btn-group" role="group" aria-label="Opciones de búsqueda">
+            <button type="button" 
+                    class="btn" 
+                    [ngClass]="{'btn-primary': status === 'Activo', 'btn-outline-primary': status !== 'Activo'}" 
+                    (click)="setStatus('Activo')">
+              Reprogramadas
+            </button>
+            <button type="button" 
+                    class="btn" 
+                    [ngClass]="{'btn-primary': status !== 'Activo', 'btn-outline-primary': status === 'Activo'}" 
+                    (click)="setStatus('Inactivo')">
+              Todos
+            </button>
+          </div>
+ 
+      </div>
+      <div class="col-md-4 position-relative technical-dropdown-parent">
+        <label>Técnico</label>
+        <input 
+          type="text" 
+          class="form-control" 
+          placeholder="Buscar técnico..." 
+          [(ngModel)]="technicalSearchQuery" 
+          (input)="searchTechnical($event)"
+          (focus)="showTechnicalDropdown = true"
+        />
+        <ul *ngIf="showTechnicalDropdown" class="list-group position-absolute mt-2 w-100 technical-dropdown">
+          <li 
+            class="list-group-item list-group-item-action"
+            (click)="selectTechnical(undefined)"
+          >
+            Ver todos
+          </li>
+          <li 
+            *ngFor="let technical of filteredTechnicals" 
+            class="list-group-item list-group-item-action"
+            (click)="selectTechnical(technical)"
+          >
+            {{ technical.itemName }}
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-4 position-relative customer-dropdown-parent">
+        <label>Cliente</label>
+        <input 
+          type="text" 
+          class="form-control" 
+          placeholder="Buscar cliente..." 
+          [(ngModel)]="customerSearchQuery" 
+          (input)="searchCustomer($event)"
+          (focus)="showCustomerDropdown = true"
+        />
+        <ul *ngIf="showCustomerDropdown" class="list-group position-absolute mt-2 w-100 customer-dropdown">
+          <li 
+            class="list-group-item list-group-item-action"
+            (click)="selectCustomer(undefined)"
+          >
+            Ver todos
+          </li>
+          <li 
+            *ngFor="let customer of filteredCustomers" 
+            class="list-group-item list-group-item-action"
+            (click)="selectCustomer(customer)"
+          >
+            {{ customer.name }} {{ customer?.lastName }}
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <label>Fecha</label>
+        <input 
+          type="date"
+          class="form-control"
+          [(ngModel)]="date"
+          (ngModelChange)="changeModel('date')"
+        />
+      </div>
+    </div>
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateWorkOrders">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templateWorkOrders>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay ordenes de trabajo por mostrar.</p>
+      
+      <div class="mt-4" *ngIf="totalResults > 0">
+
+        <span class="fw-bold">Total de resultados: {{totalResults}}</span>
+
+        <div class="table-responsive">
+          <table class="table table-light table-striped table-hover mt-3">
+            <thead>
+              <tr>
+                <th scope="col">Folio</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Cliente</th>
+                <th scope="col" style="width: 130px;">Status</th>
+                <th scope="col">Asignada a</th>
+                <th *ngIf="edit" scope="col">Asignar</th>
+                <th scope="col">Herramientas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let workOrder of workOrders">
+                  <td>{{workOrder.folio}}</td>
+                  <td>{{workOrder.startDate | date: 	'EEEE, MMMM d, y' }}</td>
+        
+                  <td>{{workOrder.customer.name}} {{workOrder?.customer?.lastName}}</td>
+                  <td>
+                    <div class="d-flex flex-column">
+                      <div class="mb-1">
+                        <span class="badge" [ngClass]="{'bg-pending': workOrder.status.id == 1, 'bg-cancelled': workOrder.status.id == 2, 'bg-finalized': (workOrder.status.id == 3 || workOrder.status.id == 6),'bg-in_progress': workOrder.status.id == 4,'bg-unassigned': workOrder.status.id == 5 }">
+                          {{ workOrder.status.value }}
+                        </span>
+                        <span class="ms-2" *ngIf="workOrder.workOrderSolution.length > 0">
+                          <small><i class="fa-solid fa-star"></i>{{ workOrder.workOrderSolution[0].rating }}</small>
+                        </span>
+                      </div>
+                      
+                      <!-- Indicador de revisión -->
+                      <div *ngIf="workOrder.isValidated" class="reviewed-indicator">
+                        <span class="badge bg-success">
+                          <i class="fa-solid fa-check-circle me-1"></i>Revisada
+                        </span>
+ 
+                      </div>
+                      
+                      <!-- Indicador de pendiente por revisar -->
+                      <div *ngIf="(!workOrder.isValidated) && (workOrder.status.id == 3 || workOrder.status.id == 6)" class="pending-review-indicator">
+                        <span class="badge bg-warning text-dark">
+                          <i class="fa-solid fa-clock me-1"></i>Pendiente revisión
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <ng-container *ngIf="workOrder.employees.length == 0; else technicalsTemplate" > 
+                      <span>-</span>
+                    </ng-container>
+                    <ng-template #technicalsTemplate>
+                      <div class="d-flex mx-2 my-1" *ngFor="let employee of workOrder.employees">
+                        <div class="bg-technical p-1">
+                          <img class="me-2" [src]=" employee.picture | image:'employees'" [alt]="employee.name">
+                          <span>{{ employee.name }} {{ employee.lastName }}</span>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </td>
+                  <td *ngIf="edit">
+                      <button  [disabled]="workOrder.status.id == 3  || workOrder.status.id == 6 || workOrder.status.id == 2" (click)="openModal( workOrder, 'assign' )" class="btn btn-sm btn-outline-secondary">Seleccionar</button>
+                  </td>
+                  <td>
+                    <div class="d-flex">
+
+                      <a [routerLink]="['/work-orders', 'details', workOrder.id]" class="btn btn-sm btn-outline-secondary me-2">Ver</a>
+                      <div class="dropdown">
+                        <button 
+                          class="btn btn-sm btn-outline-secondary" 
+                          type="button"
+                          data-bs-toggle="dropdown" 
+                          aria-expanded="false">
+                          <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li *ngIf="edit"><a [routerLink]="['/work-orders', 'edit', workOrder.id]" class="dropdown-item" type="button">Editar</a></li>
+                          <li *ngIf="deleted"><button [disabled]="workOrder.status.id == 3 || workOrder.status.id == 6 " (click)="deleteWorkOrder( workOrder.id )" class="dropdown-item" type="button">Eliminar</button></li>
+                          <li *ngIf="edit"><button [disabled]="workOrder.status.id == 3 || workOrder.status.id == 6  || workOrder.status.id == 2" (click)="openModal( workOrder, 'cancel' )" class="dropdown-item" type="button">Cancelar</button></li>
+                          <li><button  (click)="generatePDF( workOrder.id )" class="dropdown-item" type="button">Descargar</button></li>
+                          <li><button [disabled]="workOrder.status.id != 3 && workOrder.status.id != 6 " (click)="sendToEmail( workOrder )" class="dropdown-item" type="button">Enviar</button></li>
+                          <li *ngIf="workOrder.status.id == 3"><button (click)="changeIsValidate( workOrder.id )" class="dropdown-item" type="button">Marcar Revisado</button></li>
+                        </ul>
+                      </div>
+               
+                    <button 
+                    class="btn btn-sm btn-outline-danger ms-1" 
+                    type="button"
+                    data-bs-toggle="dropdown" 
+                    aria-expanded="false"
+                    *ngIf="edit" 
+                    [disabled]="workOrder.status.id == 3 || workOrder.status.id == 6  || workOrder.status.id == 2" 
+                    (click)="openModal( workOrder, 'cancel' )" 
+                    >
+                    Cancelar
+                    </button>
+
+
+                    </div>
+                  </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+
+    </ng-template>
+
+  
+
+</div>
+

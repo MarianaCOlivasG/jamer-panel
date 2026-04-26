@@ -1,0 +1,129 @@
+
+
+
+
+
+<bonus-form-modal
+  *ngIf="modalSelected == 'form' && modalService.show"
+  [bonus]="bonusSelected!"
+  (newBonus)="newBonus()"
+/>
+
+<bonus-details-modal
+  *ngIf="modalSelected == 'details' && modalService.show"
+  [bonusId]="bonusSelected!.id"
+/>
+
+<div class="container pt-4">
+
+    <h1>Bonos</h1>
+
+    <div class="text-end my-4" *ngIf="create">
+        <button (click)="openModalCreate()" class="btn btn-primary"><i class="fa-solid fa-plus me-2"></i> Crear nuevo</button>
+    </div>
+
+    <div class="bg-light p-4">
+        <input-search 
+          placeholder="Buscar bono..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+    </div>
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateBonuses">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templateBonuses>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay bonos por mostar.</p>
+      
+      <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+
+        <span class="fw-bold">Total de resultados: {{totalResults}}</span>
+
+        
+        <table class="table table-light table-striped table-hover mt-3">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Empleado</th>
+              <th scope="col">Titulo</th>
+              <th scope="col">Status</th>
+              <th scope="col" *ngIf="create || edit">Herramientas</th>
+            </tr> 
+          </thead>
+          <tbody>
+            <tr *ngFor="let bonus of bonuses"  [ngClass]="{ 'text-muted': !bonus.isActive }">
+              <td>
+                <i [ngClass]="{'isRead': bonus.isRead}" class="fa-solid fa-check-double"></i>
+              </td>
+
+              <td>{{bonus.createdAt | date:'dd-MMM-yy' }}</td>
+
+              <td>{{bonus.employee.name }} {{bonus.employee.lastName }}</td>
+
+              <td>{{bonus.title}}</td>
+
+              <td>{{bonus.isValidated ? 'Confirmado' : 'Por confirmar'}}</td>
+
+              <td *ngIf="authService.isAdmin()">
+                <div class="d-flex">
+
+                  <button 
+                    *ngIf="!bonus.isValidated && edit"
+                    class="btn btn-sm btn-outline-secondary me-2"
+                    (click)="openModalEdit( bonus )">
+                    <i class="fa-solid fa-pen"></i> Editar
+                  </button>
+
+                  <button 
+                    *ngIf="!bonus.isValidated && deleted"
+                    class="btn btn-sm btn-outline-danger me-2"
+                    [disabled]="isDeleting && (bonus.id == deletingId)"
+                    (click)="deleteById( bonus )">
+                    <i class="fa-solid fa-trash"></i> Eliminar
+                  </button>
+
+
+                  <button
+                    *ngIf="bonus.isValidated"
+                    (click)="openModalDetails(bonus)"
+                    class="btn btn-sm btn-outline-secondary">Ver
+                  </button>
+
+                  <a
+                  *ngIf="bonus.file"
+                  [href]="fileUrl + '/uploads/docs/bonuses/' + bonus.file"
+                  target="_blank"
+                  class="btn btn-sm btn-outline-secondary ms-2"><i class="fa-regular fa-file-pdf"></i> PDF
+                  </a>
+                  
+
+                </div>
+
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+
+    </ng-template>
+
+  
+
+</div>
+

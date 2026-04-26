@@ -1,0 +1,90 @@
+
+<div class="container pt-4">
+
+    <h1>Ventas</h1>
+
+
+    <div *ngIf="create" class="text-end mb-4">
+        <a routerLink="new" class="btn btn-primary"><i class="fa-solid fa-plus me-2"></i>Crear nuevo</a>
+    </div>
+
+
+    <div class="bg-light px-2 py-4 row">
+      <div class="col-md-8">
+        <input-search 
+          placeholder="Buscar compra..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+      </div>
+      <div class="col-md-4 mt-2 mt-md-0">
+        <select 
+          type="text"
+          class="form-control"
+          [(ngModel)]="customerSelected"
+          (ngModelChange)="changeModel('customerId')"
+          >
+          <option [value]="undefined">Selecciona un cliente</option>
+          <option *ngFor="let customer of customers" [ngValue]="customer">{{customer.name}}</option>
+        </select>
+      </div>
+    </div>
+
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templatePurchases">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templatePurchases>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay compras por mostar.</p>
+      
+      <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+
+        <span class="fw-bold">Total de resultados: {{totalResults}}</span>
+
+        <table class="table table-light table-striped table-hover mt-3">
+          <thead>
+            <tr>
+              <th scope="col">Folio</th>
+              <th scope="col">Fecha de emisión</th>
+              <!-- <th scope="col">Status</th> -->
+              <!-- <th scope="col"><i class="fa-regular fa-clock"></i> Límite pago</th> -->
+              <th scope="col">Cliente</th>
+              <th scope="col">Creado por</th>
+              <th scope="col">Herramientas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let sale of sales">
+              <td>{{sale.folio}}</td>
+              <td>{{sale.createdAt | date: 	'dd-MMM-yy' }}</td>
+              <!-- <td>{{ sale.expirationDate | date: 	'dd-MMM-yy'  }}</td> -->
+              <td>{{sale.customer.rfc}} | {{sale.customer.name}} {{sale.customer.lastName}}</td>
+              <td>{{sale.createdBy.name}} {{sale.createdBy.lastName}}</td>
+              <td>
+                <a [routerLink]="['/sales', 'details', sale.id]" class="btn btn-sm btn-outline-secondary me-2">Ver</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+
+    </ng-template>
+
+  
+
+</div>
+

@@ -1,0 +1,62 @@
+
+<diary-event-type-modal
+    *ngIf="modalService.show"
+    [diaryEnventType]="diaryEventTypeSelected!"
+    (newDiaryEventType)="newDiaryEventType()"
+/>
+
+
+
+<div class="container pt-4">
+
+    <h1>Tipos de eventos</h1>
+
+    <div *ngIf="create" class="text-end mb-4">
+        <button (click)="handleCreate()" class="btn btn-secondary"><i class="fa-solid fa-plus me-2"></i>Crear nuevo</button>
+    </div>
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateDiaryEventTypes">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+
+    <ng-template #templateDiaryEventTypes>
+
+        <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay tipos de eventos por mostar.</p>
+        
+        <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+  
+          <span class="fw-bold">Total de resultados: {{totalResults}}</span>
+  
+          <table class="table table-light table-striped table-hover mt-3">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Color</th>
+                <th *ngIf="edit || deleted" scope="col">Herramientas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let event of diaryEventTypes; let idx = index;">
+                <td>{{ idx + 1 }}</td>
+                <td>{{event.value}}</td>
+                <td>
+                    <div [style]="'height: 20px; width: 20px; border-radius: 100%; background:' + event.color +';'"></div>
+                </td>
+                <td *ngIf="edit || deleted">
+                    <button *ngIf="edit "  (click)="handleUpdate( event )" class="btn btn-sm btn-outline-secondary me-2"><i class="fa-solid fa-pen"></i> Editar</button>
+                    <button *ngIf="deleted" (click)="handleDelete( event.id, idx )" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+  
+      </ng-template>
+  
+
+
+</div>

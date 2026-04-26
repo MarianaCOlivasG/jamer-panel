@@ -1,0 +1,157 @@
+<div class="container pt-4">
+
+    <ng-container *ngIf="isLoading; else infoTemplate">
+      <div class="text-center">
+        <p class="text-muted mt-4">Cargando información</p>
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </ng-container>
+  
+    <ng-template #infoTemplate>
+      <h1>Información</h1>
+      <div class="text-start my-4">
+        <a (click)="goToBack()"><i class="fa-solid fa-arrow-left me-2"></i>Atrás</a>
+      </div>
+  
+      <div class="bg-light p-4">
+        <span class="text-danger"><small>Campos requeridos *</small></span>
+  
+        <form autocomplete="off" [formGroup]="form" class="row mt-3">
+          <h6 class="text-primary fw-bold">Datos de la empresa</h6>
+  
+          <div class="col-md-6 mb-2">
+            <label>Nombre<span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control mt-2"
+              placeholder="Nombre"
+              formControlName="companyName"
+            />
+            <div *ngIf="inputInvalid('companyName')" class="text-danger">
+              <span><small>{{ errorMessage('companyName') }}</small></span>
+            </div>
+          </div>
+  
+          <div class="col-md-6 mb-2">
+            <label>Gerente<span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control mt-2"
+              placeholder="Gerente"
+              formControlName="bossName"
+            />
+            <div *ngIf="inputInvalid('bossName')" class="text-danger">
+              <span><small>{{ errorMessage('bossName') }}</small></span>
+            </div>
+          </div>
+  
+          <div class="col-md-6 mb-2">
+            <label>Licencia sanitaria<span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control mt-2"
+              placeholder="Licencia sanitaria"
+              formControlName="sanitaryLicense"
+            />
+            <div *ngIf="inputInvalid('sanitaryLicense')" class="text-danger">
+              <span><small>{{ errorMessage('sanitaryLicense') }}</small></span>
+            </div>
+          </div>
+  
+          <div class="col-md-12 mb-2">
+            <label>Firma del Encargado Sanitario</label>
+            
+            <signature (signatureEvent)="onSanitarySignature($event)" ></signature>
+            <div class="mt-2" *ngIf="base64Image">
+              <p class="fw-bold">Vista de la firma:</p>
+              <img
+                [src]="base64Image"
+                alt="Firma sanitaria"
+                style="border:1px solid #000; max-width:300px;"
+              />
+            </div>
+          </div>
+  
+          <label class="mb-2">Dirección</label>
+  
+          <div class="col-md-4 mb-2">
+            <label>Estado<span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control mt-2"
+              placeholder="Estado"
+              formControlName="address_state"
+            />
+            <div *ngIf="inputInvalid('address_state')" class="text-danger">
+              <span><small>{{ errorMessage('address_state') }}</small></span>
+            </div>
+          </div>
+  
+          <div class="col-md-4 mb-2">
+            <label>Municipio<span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control mt-2"
+              placeholder="Municipio"
+              formControlName="address_municipality"
+            />
+            <div *ngIf="inputInvalid('address_municipality')" class="text-danger">
+              <span><small>{{ errorMessage('address_municipality') }}</small></span>
+            </div>
+          </div>
+  
+          <div class="col-md-4 mb-2">
+            <label>Colonia</label>
+            <input
+              type="text"
+              class="form-control mt-2"
+              placeholder="Colonia"
+              formControlName="address_colony"
+            />
+            <div *ngIf="inputInvalid('address_colony')" class="text-danger">
+              <span><small>{{ errorMessage('address_colony') }}</small></span>
+            </div>
+          </div>
+  
+          <div class="col-md-8 mb-2">
+            <label>Calle<span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control mt-2"
+              placeholder="Calle"
+              formControlName="address_street"
+            />
+            <div *ngIf="inputInvalid('address_street')" class="text-danger">
+              <span><small>{{ errorMessage('address_street') }}</small></span>
+            </div>
+          </div>
+  
+          <div class="col-md-4 mb-2">
+            <label>CP<span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control mt-2"
+              placeholder="CP"
+              formControlName="address_cp"
+            />
+            <div *ngIf="inputInvalid('address_cp')" class="text-danger">
+              <span><small>{{ errorMessage('address_cp') }}</small></span>
+            </div>
+          </div>
+        </form>
+  
+        <div class="text-end mt-4">
+          <button
+            class="btn btn-secondary"
+            type="button"
+            (click)="handleSubmit()"
+            [disabled]="isSaving"
+          >
+            {{ isSaving ? 'Guardando...' : 'Guardar' }}
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </div>

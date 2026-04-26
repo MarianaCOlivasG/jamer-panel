@@ -1,0 +1,572 @@
+
+<html-description-modal 
+    *ngIf="modalService.show && productSelected"
+    [title]="productSelected.name"
+    [productId]="productSelected.id"
+    [htmlCurrentDescription]="productSelected.htmlDescription"
+    (newHtmlDescription)="newHtmlDescription( $event )"
+/>
+
+<div class="container pt-4">
+
+    <ng-container *ngIf="isLoading; else workOrderTemplate">
+        <div class="text-center">
+            <p class="text-muted mt-4">Cargando información de la orden de trabajo</p>
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-template #workOrderTemplate>
+
+        <h1 *ngIf="budgetId">Crear orden de trabajo</h1>
+        <h1 *ngIf="!budgetId">Crear venta</h1>
+
+
+        <div class="text-start my-4">
+            <a class="btn btn-outline-success" (click)="goToBack()"><i class="fa-solid fa-arrow-left me-2"></i>Atrás</a>
+        </div>
+
+
+        <div class="bg-light p-4">
+            <div> 
+
+                <span class="text-danger"><small>Campos requeridos *</small></span>
+
+
+                <form autocomplete="off"
+                    [formGroup]="form" 
+                    class="row mt-3">
+
+                    <h6 class="text-primary fw-bold">Datos de la orden de trabajo</h6>
+
+                    <div *ngIf="!contractIdPassed" class="col-md-5 mb-2 position-relative">
+                      <label>Cliente<span class="text-danger">*</span></label>
+                      <input 
+                      [disabled]="isDisabled"
+
+                        type="text" 
+                        class="form-control mt-2" 
+                        placeholder="Buscar cliente..." 
+                        [(ngModel)]="customerSearchQuery" 
+                        [ngModelOptions]="{standalone: true}"
+                        (input)="searchCustomer($event)"
+                        (focus)="showCustomerDropdown = true" />
+                      <ul *ngIf="showCustomerDropdown" class="list-group position-absolute mt-2 w-100 customer-dropdown">
+                        <li class="list-group-item list-group-item-action" (click)="selectCustomer(undefined)">
+                          Selecciona un cliente
+                        </li>
+                        <li *ngFor="let customer of filteredCustomers" 
+                            class="list-group-item list-group-item-action" 
+                            (click)="selectCustomer(customer)">
+                          {{ customer.name }} {{ customer.lastName }}
+                        </li>
+                      </ul>
+                      <div *ngIf="inputInvalid('customerId')" class="text-danger">
+                        <span><small>{{ errorMessage('customerId') }}</small></span>
+                      </div> 
+                    </div>
+
+
+                    <div class="col-md-4 mb-2" *ngIf="rout == true">
+                        <label>Cliente Asociado</label>
+                        <input 
+                            type="text"
+                            class="form-control mt-2"
+                            [value]="getCustomerName(form.get('customerId')?.value)"
+                            readonly>
+                    </div>
+
+                    <div class="col-md-3 mb-2">
+                        <label>Tipo de documento<span class="text-danger">*</span></label>
+                        <select 
+                            type="time"
+                            class="form-control mt-2"
+                            formControlName="facturaOrRemision">
+                            <option value="R">Remisión</option>
+                            <option value="F">Factura</option>
+                        </select>
+                        <div *ngIf="inputInvalid('facturaOrRemision')" class="text-danger">
+                            <span><small>{{ errorMessage('facturaOrRemision') }}</small></span>
+                        </div> 
+                    </div>
+
+
+                    <div class="col-md-3 mb-2" *ngIf=" form.get('facturaOrRemision')?.value == 'F'">
+                        <label>No. Factura</label>
+                        <input 
+                            type="text"
+                            class="form-control mt-2"
+                            placeholder="No. Factura"
+                            formControlName="noFactura"
+                            >
+                        <div *ngIf="inputInvalid('noFactura')" class="text-danger">
+                            <span><small>{{ errorMessage('noFactura') }}</small></span>
+                        </div> 
+                    </div>
+
+
+
+                    <div class="col-md-12 mb-2">
+                        <label>Sede(s)<span class="text-danger">*</span></label>
+                        <angular2-multiselect 
+                            [data]="addresses" 
+                            class="form-control p-0 mt-2"
+                            [settings]="dropdownSettingsSingle" 
+                            (onSelect)="onItemSelect('addressId', $event)" 
+                            formControlName="addressId"
+                            (onDeSelect)="OnItemDeSelect('addressId',$event)"
+                            (onSelectAll)="onSelectAll($event)"
+                            (onDeSelectAll)="onDeSelectAll('addressId', $event)">
+                        </angular2-multiselect>
+                    </div>
+
+                </form>
+
+                <div class="mb-3" *ngIf="contractSelected == 0 && form.get('typeWork')?.value == 'contract-sale'">
+
+                    <span class="fw-bold">Agregar de servicios</span>
+
+                    <div class="row">
+    
+                        <div class="col-md-12 mt-2">
+                            <input-search 
+                              placeholder="Buscar producto..."
+                              (onEnter)="search( $event )"
+                              (onDebounce)="search( $event )"
+                            />
+                        </div>
+    
+                        <p class="text-center text-muted mt-4" *ngIf="productsSelected.length == 0">Todavía no tienes productos en esta cotización.</p>
+                        <div *ngIf="formSubmitted && productsSelected.length == 0" class="text-danger">
+                            <span><small>Almenos 1 artículo / tratamiento es requerido.</small></span>
+                        </div> 
+                        <!-- PRODUCTOS SELECCIONADOS -->
+                 
+                        <div class="mt-4" *ngIf="productsSelected.length > 0">
+                        
+                            <div class="table-responsive">
+                
+                                <table class="table table-light table-striped table-hover mt-3">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Cantidad</th>
+                                        <th scope="col">Artículos / Tratamientos </th>
+                                        <th scope="col">Precio unitario</th>
+                                        <th scope="col">Importe</th>
+                                        <th scope="col">Impuesto</th>
+                                        <th scope="col">Total</th>
+                                        <th scope="col">¿Mostrar descripción?</th>
+                                        <th scope="col">Herramientas</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let product of productsSelected; let idx = index;" [ngClass]="{ 'text-muted': !product.isActive }">
+                                    <td>
+                                        <input 
+                                            type="number"
+                                            class="form-control mini"
+                                            placeholder="0"
+                                            min="0"
+                                            (ngModelChange)="onSelectwithoutContract()"
+
+                                            [(ngModel)]="product['amount']"
+                                        >
+                                    </td>
+                                    <td>{{ product.name }}</td>
+                                    <td>
+                                        <input 
+                                            type="number"
+                                            class="form-control mini"
+                                            placeholder="0"
+                                            min="0"
+                                            (ngModelChange)="onSelectwithoutContract()"
+
+                                            [(ngModel)]="product['priceSale']"
+                                        >
+                                    </td>
+                                    <td>$ {{ (+product.priceSale) * (+product.amount!) | number : '1.2-2' }}</td>
+                                    <td>$ {{ (+product.priceSale) * (+product.amount!) * 0.16 | number : '1.2-2' }}</td>
+                                    <td>$ {{ ((+product.priceSale) * (+product.amount!)) + ((+product.priceSale) * (+product.amount!) * 0.16 )| number : '1.2-2' }}</td>
+                                    <td  class="text-center">
+                                      <div class="d-flex flex-column gap-1" style="font-size: 0.85rem;">
+                                          <!-- Opción 1: Empleado -->
+                                          <div class="d-flex align-items-center justify-content-between px-2 py-1 border rounded">
+                                              <span class="text-muted" style="font-size: 0.75rem;">Empleado:</span>
+                                              <div class="form-check form-switch mb-0">
+                                                  <input 
+                                                      class="form-check-input" 
+                                                      type="checkbox" 
+                                                      role="switch" 
+                                                      [id]="'switchEmployee' + idx"
+                                                      [(ngModel)]="product.showHtmlDescription"
+                                                      style="cursor: pointer;">
+                                              </div>
+                                          </div>
+                                          
+                                          <!-- Opción 2: Descripción HTML -->
+                                          <div class="d-flex align-items-center justify-content-between px-2 py-1 border rounded">
+                                              <span class="text-muted" style="font-size: 0.75rem;">General:</span>
+                                              <div class="d-flex align-items-center gap-1">
+                                                  <div class="form-check form-switch mb-0">
+                                                      <input 
+                                                          class="form-check-input" 
+                                                          type="checkbox" 
+                                                          role="switch" 
+                                                          [id]="'switchDescription' + idx"
+                                                          [(ngModel)]="product.showDescription"
+                                                          style="cursor: pointer;">
+                                                  </div>
+                                                  <button 
+                                                      class="btn btn-sm btn-outline-primary p-1"
+                                                      [disabled]="!product.showDescription"
+                                                      (click)="openHtmlDescriptionModal(product)"
+                                                      title="Editar descripción HTML"
+                                                      style="width: 28px; height: 28px; line-height: 1;">
+                                                      <i class="fa-solid fa-pencil" style="font-size: 0.75rem;"></i>
+                                                  </button>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </td>
+                                    <td >
+                                        <button
+                                            [disabled]="isSaving || (!isSaving && product.amount! == 0)"
+                                            (click)="removeProductToList( idx )"
+                                            class="btn btn-sm btn-outline-danger ms-2"> Remover
+                                        </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                </table>
+                            </div>
+                
+                        </div>
+    
+                        
+    
+                        <div class="mt-4 text-center"  *ngIf="isLoading; else templateProducts">
+                            <div class="spinner-border text-primary" role="status">
+                              <span class="visually-hidden">Loading...</span>
+                            </div>
+                          </div>
+                      
+                          <ng-template #templateProducts>
+                      
+                              <!-- <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay productos por mostrar.</p> -->
+                            
+                      
+                              <div class="mt-2" *ngIf="totalResults > 0">
+                      
+                                  <div class="table-responsive mt-4">
+                      
+                                      <table class="table table-light table-striped table-hover mt-3">
+                                        <thead>
+                                          <tr>
+                                            <th scope="col">Imagen</th>
+                                            <th scope="col">Nombre</th>
+                                            <th scope="col">Línea de negocio</th>
+                                            <th scope="col">Familia</th>
+                                            <th scope="col">Cantidad</th>
+                                            <th scope="col"></th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr *ngFor="let product of products; let idx = index;" [ngClass]="{ 'text-muted': !product.isActive }">
+                                            <td>
+                                              <a *ngIf="product.image" [routerLink]="['details', product.id]">
+                                                <img class="product-image"
+                                                    [src]="product.image | image:'products'"
+                                                    [alt]="product.name">
+                                              </a>
+                                              <a *ngIf="!product.image" [routerLink]="['details', product.id]">
+                                                <img class="product-image"
+                                                    src="assets/images/no-image.jpeg"
+                                                    [alt]="product.name">
+                                              </a>
+                                            </td>
+                                            <td>{{ product.name }}</td>
+                                            <td>{{ product.businessLine.name }}</td>
+                                            <td>{{ product.businessFamily.name }}</td>
+                                            <td >
+                                              <input 
+                                                  type="number"
+                                                  class="form-control mini"
+                                                  placeholder="0"
+                                                  min="0"
+                                                  [(ngModel)]="product['amount']"
+                                              >
+                                            </td>
+                                            <td >
+                                                <button
+                                                    [disabled]="isSaving || (!isSaving && product.amount! == 0)"
+                                                    (click)="addProductToList( idx )"
+                                                    
+                                                    class="btn btn-sm btn-outline-success"> Agregar
+                                                </button>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                  </div>
+                      
+                              </div>
+                      
+                            <!-- <ng-container *ngIf="totalResults > limit">
+                              <paginator 
+                                [limit]="limit"
+                                [totalResults]="totalResults"
+                                [currentPage]="currentPage"
+                                (chageCurrentPage)="changePage( $event )"
+                              />
+                            </ng-container> -->
+                      
+                          </ng-template>
+    
+                    </div>
+
+                    
+
+                </div>
+
+
+                <!-- LISTADO DE SERVICIOS CUANDO HAY UN CONTRATO -->
+                <div class="mb-3" *ngIf="contractSelected && contractSelected != 0">
+                    <span class="fw-bold fs-4">Listado de servicios</span>
+                    <div class="form-check mb-3">
+                      <input 
+                        type="checkbox" 
+                        class="form-check-input" 
+                        id="selectAllCheckbox"
+                        [(ngModel)]="selectAll" 
+                        (change)="toggleSelectAll()">
+                      <label class="form-check-label" for="selectAllCheckbox">Seleccionar Todos</label>
+                    </div>
+                    <label 
+                      *ngFor="let item of contractsProducts"
+                      class="form-check-label card p-3 mb-3">
+                      <div class="row align-items-center">
+                        <div class="col-auto" *ngIf="!item.assignedToWorkOrder">
+                          <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            (ngModelChange)="onSelect()"
+                            [(ngModel)]="item.checked">
+                        </div>
+                        <div class="col">
+                          <div class="row">
+                            <div class="col-md-2 mb-2">
+                              <small class="text-muted">Cantidad</small>
+                              <div>{{ item.amount }}</div>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                              <small class="text-muted">Nombre del Servicio</small>
+                              <div>{{ item.name }}</div>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                              <small class="text-muted">Precio Unitario</small>
+                              <div>$ {{ item.total | number:'1.2-2' }}</div>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                              <small class="text-muted">Precio con IVA</small>
+                              <div>$ {{ item.totalWithIva | number:'1.2-2' }}</div>
+                            </div>
+                          </div>
+                          <div class="row mt-2" *ngIf="item.assignedToWorkOrder">
+                            <div class="col-md-4 mb-1">
+                              <small class="text-muted">Folio Orden Trabajo</small>
+                              <div>
+
+                                <a   [routerLink]="['/work-orders', 'details',item.woId]" >{{ item.workOrderFolio }}</a>
+
+                              </div>
+
+                            </div>
+                            <div class="col-md-4 mb-1">
+                              <small class="text-muted">Asignado a</small>
+                              <div>{{ item.assignedTo }}</div>
+                            </div>
+                            <div class="col-md-4 mb-1">
+                              <small class="text-muted">Estatus Orden</small>
+                              <div [ngClass]="{
+                                'text-success': item.workOrderStatus === 'Finalizado' || item.workOrderStatus === 'Finalizado y enviado',
+                                'text-warning-strong': item.workOrderStatus === 'Pendiente',
+                                'text-danger': item.workOrderStatus === 'Cancelado',
+                                'text-secondary': item.workOrderStatus === 'En progreso'
+                              }">
+                                {{ item.workOrderStatus }}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row mt-2" *ngIf="item.htmlDescription">
+                            <div class="col">
+                              <small class="text-muted">Descripción</small>
+                              <div>{{ item.htmlDescription }}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </label>
+                    <span class="text-danger"><small>{{ messageErrorServices() }}</small></span>
+                  </div>
+                  
+                  <!-- Sección de resumen con Totales -->
+
+
+                  <table class="table table-light table-striped table-hover mt-3" *ngIf="contractSelected && contractSelected != 0" >
+                    <tbody>
+                      <tr>
+                        <th rowspan="2" colspan="2">Totales:</th>
+                        <th>Total sin IVA</th>
+                        <th>Impuesto(IVA)</th>
+                        <th>TOTAL</th>
+                      </tr>
+                      <tr>
+                        <th>$ {{ totalBaseGravable | number:'1.2-2' }}</th>
+                        <th>$ {{ totalImpuesto | number:'1.2-2' }}</th>
+                        <th>$ {{ total | number:'1.2-2' }}</th>
+                      </tr>
+                      <tbody>
+                      </table>    
+               
+                <table class="table table-light table-striped table-hover mt-3" *ngIf="!contractSelected && productsSelected.length > 0" >
+                    <tbody>
+                      <tr>
+                        <th rowspan="2" colspan="2">Totales:</th>
+                        <th>Total sin IVA</th>
+                        <th>Impuesto(IVA)</th>
+                        <th>TOTAL</th>
+                      </tr>
+                      <tr>
+                        <th>$ {{ totalBaseGravable | number:'1.2-2' }}</th>
+                        <th>$ {{ totalImpuesto | number:'1.2-2' }}</th>
+                        <th>$ {{ total | number:'1.2-2' }}</th>
+                      </tr>
+                      <tbody>
+                      </table> 
+
+                <form autocomplete="off"
+                    [formGroup]="form" 
+                    class="row">
+
+                    <div class="col-md-4 mb-2">
+                        <label>Fecha de inicio<span class="text-danger">*</span></label>
+                        <input 
+                            type="date"
+                            class="form-control mt-2"
+                            formControlName="startDate"
+                            (ngModelChange)="onChange('startDate')" />
+                        <div *ngIf="inputInvalid('startDate')" class="text-danger">
+                            <span><small>{{ errorMessage('startDate') }}</small></span>
+                        </div> 
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label>Hora de inicio<span class="text-danger">*</span></label>
+                        <input 
+                            type="time"
+                            class="form-control mt-2"
+                            formControlName="startTime"
+                            (ngModelChange)="onChange('startTime')" />
+                        <div *ngIf="inputInvalid('startTime')" class="text-danger">
+                            <span><small>{{ errorMessage('startTime') }}</small></span>
+                        </div> 
+                    </div>
+
+                    <div class="col-md-4 mb-2"></div>
+
+
+                    <div class="col-md-4 mb-2">
+                        <label>Fecha de término<span class="text-danger">*</span></label>
+                        <input 
+                            type="date"
+                            class="form-control mt-2"
+                            formControlName="finalDate"
+                            [min]="form.get('startDate')?.value"
+                            (ngModelChange)="onChange('finalDate')" />
+                        <div *ngIf="inputInvalid('finalDate')" class="text-danger">
+                            <span><small>{{ errorMessage('finalDate') }}</small></span>
+                        </div> 
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label>Hora de término<span class="text-danger">*</span></label>
+                        <input 
+                            type="time"
+                            class="form-control mt-2"
+                            formControlName="finalTime"
+                            (ngModelChange)="onChange('finalTime')" />
+                        <div *ngIf="inputInvalid('finalTime')" class="text-danger">
+                            <span><small>{{ errorMessage('finalTime') }}</small></span>
+                        </div> 
+                    </div>
+
+
+
+                    
+                    
+
+                    <div class="col-md-12 mb-2">
+                        <label>Descripción detallada para técnico(s)</label>
+                        <textarea 
+                            type="date"
+                            class="form-control mt-2"
+                            placeholder="Escribe aquí la descripción detallada para técnico(s)..."
+                            formControlName="description"
+                            (ngModelChange)="onChange('description')"></textarea>
+                        <div *ngIf="inputInvalid('description')" class="text-danger">
+                            <span><small>{{ errorMessage('description') }}</small></span>
+                        </div> 
+                    </div>
+
+
+                    <div class="col-md-6 mb-2">
+                        <label>Técnico(s)</label>
+                        <angular2-multiselect 
+                            [data]="employees" 
+                            class="form-control p-0 mt-2"
+                            formControlName="employeesIds"
+                            [settings]="dropdownSettings" 
+                            (onSelect)="onItemSelect('employeesIds', $event)" 
+                            (onDeSelect)="OnItemDeSelect('employeesIds',$event)"
+                            (onSelectAll)="onSelectAll($event)"
+                            (onDeSelectAll)="onDeSelectAll('employeesIds', $event)">
+                        </angular2-multiselect>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                      <div class="form-check form-switch mt-5">
+                        <input 
+                          class="form-check-input" 
+                          type="checkbox" 
+                          id="showCostsToggle" 
+                          formControlName="isVisible">
+                        <label class="form-check-label" for="showCostsToggle">Mostrar costos a técnicos</label>
+                      </div>
+                    </div>
+
+
+                    
+                </form>
+
+               
+            </div>
+
+
+            <div class="text-end my-4">
+                <button 
+                    class="btn btn-secondary" 
+                    type="button" 
+                    (click)="handleSubmit()"
+                    [disabled]="isSaving">{{ isSaving ? 'Guardando...' : 'Guardar'}}</button>
+            </div>
+
+            <div style="height: 100px;"></div>
+
+
+        </div>
+
+
+    </ng-template>
+
+</div>

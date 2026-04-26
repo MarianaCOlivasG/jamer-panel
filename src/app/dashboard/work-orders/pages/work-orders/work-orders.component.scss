@@ -1,0 +1,17 @@
+.table-responsive {
+    min-height: 400px; 
+}
+tbody {
+    min-height: 300px; 
+
+}
+
+.technical-dropdown,
+.customer-dropdown {
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1000; /* Ensure dropdown is above other elements */
+}   
+.btn-group {
+  margin-bottom: 1rem;
+}

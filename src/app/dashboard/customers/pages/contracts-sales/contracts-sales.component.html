@@ -1,0 +1,87 @@
+<select-budget-modal 
+  *ngIf="modalService.show">
+</select-budget-modal>
+
+<div class="container pt-4" (click)="handleOutsideClick($event)">
+  <h1>Ventas</h1>
+
+  <div class="bg-light px-2 py-4 row">
+    <div class="col-md-8">
+      <input-search 
+        placeholder="Buscar cotización..."
+        (onEnter)="search($event)"
+        (onDebounce)="search($event)"
+      />
+    </div>
+    <div class="col-md-4 mt-2 mt-md-0 position-relative">
+      <input 
+        type="text" 
+        class="form-control" 
+        placeholder="Buscar cliente..." 
+        [(ngModel)]="customerSearchQuery" 
+        (input)="searchCustomer($event)"
+        (focus)="showCustomerDropdown = true"
+      />
+      <ul *ngIf="showCustomerDropdown" class="list-group position-absolute mt-2 w-100 customer-dropdown">
+        <li 
+          class="list-group-item list-group-item-action"
+          (click)="selectCustomer(undefined)"
+        >
+          Seleccionar todos los clientes
+        </li>
+        <li 
+          *ngFor="let customer of filteredCustomers" 
+          class="list-group-item list-group-item-action"
+          (click)="selectCustomer(customer)"
+        >
+          {{ customer.name }}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="mt-4 text-center" *ngIf="isLoading; else templateBudgets">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <ng-template #templateBudgets>
+    <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay ventas por mostar.</p>
+      
+    <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+      <span class="fw-bold">Total de resultados: {{totalResults}}</span>
+      <table class="table table-light table-striped table-hover mt-3">
+        <thead>
+          <tr>
+            <th scope="col">Folio</th>
+            <th scope="col">Cliente</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Creado por</th>
+            <th scope="col">Herramientas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let contract of contracts">
+            <td>{{contract.folio}}</td>
+            <td>{{contract.customer.name}} {{contract.customer.lastName}}</td>
+            <td>{{ contract.startDate | date:'dd-MMM-yy' }}</td>
+            <td>{{contract.status.value}} </td>
+            <td>
+              <a [routerLink]="['/work-orders', 'details', contract.id]" class="btn btn-sm btn-outline-secondary me-2">Ver</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-container *ngIf="totalResults > limit">
+      <paginator 
+        [limit]="limit" 
+        [totalResults]="totalResults"
+        [currentPage]="currentPage"
+        (chageCurrentPage)="changePage($event)"
+      />
+    </ng-container>
+  </ng-template>
+</div>

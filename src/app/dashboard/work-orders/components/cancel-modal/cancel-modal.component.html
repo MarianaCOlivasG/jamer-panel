@@ -1,0 +1,48 @@
+
+
+<div class="back-modal">
+  <div class="modal" style="display: block;" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
+        <form autocomplete="off"
+          [formGroup]="form"
+          (ngSubmit)="cancelWorkOrder()" 
+          class="modal-content shadow">
+          <div class="modal-header">
+            <h5 class="modal-title">({{ workOrderSelected.folio }}) Cancelar orden de trabajo</h5> 
+           
+            <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+
+           <div>
+            
+            <div class="col-md-12">
+              <label for="readosInput" class="form-label">Motivo de la cancelación</label>
+                <input type="text" 
+                  class="form-control" 
+                  id="readosInput"
+                  placeholder="Escribe motivo de la cancelación"
+                  [ngClass]="{'border-danger': inputInvalid('reason') }" 
+                  formControlName="reason">
+                <div *ngIf="inputInvalid('reason')" class="text-danger">
+                  <span><small>{{ errorMessage('reason') }}</small></span>
+                </div>
+            </div>
+
+          </div>
+          
+          
+
+          </div>
+          <div class="modal-footer">
+            <!-- <button type="button" (click)="closeModal()" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button> -->
+            <button 
+                  type="submit"
+                  class="btn btn-primary"
+                  [disabled]="isSaving">{{ isSaving ? 'Cancelando...' : 'Cancelar orden'}}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+</div>

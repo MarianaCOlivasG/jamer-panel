@@ -1,0 +1,222 @@
+
+$primary: #42B029;
+// $secondary: #1556bf;
+$secondary: #5092fc;
+$success: #42B029;
+$light: #f9f9f9;
+$danger: #f74c5a;
+$info: #2b4a7c;
+
+$border-radius-btn: 3px;
+$font-size: 15px;
+
+$dark: #2C3D4E;
+
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+
+* {
+    font-family: 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+html, body {
+    font-size: $font-size;
+}
+
+h1 {
+    font-size: 1.5rem;
+}
+
+
+h2 {
+    font-size: 1.2rem;
+}
+
+button,
+a.btn,
+input.form-control,
+select.form-control,
+textarea.form-control {
+    border-radius: $border-radius-btn !important;
+}
+
+button.btn.btn-primary, 
+button.btn.btn-primary:active,
+a.btn.btn-primary, 
+a.btn.btn-primary:active {
+    color: white;
+}
+
+
+.btn.btn-secondary, 
+.btn.btn-secondary:active,
+.btn.btn-danger,
+.btn.btn-danger:active,
+.btn.btn-outline-secondary:active, 
+.btn.btn-outline-secondary.btn.show {
+    color: white;
+}
+
+
+.btn.btn-outline-secondary:hover,
+.btn.btn-outline-primary:hover,
+.btn.btn-outline-danger:hover,
+.btn.btn-outline-info:hover {
+    color: white !important;
+}
+
+.btn.btn-outline-dange i{
+    color: $danger;
+}
+
+
+input.form-control:focus {
+    box-shadow: 0 0 0 0.05rem rgba(67, 176, 42, 0.25);
+}
+
+.dropdown-menu {
+    border-radius: $border-radius-btn !important;
+}
+
+.bg-dark {
+    color: white !important;
+}
+
+.bg-blue {
+    background-color: #c6dcff !important;
+}
+
+
+
+.offcanvas-body {
+
+    .userContainer {
+        border-radius: $border-radius-btn !important;
+    }
+
+    li {
+        padding: 5px 0px;
+    }
+
+    li.active {
+        // border-right: 2px solid $white;
+        background-color: #42B029;
+        a {
+            color: white !important;
+            font-weight: bold;
+        }
+    }
+
+    li.active {
+        a:hover {
+            color: white !important;
+        }
+    }
+
+    span.sub-category {
+        font-size: 14px !important;
+        font-weight: bold;
+        padding-left: 20%;
+        color: #7ea2b5;
+    }
+
+    li a{
+        padding-left: 20%;
+        color: #7ea2b5;
+        font-size: 14px !important;
+    }
+
+    li a:hover {
+        color: white !important;
+    }
+
+}
+
+.fixed-top {
+    z-index: 1028 !important;
+}
+
+// MULTISELECT
+div.c-token {
+    background-color: $primary;
+    color: white;
+    border-radius: $border-radius-btn;
+}
+
+// badgets
+.bg-pending {
+    background-color: #f6d622;
+}
+.bg-cancelled {
+    background-color: #d53838;
+}
+.bg-finalized {
+    background-color: #5fe142;
+}
+.bg-in_progress {
+    background-color: #4289e1;
+}
+.bg-unassigned {
+    background-color: #737373;
+}
+.bg-technical {
+    // background-color: #EFF8F4;
+    border-radius: $border-radius-btn;
+    font-size: 12px;
+
+    img {
+        border-radius: 100%;
+        width: 30px;
+        height: 30px;
+        object-fit: cover;
+    }
+}
+
+
+// badge
+.badge.late-payment {
+    border: 1px solid #ff4f98;
+    color: #ff4f98;
+    background-color: #fdc7de;
+}
+.badge.not-paid {
+    border: 1px solid #f72222;
+    color: #f72222;
+    background-color: #ffbbbb;
+}
+.badge.pending {
+    border: 1px solid #f3aa34;
+    color: white;
+    background-color: #f3aa34;
+}
+.badge.paid {
+    border: 1px solid #25c36f;
+    color: white;
+    background-color: #25c36f;
+}
+.badge.surplus	 {
+    border: 1px solid #ff4f4f;
+    color: #ff4f4f;
+    background-color: #fdc7c7;
+}
+	
+
+.angular-editor-textarea {
+    background-color: white !important;
+}
+
+// CALENDAR
+div.calendar a {
+    text-decoration: none;
+    color: #000;
+}
+
+.fc-daygrid-day-frame {
+    background-color: #FFFFFF;
+}
+
+button.fc-button {
+    background-color: $primary !important;
+    color: white !important;
+    border-color: $primary !important;
+    margin: 1px !important;
+}

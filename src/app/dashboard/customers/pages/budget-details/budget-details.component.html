@@ -1,0 +1,360 @@
+<select-contract-modal
+[budgetId]="budgetId"
+*ngIf="modalService.show&& modalService.name =='Contracts'"
+
+></select-contract-modal>
+
+<emails-modal 
+  [customerEmail]="budget.customer.email"
+  [entityId]="budget.id"
+  [entity]="'budget'"
+  *ngIf="modalService.show&& modalService.name =='email'"
+  [DesgloseIvaBudget] = "desgloseIva"
+/>
+
+<div class="container py-4">
+
+        <ng-container *ngIf="isLoading; else budgetTemplate">
+            <div class="text-center">
+                <p class="text-muted mt-4">Cargando información de la cotización</p>
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </ng-container>
+    
+        <ng-template #budgetTemplate>
+    
+                <h1>Detalle de la cotización</h1>
+    
+                <div class="d-flex justify-content-between my-4">
+                    <a class="" routerLink="/customers/budgets"><i class="fa-solid fa-arrow-left me-2"></i>Atrás</a>
+                    <a *ngIf="edit" class="btn btn-secondary" [routerLink]="['/customers', 'budgets','edit', budget.id]"><i class="fa-solid fa-pen me-2"></i>Editar</a>
+                </div>
+
+                <div class="row px-3">
+
+                  <div class="col-12">
+                    <h6 class="text-secondary fw-bold">Herramientas</h6>
+                    <div class="form-check mb-2">
+                      <input 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        [(ngModel)]="desgloseIva" 
+                        id="desglosarIvaCheckbox"
+                      />
+                      <label class="form-check-label" for="desglosarIvaCheckbox">
+                        Desglosar IVA
+                      </label>
+                    </div>
+                    <div>
+                      <button
+                        (click)="downloadPDF()"
+                        class="btn btn-outline-info me-3"><i class="fa-regular fa-file-pdf"></i> Descargar PDF</button>
+                      <button 
+                        class="btn btn-outline-info me-3"
+                        (click)="openModal()"><i class="fa-regular fa-envelope"></i> Enviar</button>
+                      <!-- <button 
+                        class="btn btn-outline-info me-3"
+                        (click)="createContract()">Crear Contrato</button>
+                      <button 
+                        class="btn btn-outline-info me-3"
+                        (click)="createWorkOrder()">Crear Servicio</button> -->
+                    </div>
+                  </div>
+                  
+                </div>
+
+                <hr>
+
+                <div class="row px-3">
+            
+            
+                    <div class="col-md-12 mt-4 mt-md-0">
+    
+                        <h6 class="text-primary fw-bold">Datos Generales</h6>
+                        <div class="row">
+                            <div class="col-md-3 d-flex flex-column mb-2"><small>Folio</small><span>{{ budget.folio }}</span></div>
+                            <div class="col-md-4 d-flex flex-column mb-2"><small>Creado por</small><span>{{ budget.createdBy.name }} {{ budget.createdBy.lastName }}</span></div>
+                            <div class="col-md-4 d-flex flex-column mb-2"><small>Fecha</small><span>{{ budget.createdAt | date: 	'dd-MMM-yy' }}</span></div>
+                        </div>
+
+
+
+                        <h6 class="text-primary fw-bold">Datos Cliente</h6>
+                        <div class="row">
+                            <div class="col-md-6 d-flex flex-column mb-2"><small>Cliente</small><span>{{ budget.customer.name }} {{ budget.customer.lastName }}</span></div>
+                            <div class="col-md-6 d-flex flex-column mb-2"><small>Correo electrónico</small><span>{{ budget.customer.email }}</span></div>
+                        </div>
+
+
+                        <h6 class="text-primary fw-bold">Instalaciones donde se realiza el servicio</h6>
+                        <div class="table-responsive" >
+
+                            <table class="table table-light table-striped table-hover mt-3">
+                              <thead>
+                                <tr>
+                                  <th scope="col">#</th>
+                                  <th scope="col">Nombre</th>
+                                  <th scope="col">Dirección</th>
+                                  <th scope="col">Referencias</th>
+                                </tr> 
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let address of budget.addresses; let i = index;">
+                                  <td># {{ i + 1 }}</td>
+                                  <td>{{ address.name }}</td>
+                                  <td>{{ address.address }}</td>
+                                  <td>{{ address.references }}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                        </div>
+
+
+
+                        <h6 class="text-primary fw-bold">Artículos/Tratamientos</h6>
+                        <div class="table-responsive" >
+
+                            <table class="table table-light table-striped table-hover mt-3">
+                              <thead>
+                                <tr>
+                                  <th scope="col">Cantidad</th>
+                                  <th scope="col">Artículos/Tratamientos</th>
+                                  <th scope="col">Precio unitario</th>
+                                  <th scope="col">Importe</th>
+                                  <th scope="col">Impuesto</th>
+                                  <th scope="col">Total</th>
+                                </tr> 
+                              </thead>
+                              <tbody>
+                                <ng-container *ngFor="let bp of budget.budgetsProducts">
+                                  <tr>
+                                    <td>{{ bp.amount }}</td>
+                                    <td>{{ bp.product.name }}</td>
+                                    <td>$ {{ bp.unitPrice | number : '1.2-2' }}</td>
+                                    <td>$ {{ bp.totalWithoutIva | number : '1.2-2' }}</td>
+                                    <td>$ {{ bp.iva | number : '1.2-2' }}</td>
+                                    <td>$ {{ bp.totalWithIva | number : '1.2-2' }}</td>
+                                  </tr>
+                                  <tr *ngIf="bp.htmlDescription">
+                                    <td colspan="6">
+                                      <div [innerHTML]="bp.htmlDescription"></div>
+                                    </td>
+                                  </tr>
+                                </ng-container>
+                                <tr>
+                                    <th rowspan="2" colspan="3">Totales:</th>
+                                    <th>Total</th>
+                                    <th>IVA</th>
+                                    <th>Total con IVA</th>
+                                </tr>
+                                <tr>
+                                  <td>$ {{ budget.totalWithoutIva | number : '1.2-2' }}</td>
+                                  <td>$ {{ budget.iva | number : '1.2-2' }}</td>
+                                  <th>$ {{ budget.totalWithIva | number : '1.2-2' }}</th>
+                                </tr>
+                              </tbody>
+                            </table>
+                        </div>
+ 
+                        
+                        <h6 class="text-primary fw-bold">Datos de pago</h6>
+                        <div class="row">
+                            <div class="col-md-3 d-flex flex-column mb-2"><small>Método de pago</small><span>{{ budget.paymentMethod }}</span></div>
+                            <div class="col-md-3 d-flex flex-column mb-2"><small>Tipo de trabajo a realizar</small><span>{{ budget.typeWork }}</span></div>
+                            <div *ngIf="budget.htmlDescription" class="col-md-12 d-flex flex-column mb-2"><small>Descripciones / Cláusulas / Anexos de la cotización</small><div [innerHTML]="budget.htmlDescription"></div></div>
+                            <div *ngIf="budget.htmlGuarantee" class="col-md-12 d-flex flex-column mb-2"><small>Garantías</small><div [innerHTML]="budget.htmlGuarantee"></div></div>
+                        </div>
+
+                    </div>
+            
+                </div>
+                <div class="d-flex justify-content-end my-4 gap-3" *ngIf="createWorkOrderVal || createContractVal">
+  
+
+                  
+
+                  
+                  <a 
+                    [routerLink]="['/work-orders/new']"  
+                    [queryParams]="{ budgetId: budget.id, typeWork: 'contract-sale' }"
+                    class="btn btn-outline-warning d-flex align-items-center"
+                    title="Convertir cotización a Orden de trabajo"
+                  >
+                    <i class="fa fa-usd me-2" aria-hidden="true"></i>
+                    Convertir a Orden de Trabajo                  </a>
+                
+                </div>
+                
+                <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
+
+     
+                  
+  <!-- Pestaña Órdenes de Trabajo (Contact) -->
+
+
+    <!-- Pestaña Órdenes de Trabajo (Contract Sale) -->
+    <li class="nav-item" role="presentation">
+      <button 
+        class="nav-link active" 
+        id="pills-work-orders-contract-sale-tab" 
+        data-bs-toggle="pill" 
+        data-bs-target="#pills-work-orders-contract-sale" 
+        type="button" 
+        role="tab" 
+        aria-controls="pills-work-orders-contract-sale" 
+        aria-selected="false">
+        <span class="badge bg-info">
+          {{ totals['workOrdersContractSale'] > 99 ? '99+' : totals['workOrdersContractSale'] }}
+        </span> 
+        Ordenes de trabajo
+      </button>
+    </li>
+                </ul>
+            
+                <div class="tab-content" id="pills-tabContent">
+
+            
+                  <!-- Pestaña Contratos -->
+                  <div 
+                    class="tab-pane fade " 
+                    id="pills-contracts" 
+                    role="tabpanel" 
+                    aria-labelledby="pills-contracts-tab" 
+                    tabindex="0">
+                    <!-- Contenido de la pestaña Contratos -->
+                    <div *ngIf="isContractsLoading">
+                      <div class="text-center">
+                        <p class="text-muted mt-4">Cargando contratos...</p>
+                        <div class="spinner-border text-primary" role="status">
+                          <span class="visually-hidden">Cargando...</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div *ngIf="!isContractsLoading">
+                      <p *ngIf="contracts.length === 0" class="text-muted">No hay contratos asociados a esta cotización.</p>
+                      <div class="table-responsive mt-4" *ngIf="contracts.length > 0">
+                        <table class="table table-light table-striped table-hover mt-3">
+                          <thead>
+                            <tr>
+                              <th scope="col">Folio</th>
+                              <th scope="col">Cliente</th>
+                              <th scope="col">Fecha de Creación</th>
+                              <th scope="col">Creado por</th>
+                              <th scope="col">Herramientas</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let contract of contracts">
+                              <td>{{ contract.folio }}</td>
+                              <td>{{ contract.customer.name }} {{ contract.customer.lastName }}</td>
+                              <td>{{ contract.createdAt | date: 'dd-MMM-yy' }}</td>
+                              <td>{{ contract.createdBy.name }} {{ contract.createdBy.lastName }}</td>
+                              <td>
+                                <a [routerLink]="['/customers/contracts/details', contract.id]" class="btn btn-sm btn-outline-secondary me-2">Ver</a>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+ <!-- Pestaña Órdenes de Trabajo (Contact) -->
+  <div 
+    class="tab-pane fade   " 
+    id="pills-work-orders-contact" 
+    role="tabpanel" 
+    aria-labelledby="pills-work-orders-contact-tab" 
+    tabindex="0">
+    <!-- Contenido para Órdenes de Trabajo con typeWork 'contact' -->
+    <div *ngIf="isWorkOrdersLoading">
+      <div class="text-center">
+        <p class="text-muted mt-4">Cargando órdenes de trabajo...</p>
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="!isWorkOrdersLoading">
+      <p *ngIf="workOrdersContact.length === 0" class="text-muted">No hay órdenes de trabajo de tipo 'contact' asociadas a esta cotización.</p>
+      <div class="table-responsive mt-4" *ngIf="workOrdersContact.length > 0">
+        <table class="table table-light table-striped table-hover mt-3">
+          <thead>
+            <tr>
+              <th scope="col">Folio</th>
+              <th scope="col">Cliente</th>
+              <th scope="col">Fecha de Inicio</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Herramientas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let workOrder of workOrdersContact">
+              <td>{{ workOrder.folio }}</td>
+              <td>{{ workOrder.customer.name }} {{ workOrder.customer.lastName }}</td>
+              <td>{{ workOrder.startDate | date: 'dd-MMM-yy' }}</td>
+              <td>{{ workOrder.status.value }}</td>
+              <td>
+                <a [routerLink]="['/work-orders/details', workOrder.id]" class="btn btn-sm btn-outline-secondary me-2">Ver</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pestaña Órdenes de Trabajo (Contract Sale) -->
+  <div 
+    class="tab-pane fade show active" 
+    id="pills-work-orders-contract-sale" 
+    role="tabpanel" 
+    aria-labelledby="pills-work-orders-contract-sale-tab" 
+    tabindex="0">
+    <!-- Contenido para Órdenes de Trabajo con typeWork 'contract-sale' -->
+    <div *ngIf="isWorkOrdersLoading">
+      <div class="text-center">
+        <p class="text-muted mt-4">Cargando órdenes de trabajo...</p>
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="!isWorkOrdersLoading">
+      <p *ngIf="workOrdersContractSale.length === 0" class="text-muted">No hay órdenes de trabajo de tipo 'contract-sale' asociadas a esta cotización.</p>
+      <div class="table-responsive mt-4" *ngIf="workOrdersContractSale.length > 0">
+        <table class="table table-light table-striped table-hover mt-3">
+          <thead>
+            <tr>
+              <th scope="col">Folio</th>
+              <th scope="col">Cliente</th>
+              <th scope="col">Fecha de Inicio</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Herramientas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let workOrder of workOrdersContractSale">
+              <td>{{ workOrder.folio }}</td>
+              <td>{{ workOrder.customer.name }} {{ workOrder.customer.lastName }}</td>
+              <td>{{ workOrder.startDate | date: 'dd-MMM-yy' }}</td>
+              <td>{{ workOrder.status.value }}</td>
+              <td>
+                <a [routerLink]="['/work-orders/details', workOrder.id]" class="btn btn-sm btn-outline-secondary me-2">Ver</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+                </div>
+        
+        </ng-template>
+    
+</div>
+    
+    
+    

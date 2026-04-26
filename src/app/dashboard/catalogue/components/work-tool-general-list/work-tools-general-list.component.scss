@@ -1,0 +1,112 @@
+/* Estilos generales */
+:host {
+  display: block;
+  min-height: 100%;
+}
+
+/* Animaciones y efectos */
+.card, .btn, .tool-img-container, .icon-box, .badge {
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important;
+}
+
+/* Tarjetas y contenedores */
+.card {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.card:hover {
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08) !important;
+}
+
+/* Estilos para la tabla */
+.table {
+  margin-bottom: 0;
+}
+
+.table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+}
+
+.table tr {
+  border-left: 3px solid transparent;
+}
+
+.table tr:hover {
+  border-left: 3px solid var(--bs-primary);
+}
+
+/* Estilos para imágenes de herramientas */
+.tool-img-container {
+  transition: transform 0.3s ease;
+  overflow: hidden;
+}
+
+.tool-img-container:hover {
+  transform: scale(1.05);
+}
+
+.tool-img-container img {
+  transition: transform 0.5s ease;
+}
+
+.tool-img-container:hover img {
+  transform: scale(1.1);
+}
+
+/* Personalización de badges */
+.badge {
+  font-weight: 500;
+  padding: 0.5em 0.8em;
+}
+
+/* Dropdown personalizado */
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+
+/* Spinner de carga */
+.spinner-grow {
+  animation-duration: 1.5s;
+}
+
+/* Estado inactivo para filas */
+.opacity-75 {
+  background-color: rgba(0,0,0,0.02);
+}
+
+/* Mejoras para dispositivos móviles */
+@media (max-width: 767.98px) {
+  .table th:nth-child(3),
+  .table td:nth-child(3) {
+    display: none;
+  }
+  
+  .icon-box {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  
+  .icon-box i {
+    font-size: 1.25rem !important;
+  }
+}

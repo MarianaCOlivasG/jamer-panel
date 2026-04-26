@@ -1,0 +1,141 @@
+
+
+<div class="back-modal">
+  <div class="modal" style="display: block;" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content shadow">
+          <div class="modal-header">
+            <h5 class="modal-title">Añadir pago a venta {{ saleFolio }}</h5> 
+           
+            <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+        <form class="row"
+            [formGroup]="form">
+
+        <span class="text-danger"><small>Campos requeridos *</small></span>
+
+
+
+
+       
+
+        <!-- <div class="col-md-6 my-2">
+          <label>Tipo de servicio<span class="text-danger">*</span></label>
+          <select 
+            class="form-control mt-2" 
+            formControlName="type" 
+            (ngModelChange)="onChange('type')">
+            <option value="">Seleccione una opción</option>
+            <option value="1">Servicio</option>
+            <option value="2">Venta</option>
+          </select>
+          <div *ngIf="inputInvalid('type')" class="text-danger">
+              <span><small>{{ errorMessage('type') }}</small></span>
+          </div> 
+        </div> -->
+
+
+        <div class="col-md-6 my-2">
+          <label>Método de pago<span class="text-danger">*</span></label>
+          <select 
+            class="form-control mt-2" 
+            placeholder="Método de pago"
+            formControlName="paymethod" >
+            <option value="">Seleccione método de pago</option>
+            <option *ngFor="let paymentMethod of paymentMethods" [value]="paymentMethod">{{ paymentMethod }}</option>
+          </select>
+          <div *ngIf="inputInvalid('paymethod')" class="text-danger">
+              <span><small>{{ errorMessage('paymethod') }}</small></span>
+          </div> 
+        </div>
+
+
+        <div class="col-md-6 my-2">
+          <label>Cantidad<span class="text-danger">*</span></label>
+          <input 
+            type="number"
+            class="form-control mt-2"
+            placeholder="Cantidad"
+            formControlName="amount" />
+          <div *ngIf="inputInvalid('amount')" class="text-danger">
+              <span><small>{{ errorMessage('amount') }}</small></span>
+          </div> 
+        </div>
+
+        <div class="col-md-6 my-2">
+          <label>Fecha de pago<span class="text-danger">*</span></label>
+          <input 
+            type="date"
+            class="form-control mt-2"
+            formControlName="paymentAt" />
+          <div *ngIf="inputInvalid('paymentAt')" class="text-danger">
+              <span><small>{{ errorMessage('paymentAt') }}</small></span>
+          </div> 
+        </div>
+
+        <div class="col-md-6 my-2">
+          <label>Destino<span class="text-danger">*</span></label>
+          <input 
+            type="text"
+            class="form-control mt-2"
+            placeholder="Destino"
+            formControlName="destinationAccount" />
+          <div *ngIf="inputInvalid('destinationAccount')" class="text-danger">
+              <span><small>{{ errorMessage('destinationAccount') }}</small></span>
+          </div> 
+        </div>
+
+
+        <!-- <div class="col-md-12 my-2">
+            <label>Comentario</label>
+            <textarea 
+              class="form-control mt-2"
+              placeholder="Escribe aquí..."
+              formControlName="comment"></textarea>
+            <div *ngIf="inputInvalid('comment')" class="text-danger">
+                <span><small>{{ errorMessage('comment') }}</small></span>
+            </div> 
+        </div> -->
+
+        <div class="col-md-6 my-2">
+          <label>Complemento de pago<span class="text-danger">*</span></label>
+          <input 
+            type="text"
+            class="form-control mt-2"
+            placeholder="Complemento de pago"
+            formControlName="complement" />
+          <div *ngIf="inputInvalid('complement')" class="text-danger">
+              <span><small>{{ errorMessage('complement') }}</small></span>
+          </div> 
+        </div>
+
+        <!-- <div class="col-md-6 my-2">
+          <label>Comprobante</label>
+          <input 
+            type="file"
+            class="form-control mt-2"
+            placeholder="Examinar comprobante" 
+            (change)="changeFile( $event.target )"/>
+            <div *ngIf="!isValidSizeFile" class="text-danger">
+              <span><small>Tamaño de archivo no válido. Máximo 4 MB</small></span>
+          </div> 
+        </div> -->
+  
+
+      </form>
+          
+          </div>
+          <div class="modal-footer">
+            <button type="button" (click)="closeModal()" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button 
+                  type="button"
+                  (click)="create()" 
+                  class="btn btn-primary"
+                  [disabled]="isSaving">{{ isSaving ? 'Guardando...' : 'Guardar'}}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>

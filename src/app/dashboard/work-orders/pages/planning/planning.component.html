@@ -1,0 +1,51 @@
+<div class="container pt-4 pb-5">
+
+  <h1>Planning vista calendario</h1>
+
+  <div class="text-end my-4">
+    <a routerLink="/work-orders/planning-test" class="btn btn-secondary">Vista técnicos</a>
+  </div>
+
+  <div class="calendar" *ngIf="!isLoading">
+    <full-calendar 
+      *ngIf="calendarVisible" 
+      [options]="calendarOptions">
+    </full-calendar> 
+  </div>
+
+  <!-- Custom Context Menu -->
+  <div class="custom-context-menu" 
+       #contextMenu 
+       [style.top.px]="contextMenuPosition.y" 
+       [style.left.px]="contextMenuPosition.x" 
+       [class.visible]="contextMenuVisible">
+    <ul>
+      <li (click)="reprogramWorkOrder()">Reprogramar</li>
+    </ul>
+  </div>
+  
+  <!-- Modal para eventos superpuestos -->
+  <div class="event-info-modal" *ngIf="showEventInfoModal" (click)="closeEventInfoModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h4>Ordenes</h4>
+        <button type="button" class="close-btn" (click)="closeEventInfoModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <ul class="event-list">
+          <li class="event-item" *ngFor="let event of selectedEventGroup" (click)="selectEvent(event.id)">
+            <div class="event-title">{{ event.title }}</div>
+            <div class="event-time">{{ event.start }} - {{ event.end }}</div>
+            <div class="event-status" [ngClass]="event.status === 'CANCELADA' ? 'canceled' : 'active'">
+              {{ event.status }}
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary me-2" (click)="refreshEventModal()">Actualizar</button>
+        <button type="button" class="btn-secondary" (click)="closeEventInfoModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

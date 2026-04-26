@@ -1,0 +1,84 @@
+
+
+<div class="back-modal">
+  <div class="modal" style="display: block;" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
+        <div class="modal-content shadow">
+          <div class="modal-header">
+            <h5 class="modal-title">Persona de contacto</h5> 
+           
+            <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+          
+        <form class="row"
+            [formGroup]="form">
+
+        <div class="col-md-6 my-2">
+          <label>Nombre completo<span class="text-danger">*</span></label>
+          <input 
+            class="form-control mt-2" 
+            formControlName="name"
+            placeholder="Nombre completo"/>
+            <div *ngIf="inputInvalid('name')" class="text-danger">
+              <span><small>{{ errorMessage('name') }}</small></span>
+          </div> 
+        </div>
+
+        <div class="col-md-6 my-2">
+          <label>Correo electrónico</label>
+          <input 
+            type="email"
+            class="form-control mt-2" 
+            formControlName="email"
+            placeholder="example@mail.com"/>
+            <div *ngIf="inputInvalid('email')" class="text-danger">
+              <span><small>{{ errorMessage('email') }}</small></span>
+          </div> 
+        </div>
+
+
+        <div class="col-md-6 my-2">
+          <label>Teléfono/Celular<span class="text-danger">*</span></label>
+          <input 
+            type="text"
+            class="form-control mt-2" 
+            formControlName="phone"
+            placeholder="Teléfono/Celular"/>
+            <div *ngIf="inputInvalid('phone')" class="text-danger">
+              <span><small>{{ errorMessage('phone') }}</small></span>
+          </div> 
+        </div>
+
+
+        <div class="col-md-6 my-2">
+          <label>Puesto/Cargo<span class="text-danger">*</span></label>
+          <input 
+            type="text"
+            class="form-control mt-2" 
+            formControlName="position"
+            placeholder="Puesto/Cargo"/>
+            <div *ngIf="inputInvalid('position')" class="text-danger">
+              <span><small>{{ errorMessage('position') }}</small></span>
+          </div> 
+        </div>
+
+
+      </form>
+
+      <div class="modal-footer">
+        <button 
+          type="button"
+          (click)="create()" 
+          class="btn btn-primary"
+          [disabled]="isSaving">{{ isSaving ? 'Guardando...' : 'Guardar'}}</button>
+        <button type="button" (click)="closeModal()" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+          
+          </div>
+          
+        </div>
+      </div>
+
+    </div>

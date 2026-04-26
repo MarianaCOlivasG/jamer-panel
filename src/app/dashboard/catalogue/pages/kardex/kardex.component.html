@@ -1,0 +1,303 @@
+<div class="container pt-4">
+  <!-- Encabezado mejorado con iconos y descripción -->
+  <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+    <div class="d-flex align-items-center">
+      <div class="icon-box rounded-circle bg-primary text-white me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+        <i class="fa-solid fa-book-open fs-4"></i>
+      </div>
+      <div>
+        <h2 class="fw-bold mb-0">Kárdex</h2>
+        <p class="text-muted mb-0">Control de movimientos e inventario de productos</p>
+      </div>
+    </div>
+    
+
+  </div>
+
+  <!-- Solo visible en impresión -->
+  <div class="print-header d-none">
+    <h1>Reporte de Kárdex</h1>
+    <p>Control de movimientos de inventario</p>
+  </div>
+  <!-- <div class="print-date d-none">
+    Fecha de impresión: {{ date | date: 'dd/MM/yyyy HH:mm' }}
+  </div> -->
+
+  <!-- Filtros de búsqueda mejorados -->
+  <div class="card shadow-sm border-0 rounded-3 mb-4">
+    <div class="card-header bg-white border-0 pt-3">
+      <h5 class="text-muted mb-0">
+        <i class="fa-solid fa-filter me-2"></i>
+        Filtros y Búsqueda
+      </h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <!-- Selector de producto mejorado -->
+        <div class="col-md-4">
+          <label class="form-label small text-muted">Seleccionar producto</label>
+          <div class="input-group shadow-sm rounded-3 overflow-hidden">
+            <span class="input-group-text bg-white border-end-0">
+              <i class="fa-solid fa-boxes-stacked text-primary"></i>
+            </span>
+            <div class="form-control border-start-0 p-0 bg-transparent">
+              <angular2-multiselect 
+                  [data]="products" 
+                  [(ngModel)]="product"
+                  [settings]="dropdownSettings" 
+                  (onSelect)="onItemSelect($event)" 
+                  (onDeSelect)="OnItemDeSelect($event)"
+                  (onSelectAll)="onSelectAll($event)"
+                  (onDeSelectAll)="onDeSelectAll($event)">
+              </angular2-multiselect>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Búsqueda mejorada -->
+        <div class="col-md-8">
+          <label class="form-label small text-muted">Buscar movimiento</label>
+          <div class="input-group shadow-sm rounded-3 overflow-hidden">
+     
+            <input-search 
+              placeholder="Buscar artículo..."
+              (onEnter)="search($event)"
+              (onDebounce)="search($event)"
+              class="w-100"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Detalles del producto seleccionado mejorados -->
+  <div class="card shadow-sm border-0 rounded-3 mb-4 fade-in" *ngIf="productDetails">
+    <div class="card-header bg-white border-0 pt-3 d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">
+        <i class="fa-solid fa-info-circle text-primary me-2"></i>
+        Detalles del Producto
+      </h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-4">
+        <!-- Información básica del producto -->
+        <div class="col-md-6">
+          <div class="product-info bg-light rounded-3 p-3 h-100">
+            <h6 class="text-primary border-bottom pb-2 mb-3">
+              <i class="fa-solid fa-tag me-2"></i>
+              Datos del Producto
+            </h6>
+            
+            <div class="d-flex mb-3">
+              <div class="flex-shrink-0 me-3">
+                <div class="rounded bg-white shadow-sm p-2" style="width: 60px; height: 60px;">
+                  <img 
+                    [src]="productDetails.image ? (productDetails.image | image:'products') : 'assets/images/no-image.jpeg'" 
+                    class="img-fluid" 
+                    [alt]="productDetails.name"
+                  >
+                </div>
+              </div>
+              <div class="flex-grow-1">
+                <h5 class="mb-1 fw-bold">{{ productDetails.name }}</h5>
+                <p class="text-muted mb-0 small">{{ productDetails.description || 'Sin descripción' }}</p>
+              </div>
+            </div>
+            
+            <div class="row g-2">
+              <div class="col-6">
+                <div class="detail-item">
+                  <small class="text-muted d-block">Línea de negocio</small>
+                  <span class="fw-medium">{{ productDetails.businessLine.name || 'N/A' }}</span>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="detail-item">
+                  <small class="text-muted d-block">Familia</small>
+                  <span class="fw-medium">{{ productDetails.businessFamily.name || 'N/A' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Existencias y costos -->
+        <div class="col-md-6">
+          <div class="inventory-info bg-light rounded-3 p-3 h-100">
+            <h6 class="text-primary border-bottom pb-2 mb-3">
+              <i class="fa-solid fa-chart-line me-2"></i>
+              Existencias y Costos
+            </h6>
+            
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="stock-indicator p-3 bg-white rounded-3 shadow-sm text-center">
+                  <div class="fs-5 fw-bold mb-1">{{ productDetails.totalStock }}</div>
+                  <div class="d-flex align-items-center justify-content-center">
+                    <span class="badge bg-info me-1">Uds</span>
+                    <small class="text-muted">Existencias totales</small>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="stock-indicator p-3 bg-white rounded-3 shadow-sm text-center">
+                  <div class="fs-5 fw-bold mb-1">{{ productDetails.availableStock || 0 }}</div>
+                  <div class="d-flex align-items-center justify-content-center">
+                    <span class="badge bg-success me-1">Uds</span>
+                    <small class="text-muted">Disponibles</small>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-12">
+                <div class="cost-indicator p-3 bg-white rounded-3 shadow-sm">
+                  <div class="row">
+                    <div class="col-6 text-center">
+                      <div class="fs-5 fw-bold text-primary">$ {{ productDetails.cost | number : '1.2-2'}}</div>
+                      <small class="text-muted">Costo unitario</small>
+                    </div>
+            
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spinner de carga mejorado -->
+  <div class="d-flex justify-content-center my-5" *ngIf="isLoading; else templateKardex">
+    <div class="spinner-grow text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+
+  <!-- Template de visualización de movimientos mejorado -->
+  <ng-template #templateKardex>
+    <!-- Mensaje cuando no hay movimientos -->
+    <div class="alert alert-info d-flex align-items-center rounded-3 shadow-sm" *ngIf="totalResults == 0">
+      <i class="fa-solid fa-info-circle me-3 fs-4"></i>
+      <div>
+        <h5 class="mb-1">No hay movimientos disponibles</h5>
+        <p class="mb-0">Selecciona otro producto o modifica los criterios de búsqueda.</p>
+      </div>
+    </div>
+
+    <!-- Tabla de movimientos mejorada -->
+    <div class="card shadow-sm border-0 rounded-3 mt-4" *ngIf="totalResults > 0">
+      <div class="card-header bg-white pt-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 text-muted">
+          <i class="fa-solid fa-list-ul me-2"></i>
+          Movimientos Registrados
+        </h5>
+        <span class="badge bg-primary rounded-pill">{{ totalResults }} movimientos</span>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" class="border-0">Fecha</th>
+                <th scope="col" class="border-0">Movimiento</th>
+                <th scope="col" class="border-0">Documento</th>
+                <th scope="col" class="border-0">Artículo</th>
+                <th scope="col" class="border-0">Cantidad</th>
+                <th scope="col" class="border-0">Importe Unitario</th>
+                <th scope="col" class="border-0">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of kardex" 
+                  [ngClass]="{'border-start-success': item.concept === 'in', 'border-start-danger': item.concept === 'out'}"
+                  style="transition: all 0.2s ease;"
+                  onmouseover="this.style.backgroundColor='#f8f9fa'" 
+                  onmouseout="this.style.backgroundColor=''">
+               
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="calendar-icon me-2 text-muted">
+                      <i class="fa-regular fa-calendar-alt"></i>
+                    </div>
+                    <span>{{ item.createdAt | date: 'dd-MMM-yy' }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="badge" 
+                        [ngClass]="{'bg-success': item.action === 'purchase', 'bg-warning': item.action === 'work-order'}">
+                    <i class="fa-solid me-1" 
+                       [ngClass]="{'fa-cart-shopping': item.action === 'purchase', 'fa-clipboard-list': item.action === 'work-order'}"></i>
+                    {{ (item.action === 'purchase') ? 'Compra' : (item.action === 'work-order') ? 'Salida' : item.action }}
+                  </span>
+                </td>
+                <td>
+                  <a *ngIf="item.action === 'purchase'" 
+                     class="btn btn-sm btn-light border" 
+                     [routerLink]="['/purchases','details', item.purchase.id]">
+                    <i class="fa-solid fa-file-invoice me-1 text-primary"></i>
+                    {{ item.purchase.folio || 'N/A' }}
+                  </a>
+                  <span *ngIf="item.action !== 'purchase'">-</span>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0 me-2">
+                      <div class="mini-product-img rounded bg-light" style="width: 30px; height: 30px;">
+                        <img 
+                          [src]="item.product.image ? (item.product.image | image:'products') : 'assets/images/no-image.jpeg'" 
+                          class="img-fluid" 
+                          [alt]="item.product.name"
+                        >
+                      </div>
+                    </div>
+                    <span class="fw-medium">{{ item.product.name }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="badge py-2 px-3" [ngClass]="{'bg-success': item.concept === 'in', 'bg-danger': item.concept === 'out'}">
+                    {{ item.concept === 'in' ? '+' : '-' }} {{ item.amont }} Uds
+                  </span>
+                </td>
+                <td>
+                  <div class="cost-value">
+                    <i class="fa-solid fa-dollar-sign text-muted me-1"></i>
+                    <span>{{ item.cost | number: '1.2-2' }}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="total-value fw-bold" [ngClass]="{'text-success': item.concept === 'in', 'text-danger': item.concept === 'out'}">
+                    <i class="fa-solid fa-dollar-sign me-1"></i>
+                    <span>{{ item.cost * item.amont | number: '1.2-2' }}</span>
+                  </div>
+                </td>
+              
+              </tr>
+            </tbody>
+            <tfoot class="table-light">
+              <tr class="fw-bold">
+                <td colspan="4" class="text-end">Totales:</td>
+                <td>{{ getTotalAmount() }}</td>
+                <td>-</td>
+                <td class="">$ {{ getTotalValue() | number: '1.2-2' }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Paginador mejorado -->
+      <div class="card-footer bg-white py-3" *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage($event)"
+          class="d-block">
+        </paginator>
+      </div>
+    </div>
+  </ng-template>
+</div>

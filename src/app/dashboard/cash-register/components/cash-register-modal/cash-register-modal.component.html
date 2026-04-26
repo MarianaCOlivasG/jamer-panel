@@ -1,0 +1,122 @@
+
+
+<div class="back-modal">
+  <div class="modal" style="display: block;" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content shadow">
+          <div class="modal-header">
+            <h5 class="modal-title">Añadir Registro a Caja</h5> 
+           
+            <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+          
+        <form class="row"
+            [formGroup]="form">
+
+        <span class="text-danger"><small>Campos requeridos *</small></span>
+
+        <div class="col-md-6 my-2">
+          <label>Venta ó Servicio<span class="text-danger">*</span></label>
+          <select class="form-control mt-2" 
+            formControlName="entity">
+            <option value="sale">Venta</option>
+            <option value="workOrder">Servicio</option>
+            <option value="other">Otro</option>
+          </select>
+          <div *ngIf="inputInvalid('entity')" class="text-danger">
+              <span><small>{{ errorMessage('entity') }}</small></span>
+          </div> 
+        </div>
+
+        <div class="col-md-6 my-2" *ngIf="form.get('entity')?.value == 'workOrder'">
+          <label>Servicio</label>
+          <angular2-multiselect 
+                [data]="workOrders" 
+                class="form-control mt-2 p-0"
+                formControlName="entityId"
+                [settings]="dropdownSettings" 
+                (onSelect)="onItemSelect($event)" 
+                (onDeSelect)="OnItemDeSelect($event)"
+                (onSelectAll)="onSelectAll($event)"
+                (onDeSelectAll)="onDeSelectAll($event)">
+          </angular2-multiselect>
+          <div *ngIf="inputInvalid('amount')" class="text-danger">
+              <span><small>{{ errorMessage('amount') }}</small></span>
+          </div> 
+        </div>
+
+        <div class="col-md-6 my-2" *ngIf="form.get('entity')?.value == 'sale'">
+          <label>Venta</label>
+          <angular2-multiselect 
+                [data]="sales" 
+                class="form-control mt-2 p-0"
+                formControlName="entityId"
+                [settings]="dropdownSettings" 
+                (onSelect)="onItemSelect($event)" 
+                (onDeSelect)="OnItemDeSelect($event)"
+                (onSelectAll)="onSelectAll($event)"
+                (onDeSelectAll)="onDeSelectAll($event)">
+          </angular2-multiselect>
+          <div *ngIf="inputInvalid('entityId')" class="text-danger">
+              <span><small>{{ errorMessage('entityId') }}</small></span>
+          </div> 
+        </div>
+
+        <div class="col-md-6 my-2">
+          <label>Concepto<span class="text-danger">*</span></label>
+          <input 
+            type="text"
+            class="form-control mt-2"
+            placeholder="Concepto"
+            formControlName="concept" />
+          <div *ngIf="inputInvalid('concept')" class="text-danger">
+              <span><small>{{ errorMessage('concept') }}</small></span>
+          </div> 
+        </div>
+
+
+         <div class="col-md-6 my-2">
+          <label>Tipo<span class="text-danger">*</span></label>
+          <select class="form-control mt-2" formControlName="movement">
+            <option value="E">Abono/Entrada</option>
+            <option value="S">Cargo/Salida</option>
+          </select>
+          <div *ngIf="inputInvalid('movement')" class="text-danger">
+              <span><small>{{ errorMessage('movement') }}</small></span>
+          </div> 
+        </div>
+
+        <div class="col-md-6 my-2">
+          <label>Cantidad<span class="text-danger">*</span></label>
+          <input 
+            type="text"
+            placeholder="Cantidad"
+            class="form-control mt-2"
+            formControlName="amount" />
+          <div *ngIf="inputInvalid('amount')" class="text-danger">
+              <span><small>{{ errorMessage('amount') }}</small></span>
+          </div> 
+        </div>
+
+
+       
+
+
+
+      </form>
+          
+          </div>
+          <div class="modal-footer">
+            <button type="button" (click)="closeModal()" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button 
+                  type="button"
+                  (click)="submit()" 
+                  class="btn btn-primary"
+                  [disabled]="isSaving">{{ isSaving ? 'Guardando...' : 'Guardar'}}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>

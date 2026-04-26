@@ -1,0 +1,77 @@
+
+
+<div class="back-modal">
+  <div class="modal" style="display: block;" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content shadow">
+          <div class="modal-header">
+            <h5 class="modal-title">Añadir cobro a {{ customer.name }} | Orden de trabajo {{ bWorkOrder.workOrder.folio }}</h5> 
+           
+            <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+          
+        <form class="row"
+            [formGroup]="form">
+
+        <span class="text-danger"><small>Campos requeridos *</small></span>
+
+
+        <h6 class="text-primary fw-bold mt-2">Datos generales</h6>
+
+        <div class="col-md-6 my-2">
+          <label>Método de pago<span class="text-danger">*</span></label>
+          <select 
+            class="form-control mt-2" 
+            placeholder="Método de pago"
+            formControlName="paymethod" >
+            <option value="">Seleccione método de pago</option>
+            <option *ngFor="let paymentMethod of paymentMethods" [value]="paymentMethod">{{ paymentMethod }}</option>
+          </select>
+          <div *ngIf="inputInvalid('paymethod')" class="text-danger">
+              <span><small>{{ errorMessage('paymethod') }}</small></span>
+          </div> 
+        </div>
+
+
+        <div class="col-md-6 my-2">
+          <label>Cantidad<span class="text-danger">*</span></label>
+          <input 
+            type="number"
+            class="form-control mt-2"
+            placeholder="Cantidad"
+            formControlName="amount" />
+          <div *ngIf="inputInvalid('amount')" class="text-danger">
+              <span><small>{{ errorMessage('amount') }}</small></span>
+          </div> 
+        </div>
+
+
+        <div class="col-md-12 my-2">
+            <label>Comentario</label>
+            <textarea 
+              class="form-control mt-2"
+              placeholder="Escribe aquí..."
+              formControlName="comment"></textarea>
+            <div *ngIf="inputInvalid('comment')" class="text-danger">
+                <span><small>{{ errorMessage('comment') }}</small></span>
+            </div> 
+        </div>
+  
+
+      </form>
+          
+          </div>
+          <div class="modal-footer">
+            <button type="button" (click)="closeModal()" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button 
+                  type="button"
+                  (click)="create()" 
+                  class="btn btn-primary"
+                  [disabled]="isSaving">{{ isSaving ? 'Guardando...' : 'Guardar'}}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>

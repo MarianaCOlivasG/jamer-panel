@@ -1,0 +1,66 @@
+
+
+
+
+ 
+<div class="back-modal">
+    <div class="modal" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+          <div class="modal-content shadow">
+            <div class="modal-header">
+              <h5 class="modal-title">Foto de {{ employee.name }} {{ employee.lastName }}</h5> 
+              <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+              
+              <div class="row bg-white mt-3 p-3">
+
+                <div class="col-md-4 d-flex justify-content-center align-items-center">
+                    <img 
+                      *ngIf="!fileTemp"
+                      [src]="employee.picture | image:'employees'"
+                      [alt]="employee.name" 
+                      width="250" 
+                      height="250" >
+
+                    <img 
+                        *ngIf="fileTemp"
+                        [src]="fileTemp" 
+                        [alt]="employee.name"
+                        width="250" 
+                        height="250" >
+
+                </div>
+    
+    
+    
+                <div class="col-md-8 mt-4 mt-md-0 d-flex justify-content-center flex-column">
+
+                  <span class="text-danger"><small>{{ errorMessage() }}</small></span>
+    
+                  <div class="input-group">
+                    <input 
+                        type="file" 
+                        class="form-control" 
+                        id="inputGroupFile04" 
+                        aria-describedby="inputGroupFileAddon04" 
+                        aria-label="Upload"
+                        #fileInput
+                        (change)="changeFile( $event.target )">
+                  </div>
+                
+                </div>
+    
+              </div>
+
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" (click)="closeModal()" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+              <button [disabled]="!file || isLoading" type="button" (click)="uploadImage()" class="btn btn-primary">{{ isLoading ? 'Actualizando...' : 'Guardar' }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>

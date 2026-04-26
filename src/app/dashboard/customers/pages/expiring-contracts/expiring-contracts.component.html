@@ -1,0 +1,100 @@
+
+<contract-renew-modal
+  *ngIf="modalService.show && contactIdSelected != 0"
+  [contractId]="contactIdSelected"
+  (renewSuccess)="renewSuccess()"
+/>
+
+<div class="container pt-4">
+
+    <h1>Contratos a vencer</h1>
+
+    <div class="bg-light px-2 py-4 row">
+      <div class="col-md-8">
+        <input-search 
+          placeholder="Buscar cotización..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+      </div>
+      <div class="col-md-4 mt-2 mt-md-0">
+        <select 
+          type="text"
+          class="form-control"
+          [(ngModel)]="customerSelected"
+          (ngModelChange)="changeModel('customerId')"
+          >
+          <option [value]="undefined">Selecciona un cliente</option>
+          <option *ngFor="let customer of customers" [ngValue]="customer">{{customer.name}}</option>
+        </select>
+      </div>
+    </div>
+
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateBudgets">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templateBudgets>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay contratos por mostar.</p>
+      
+      <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+
+        <span class="fw-bold">Total de resultados: {{totalResults}}</span>
+
+        <table class="table table-light table-striped table-hover mt-3">
+          <thead>
+            <tr>
+              <th scope="col">Folio</th>
+              <th scope="col">Cotización</th>
+              <th scope="col">Cliente</th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Creado por</th>
+              <th scope="col">Fecha vencimiento</th>
+              <th scope="col">Herramientas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let contract of contracts">
+              <td>{{contract.folio}}</td>
+              <td> <a class="text-secondary" [routerLink]="['/customers', 'budgets', 'details', contract.budget.id]">{{ contract.budget.folio }}</a> </td>
+              <td>{{contract.customer.name}} {{contract.customer.lastName}}</td>
+              <td>{{contract.createdAt | date: 	'dd-MMM-yy' }}</td>
+              <td>{{contract.createdBy.name}} {{contract.createdBy.lastName}}</td>
+              <td>
+                <span class="badge bg-dark" *ngIf="isAfter( contract.expirationDate! )">Vencido</span> 
+                <span class="badge" 
+                  [ngClass]="{'bg-warning' : diffDays(contract.expirationDate!) >= 20, 'pending' : (diffDays(contract.expirationDate!) >= 10 && diffDays(contract.expirationDate!) < 20), 'bg-danger' : diffDays(contract.expirationDate!) <= 9 }" *ngIf="!isAfter( contract.expirationDate! )">
+                  {{ diffDays(contract.expirationDate!) > 0 ? 'Vence en ' + diffDays(contract.expirationDate!) + ' días' : 'Vence hoy'}} 
+                </span> 
+                {{contract.expirationDate | date: 	'dd-MMM-yy' }}</td>
+              <td>
+                <div class="d-flex">
+                  <a [routerLink]="['/customers', 'contracts', 'details', contract.id]" class="btn btn-sm btn-outline-secondary me-2">Ver</a>
+                  <button *ngIf="renew" (click)="renewContract( contract.id )" class="btn btn-sm btn-outline-secondary">Renovar</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit" 
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+
+    </ng-template>
+
+  
+
+</div>
+

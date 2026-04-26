@@ -1,0 +1,176 @@
+<div class="container pt-4">
+  <!-- Encabezado mejorado con iconos e información -->
+  <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+    <div class="d-flex align-items-center">
+      <div class="icon-box rounded-circle bg-primary text-white me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+        <i class="fa-solid fa-tools fs-4"></i>
+      </div>
+      <div>
+        <h2 class="fw-bold mb-0">Mis Herramientas y Equipos</h2>
+        <p class="text-muted mb-0">Gestión y seguimiento del inventario de herramientas</p>
+      </div>
+    </div>
+    
+    <div class="badge bg-primary rounded-pill">
+      <span>Total: {{ totalResults || 0 }}</span>
+    </div>
+  </div>
+
+  <!-- Filtros de búsqueda mejorados -->
+  <div class="card shadow-sm border-0 rounded-3 mb-4">
+    <div class="card-header bg-white border-0 pt-3">
+      <h5 class="text-muted mb-0">
+        <i class="fa-solid fa-filter me-2"></i>
+        Filtros de búsqueda
+      </h5>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="input-group shadow-sm rounded-3 overflow-hidden">
+  
+            <input-search 
+              placeholder="Buscar por nombre, marca, modelo o número de serie..."
+              (onEnter)="search($event)"
+              (onDebounce)="search($event)"
+              class="w-100"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spinner de carga mejorado -->
+  <div class="d-flex justify-content-center my-5" *ngIf="isLoading; else templateWorkTools">
+    <div class="spinner-grow text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+
+  <!-- Template de visualización de herramientas/equipos mejorado -->
+  <ng-template #templateWorkTools>
+    <!-- Mensaje cuando no hay resultados -->
+    <div class="alert alert-info d-flex align-items-center rounded-3 shadow-sm" *ngIf="totalResults === 0">
+      <i class="fa-solid fa-info-circle me-3 fs-4"></i>
+      <div>No se encontraron herramientas o equipos con los filtros aplicados.</div>
+    </div>
+
+    <!-- Listado de herramientas en formato de tarjetas -->
+    <div class="card shadow-sm border-0 rounded-3 mt-4" *ngIf="totalResults > 0">
+      <div class="card-header bg-white pt-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 text-muted">
+          <i class="fa-solid fa-list me-2"></i>
+          Inventario de Herramientas y Equipos
+        </h5>
+   
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" class="border-0">Imagen</th>
+                <th scope="col" class="border-0">Información</th>
+                <th scope="col" class="border-0">Especificaciones</th>
+                <th scope="col" class="border-0">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let workTool of workTools" 
+                  [ngClass]="{ 'opacity-75': !workTool.isActive }"
+                  style="transition: all 0.2s ease;"
+                  onmouseover="this.style.backgroundColor='#f8f9fa'" 
+                  onmouseout="this.style.backgroundColor=''">
+                <td style="width: 80px;">
+                  <div class="tool-img-container rounded overflow-hidden shadow-sm" style="width: 65px; height: 65px;">
+                    <a [routerLink]="['/catalogue/work-tools/details', workTool.id]">
+                      <img class="img-fluid"
+                          [src]="workTool.image ? (workTool.image | image:'work-tools') : 'assets/images/no-image.jpeg'"
+                          [alt]="workTool.name"
+                          style="width: 100%; height: 100%; object-fit: cover;">
+                    </a>
+                  </div>
+                </td>
+                <td>
+                  <div class="fw-medium">{{ workTool.name }}</div>
+                  
+                  <div *ngIf="!workTool.isActive" class="badge bg-warning mt-1">
+                    <i class="fa-solid fa-triangle-exclamation me-1"></i>
+                    Inactivo
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex flex-column">
+                    <div class="d-flex align-items-center mb-1">
+                      <span class="badge bg-light text-dark me-2">Marca</span>
+                      <span>{{ workTool.brand || 'No especificada' }}</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                      <span class="badge bg-light text-dark me-2">Modelo</span>
+                      <span>{{ workTool.model || 'No especificado' }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="badge" 
+                        [ngClass]="workTool.isAvailable ? 'bg-success' : 'bg-danger'"
+                        style="font-size: 0.875rem; padding: 0.5em 0.85em;">
+                    <i class="fa-solid me-1" 
+                      [ngClass]="workTool.isAvailable ? 'fa-check-circle' : 'fa-ban'"></i>
+                    {{ workTool.isAvailable ? 'DISPONIBLE' : 'EN USO' }}
+                  </span>
+                </td>
+ 
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Paginador mejorado -->
+      <div class="card-footer bg-white py-3" *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage($event)"
+          class="d-block">
+        </paginator>
+      </div>
+    </div>
+
+    <!-- Vista alternativa en cuadrícula (inicialmente oculta) -->
+    <div class="d-none" id="gridView">
+      <div class="row g-3">
+        <div class="col-md-4 col-lg-3" *ngFor="let workTool of workTools">
+          <div class="card h-100 shadow-sm hover-lift border-0" 
+               [ngClass]="{'opacity-75': !workTool.isActive}">
+            <div class="position-relative">
+              <img [src]="workTool.image ? (workTool.image | image:'work-tools') : 'assets/images/no-image.jpeg'"
+                   class="card-img-top" 
+                   style="height: 160px; object-fit: cover;" 
+                   [alt]="workTool.name">
+              <span class="position-absolute top-0 end-0 m-2 badge" 
+                    [ngClass]="workTool.isAvailable ? 'bg-success' : 'bg-danger'">
+                {{ workTool.isAvailable ? 'DISPONIBLE' : 'EN USO' }}
+              </span>
+            </div>
+            <div class="card-body">
+              <h6 class="card-title">{{ workTool.name }}</h6>
+              <p class="card-text small mb-2">
+                <strong>Marca:</strong> {{ workTool.brand || 'No especificada' }}<br>
+                <strong>Modelo:</strong> {{ workTool.model || 'No especificado' }}
+              </p>
+            </div>
+            <div class="card-footer bg-white border-top-0">
+              <a [routerLink]="['details', workTool.id]" class="btn btn-sm btn-primary w-100">
+                <i class="fa-solid fa-eye me-1"></i> Ver detalles
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>

@@ -1,0 +1,145 @@
+
+
+<div class="back-modal">
+    <div class="modal" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+          <div class="modal-content shadow">
+            <div class="modal-header">
+              <h5 class="modal-title">Agregar producto a almacén</h5> 
+              <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+              <div class="bg-light px-2 py-4 row">
+                <div class="col-md-12 mb-3">
+                  <input-search 
+                    placeholder="Buscar producto.."
+                    (onEnter)="search( $event )"
+                    (onDebounce)="search( $event )"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <select
+                      class="form-control mb-3 mb-md-0"
+                      [(ngModel)]="businessLineId"
+                      (ngModelChange)="changeModel('businessLineId')"
+                      >
+                      <option [value]="0">TODAS LAS LÍNEAS DE NEGOCIO</option>
+                      <option *ngFor="let line of businessLines" [value]="line.id">{{ line.name }}</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <select
+                      class="form-control mb-3 mb-md-0"
+                      [(ngModel)]="businessFamilyId"
+                      (ngModelChange)="changeModel('businessFamilyId')"
+                      >
+                      <option [value]="0">TODAS LAS FAMILIAS</option>
+                      <option *ngFor="let family of businessFamilies" [value]="family.id">{{ family.name }}</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <select
+                      class="form-control mb-3 mb-md-0"
+                      [(ngModel)]="productTypeId"
+                      (ngModelChange)="changeModel('productTypeId')"
+                  >
+                      <option [value]="0">TODOS LOS TIPOS DE PRODUCTOS</option>
+                      <option *ngFor="let type of productTypes" [value]="type.id">{{ type.value }}</option>
+                  </select>
+                </div>
+              </div>
+          
+          
+              <div class="mt-4 text-center"  *ngIf="isLoading; else templateProducts">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+          
+              <ng-template #templateProducts>
+          
+                  <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay productos por mostrar.</p>
+                
+          
+                  <div class="mt-4" *ngIf="totalResults > 0">
+          
+                      <div class="table-responsive" *ngIf="totalResults > 0">
+          
+                          <table class="table table-light table-striped table-hover mt-3" >
+                            <thead>
+                              <tr>
+                                <th scope="col">Imagen</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Línea de negocio</th>
+                                <th scope="col">Familia</th>
+                                <th scope="col" *ngIf="authService.isAdmin()">Cantidad Disponible</th>
+                                <th scope="col" *ngIf="authService.isAdmin()">Añadir Cantidad</th>
+                                <th scope="col" *ngIf="authService.isAdmin()"></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let product of products; let idx = index;" [ngClass]="{ 'text-muted': !product.isActive }">
+                                <td>
+                                  <a *ngIf="product.image" [routerLink]="['details', product.id]">
+                                    <img class="product-image"
+                                        [src]="product.image | image:'products'"
+                                        [alt]="product.name">
+                                  </a>
+                                  <a *ngIf="!product.image" [routerLink]="['details', product.id]">
+                                    <img class="product-image"
+                                        src="assets/images/no-image.jpeg"
+                                        [alt]="product.name">
+                                  </a>
+                                </td>
+                                <td>{{ product.name }}</td>
+                                <td>{{ product.businessLine.name }}</td>
+                                <td>{{ product.businessFamily.name }}</td>
+                                <td *ngIf="authService.isAdmin()">
+                                  <span *ngIf="product.availableStock == 0">Agotado</span>
+                                  <span *ngIf="product.availableStock != 0">{{ product.availableStock }} {{ product.availableStock > 1 ? product.unit  + 's' : product.unit }}</span>
+                                </td>
+                                <td *ngIf="authService.isAdmin()">
+                                  <input 
+                                    type="number"
+                                    class="form-control"
+                                    placeholder="0"
+                                    [disabled]="product.availableStock == 0"
+                                    min="0"
+                                    max="{{ product.availableStock }}"
+                                    [(ngModel)]="product['amount']"
+                                  >
+                                </td>
+                                <td *ngIf="authService.isAdmin()">
+                                  <button
+                                      [disabled]="isSaving || (!isSaving && product.amount! == 0)"
+                                      (click)="addProductToStore( idx )"
+                                      class="btn btn-sm btn-outline-success me-2"> Agregar
+                                  </button>
+                                  </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                      </div>
+          
+                  </div>
+          
+                <ng-container *ngIf="totalResults > limit">
+                  <paginator 
+                    [limit]="limit"
+                    [totalResults]="totalResults"
+                    [currentPage]="currentPage"
+                    (chageCurrentPage)="changePage( $event )"
+                  />
+                </ng-container>
+          
+              </ng-template>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" (click)="closeModal()" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>

@@ -1,0 +1,86 @@
+
+<div class="container pt-4">
+
+    <h5>Cotizaciones</h5>
+
+
+    <div *ngIf="create" class="text-end mb-4">
+        <button (click)="goToCreateBudget()" class="btn btn-secondary"><i class="fa-solid fa-plus me-2"></i>Crear nuevo</button>
+     </div>
+
+
+    <div class="bg-light px-2 py-4 row">
+      <div class="col-md-8">
+        <input-search 
+          placeholder="Buscar cotización..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+      </div>
+    </div>
+
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateBudgets">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templateBudgets>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay cotizaciones por mostar.</p>
+      
+      <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+        <span class="fw-bold">Total de resultados: {{totalResults}}</span>
+
+        <table class="table table-light table-striped table-hover mt-3">
+          <thead>
+            <tr>
+              <th scope="col">Folio</th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Sede</th>
+              <th scope="col">Creado por</th>
+              <th scope="col">Herramientas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let budget of budgets">
+              <td>{{budget.folio}} </td>
+              <td>{{budget.createdAt | date: 	'dd-MMM-yy' }}</td>
+              <td>
+                {{ budget.addresses.length > 0 ? (budget.addresses[0].name + " | " + budget.addresses[0].address) : "Sin sede seleccionada" }}
+              </td>
+              <td>{{budget.createdBy.name}} {{budget.createdBy.lastName}}</td>
+              <td>
+                <a 
+                [routerLink]="['/work-orders/new']"  
+                [queryParams]="{ budgetId: budget.id, typeWork: 'contract-sale' }"
+                class="btn btn-sm btn-outline-primary me-2"
+                title="Convertir a Orden de trabajo"
+              >
+                Convertir a Orden de Trabajo</a>
+             
+                  <a [routerLink]="['/customers', 'budgets', 'details', budget.id]" class="btn btn-sm btn-outline-secondary me-2">Ver</a>
+                  <a [routerLink]="['/customers', 'budgets', 'edit', budget.id]" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-pen"></i> Editar</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+
+    </ng-template>
+
+  
+
+</div>
+

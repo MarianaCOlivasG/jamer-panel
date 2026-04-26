@@ -1,0 +1,31 @@
+
+
+
+.itemMenuCard {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 120px;
+    border-radius: 3px;
+    cursor: pointer;
+    background: #065951;
+    color: white;
+    border: none;
+    text-decoration: none;
+}
+
+.itemMenuCard:hover {
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
+}
+
+span.text-title {
+    font-size: 20px;
+}
+
+span.text-no {
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}

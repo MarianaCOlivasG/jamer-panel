@@ -1,0 +1,14 @@
+<div class="container pt-4 pb-5">
+  <h1>Planning vista técnicos</h1>
+  
+  <div class="d-flex my-4 justify-content-between">
+    <div class="d-flex">
+      <button class="btn btn-primary" (click)="changeDay('prev')">Anterior</button>
+      <h4 class="mx-4">{{ currentDate.toString("yyyy-MM-dd") }}</h4>
+      <button class="btn btn-primary" (click)="changeDay('next')">Siguiente</button>
+    </div>
+    <a routerLink="/work-orders/planning" class="btn btn-secondary">Vista calendario</a>
+  </div>
+  
+  <div id="dp"></div>
+</div>

@@ -1,0 +1,251 @@
+
+
+<div class="offcanvas offcanvas-start sidebarNav bg-dark shadow border-0" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+  
+  <div class="offcanvas-header justify-content-center">
+    <div class="bg-white logoContainer">
+      <img 
+        *ngIf="user.role.key == 'admin' && !fileTemp"
+        [src]="inforService.info?.logo | image: 'logo'" 
+        alt="LOGO JAMER"
+        class="logo"
+        (click)="file.click()">
+
+      <img 
+        *ngIf="user.role.key == 'admin' && fileTemp"
+        [src]="fileTemp" 
+        alt="LOGO JAMER"
+        class="logo"
+        (click)="file.click()">
+        
+        <img 
+          *ngIf="user.role.key != 'admin'"
+          src="assets/images/logo1.png" 
+          alt="LOGO JAMER">
+      </div>
+      <input style="display: none;" type="file" accept="image/*" #file (change)="upload(file.files)">
+  </div>
+
+
+    <ul style="list-style: none;"  class="m-0 p-0">
+
+      <li class="nav-item mb-1"*ngIf="viewEmployees||viewIncidences||viewBonuses||viewWorkStation" >
+        <div class="w-100 btn-group dropend">
+          <a type="button" [ngClass]="{'active': isActiveRoute('employees')}" class="nav-link dropdown-toggle w-100 px-4 py-2" data-bs-toggle="dropdown" aria-expanded="false">
+            <div>
+              <img width="20" height="20" src="https://img.icons8.com/color/48/staff.png" alt="staff"/>
+              <span class="ms-2">RH</span>
+            </div>
+          </a>
+          <ul class="dropdown-menu">
+            <li *ngIf="viewEmployees" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/employees" class="dropdown-item">Empleados</a></li>
+            <li *ngIf="viewIncidences" routerLinkActive="active"><a routerLink="/employees/incidences" class="dropdown-item">Incidencias</a></li>
+            <li *ngIf="viewBonuses" routerLinkActive="active"><a routerLink="/employees/bonuses" class="dropdown-item">Bonos</a></li>
+            <li *ngIf="viewWorkStation" routerLinkActive="active"><a routerLink="/employees/workstation" class="dropdown-item">Puestos de trabajo</a></li>
+          </ul>
+        </div>
+      </li>
+  
+      <li  *ngIf="viewCustomer || viewBudgets||viewContracts||viewsale||viewContracts||viewTemplate" class="nav-item mb-1">
+        <div class="w-100 btn-group dropend">
+          <a type="button" [ngClass]="{'active': isActiveRoute('customers')}" class="nav-link dropdown-toggle w-100 px-4 py-2" data-bs-toggle="dropdown" aria-expanded="false">
+            <div>
+              <img width="20" height="20" src="https://img.icons8.com/color/48/crowd.png" alt="crowd"/>
+              <span class="ms-2">Clientes</span>
+            </div>
+          </a>
+          <ul class="dropdown-menu">
+            <li  *ngIf="viewCustomer" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/customers" class="dropdown-item">Listado</a></li>
+            <li *ngIf="viewBudgets" routerLinkActive="active"><a routerLink="/customers/budgets" class="dropdown-item">Cotizaciones</a></li>
+            <li *ngIf="viewsale" routerLinkActive="active"><a routerLink="/customers/sales" class="dropdown-item">Ventas</a></li>
+            <li *ngIf="viewTemplate" routerLinkActive="active"><a routerLink="/customers/descriptions" class="dropdown-item">Plantillas/Descripciones</a></li>
+          </ul>
+        </div>
+      </li>
+  
+    
+  
+      <li *ngIf="viewLeads" class="nav-item mb-1">
+        <a class="nav-link px-4 py-2" [ngClass]="{'active': isActiveRoute('leads')}" style="justify-content: start !important;" routerLink="/leads">
+          <div>
+            <img width="20" height="20" src="https://img.icons8.com/color/48/new-contact.png" alt="new-contact"/>
+            <span class="ms-2">Leads</span>
+          </div>
+        </a>
+      </li>
+  
+  
+  
+      <li class="nav-item mb-1">
+        <div class="w-100 btn-group dropend">
+          <a type="button" [ngClass]="{'active': isActiveRoute('calendar')}" class="nav-link dropdown-toggle w-100 px-4 py-2" data-bs-toggle="dropdown" aria-expanded="false">
+            <div>
+              <img width="20" height="20" src="https://img.icons8.com/external-goofy-flat-kerismaker/96/external-Agenda-office-goofy-flat-kerismaker.png" alt="external-Agenda-office-goofy-flat-kerismaker"/>
+              <span class="ms-2">Agenda</span>
+            </div>
+          </a>
+          <ul class="dropdown-menu">
+            <li *ngIf="viewCalendarType" routerLinkActive="active"><a routerLink="/calendar/event-types" class="dropdown-item">Tipos de eventos</a></li>
+            <li routerLinkActive="active"><a routerLink="/calendar/my-calendar" class="dropdown-item">Mi Agenda Personal</a></li>
+            <li routerLinkActive="active"><a routerLink="/calendar/general" class="dropdown-item">Agenda General</a></li>
+          </ul>
+        </div>
+      </li>
+  
+  
+  
+  
+      <li class="nav-item mb-1" *ngIf="viewStore || viewBusiness||viewStore||viewKardex">
+        <div class="w-100 btn-group dropend">
+          <a type="button" [ngClass]="{'active': isActiveRoute('catalogue')}" class="nav-link dropdown-toggle w-100 px-4 py-2" data-bs-toggle="dropdown" aria-expanded="false">
+            <div>
+              <img width="20" height="20" src="https://img.icons8.com/color/48/book.png" alt="book"/>
+              <span class="ms-2">Catálogo</span>
+            </div>
+          </a>
+          <ul class="dropdown-menu">
+            <li *ngIf="viewStore" routerLinkActive="active"><a routerLink="/catalogue/stores" class="dropdown-item">Almacenes</a></li>
+            <li *ngIf="viewBusiness" routerLinkActive="active"><a routerLink="/catalogue/business_lines" class="dropdown-item">Líneas de negocio</a></li>
+            <li *ngIf="viewStore" routerLinkActive="active"><a routerLink="/catalogue/products" class="dropdown-item">Productos</a></li>
+            <li *ngIf="viewStore" routerLinkActive="active"><a routerLink="/catalogue/work-tools" class="dropdown-item">Herramientas/Equipos</a></li>
+            <li *ngIf="viewStore" routerLinkActive="active"><a routerLink="/catalogue/vehicles" class="dropdown-item">Vehículos</a></li>
+            <li *ngIf="viewKardex"  routerLinkActive="active"><a routerLink="/catalogue/kardex" class="dropdown-item">Kárdex</a></li>
+          </ul>
+        </div>
+      </li>
+  
+  
+  
+      <li *ngIf="viewSuppliers" class="nav-item mb-1">
+        <div class="w-100 btn-group dropend">
+          <a type="button" [ngClass]="{'active': isActiveRoute('suppliers')}" class="nav-link dropdown-toggle w-100 px-4 py-2" data-bs-toggle="dropdown" aria-expanded="false">
+            <div>
+              <img width="20" height="20" src="https://img.icons8.com/color/48/supplier.png" alt="supplier"/>
+              <span class="ms-2">Proveedores</span>
+            </div>           
+          </a>
+          <ul class="dropdown-menu">
+            <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/suppliers" class="dropdown-item">Listado</a></li>
+            <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/suppliers/payments" class="dropdown-item">Pagos</a></li>
+            </ul>
+        </div>
+      </li>
+  
+  
+  
+  
+      <li *ngIf="viewStore" class="nav-item mb-1">
+        <a class="nav-link px-4 py-2" [ngClass]="{'active': isActiveRoute('inventory')}"  style="justify-content: start !important;" routerLink="/inventory">
+          <div>
+            <img width="20" height="20" src="https://img.icons8.com/fluency/48/warehouse-1.png" alt="warehouse-1"/>
+            <span class="ms-2">Inventario</span>
+          </div>  
+        </a>
+      </li>
+  
+  
+      <li  *ngIf="viewKardex" class="nav-item mb-1">
+        <a class="nav-link px-4 py-2" [ngClass]="{'active': isActiveRoute('purchase-orders')}"  style="justify-content: start !important;" routerLink="/purchase-orders">
+          <div>
+            <img width="20" height="20" src="https://img.icons8.com/fluency/48/purchase-order.png" alt="purchase-order"/>
+            <span class="ms-2">Ordenes de compra</span>
+          </div>  
+        </a>
+      </li>
+  
+  
+      <li *ngIf="viewKardex" class="nav-item mb-1">
+        <a class="nav-link px-4 py-2" style="justify-content: start !important;" [ngClass]="{'active': isActiveRoute('purchases')}"  routerLink="/purchases">
+          <div>
+            <img width="20" height="20" src="https://img.icons8.com/color/48/shopping-cart--v1.png" alt="shopping-cart--v1"/>            
+            <span class="ms-2">Compras</span>
+          </div>  
+        </a>
+      </li>
+  
+      <!-- <li class="nav-item mb-1">
+        <a class="nav-link px-4 py-2" style="justify-content: start !important;" [ngClass]="{'active': isActiveRoute('work-orders')}"  routerLink="/work-orders/0">
+          <div>
+            <img width="20" height="20" src="https://img.icons8.com/color/48/cockroach.png" alt="cockroach"/>
+            <span class="ms-2">Ordenes de trabajo</span>
+          </div>
+        </a>
+      </li>-->
+
+
+      <li class="nav-item mb-1" *ngIf="viewWorkOrders">
+        <div class="w-100 btn-group dropend">
+          <a type="button" [ngClass]="{'active': isActiveRoute('work-orders')}" class="nav-link dropdown-toggle w-100 px-4 py-2" data-bs-toggle="dropdown" aria-expanded="false">
+            <div>
+              <img width="20" height="20" src="https://img.icons8.com/color/48/cockroach.png" alt="cockroach"/>
+              <span class="ms-2">Ordenes de trabajo</span>
+            </div>           
+          </a>
+          <ul class="dropdown-menu">
+            <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/work-orders/list/5" class="dropdown-item">Sin Asignar</a></li>
+            <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/work-orders/list/1" class="dropdown-item">Asignadas</a></li>
+            <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/work-orders/list/2" class="dropdown-item">Canceladas</a></li>
+            <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/work-orders/list/0" class="dropdown-item">Todas</a></li>
+            <li><hr></li>
+            <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/work-orders/list/3" class="dropdown-item">Pendientes por revisar</a></li>
+          </ul>
+        </div>
+      </li>
+  
+      <li class="nav-item mb-1" *ngIf="viewWorkOrders" >
+        <a class="nav-link px-4 py-2" style="justify-content: start !important;" [ngClass]="{'active': isActiveRoute('planning')}"  routerLink="/work-orders/planning">
+          <div>
+            <img width="20" height="20" src="https://img.icons8.com/external-chloe-kerismaker/64/external-Calendar-business-management-chloe-kerismaker.png" alt="external-Calendar-business-management-chloe-kerismaker"/>
+            <span class="ms-2">Planning</span>
+          </div>
+        </a>
+      </li>
+  
+      <li *ngIf="viewKardex" class="nav-item mb-1">
+        <a class="nav-link px-4 py-2" style="justify-content: start !important;" [ngClass]="{'active': isActiveRoute('sales')}"  routerLink="/sales">
+          <div>
+            <img width="20" height="20" src="https://img.icons8.com/color/48/total-sales-1.png" alt="total-sales-1"/>
+            <span class="ms-2">Ventas Puntuales</span>
+          </div>
+        </a>
+      </li>
+     
+
+    
+
+      <li class="nav-item mb-1" *ngIf="viewPayment">
+        <div class="w-100 btn-group dropend">
+          <a type="button" [ngClass]="{'active': isActiveRoute('payments')}"  class="nav-link dropdown-toggle w-100 px-4 py-2" data-bs-toggle="dropdown" aria-expanded="false">
+            <div>
+              <img width="20" height="20" src="https://img.icons8.com/fluency/48/money.png" alt="money"/>
+              <span class="ms-2">Cobranza Servicios</span>
+            </div>
+          </a>
+          <ul class="dropdown-menu">
+            <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/customers/payments/R" class="dropdown-item">Remisión</a></li>
+            <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/customers/payments/F" class="dropdown-item">Factura</a></li>
+            <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/customers/x-cobrar" class="dropdown-item">Por cobrar</a></li>
+          </ul>
+        </div>
+      </li>
+
+
+      <li class="nav-item mb-1" *ngIf="viewPayment">
+        <div class="w-100 btn-group dropend">
+          <a type="button" [ngClass]="{'active': isActiveRoute('payments-sales')}"  class="nav-link dropdown-toggle w-100 px-4 py-2" data-bs-toggle="dropdown" aria-expanded="false">
+            <div>
+              <img width="20" height="20" src="https://img.icons8.com/fluency/48/money.png" alt="money"/>
+              <span class="ms-2">Cobranza Ventas</span>
+            </div>
+          </a>
+          <ul class="dropdown-menu">
+            <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/customers/payments-sales/R" class="dropdown-item">Remisión</a></li>
+            <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/customers/payments-sales/F" class="dropdown-item">Factura</a></li>
+          </ul>
+        </div>
+      </li>
+
+    </ul>
+  
+</div>
+

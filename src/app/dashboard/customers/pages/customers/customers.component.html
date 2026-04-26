@@ -1,0 +1,147 @@
+
+
+<agendar-modal 
+  *ngIf="modalSelected == 'agendar' && modalService.show"
+  [customerSelected]="customerSelected"
+/>
+
+<emails-facturas-modal
+  *ngIf="modalSelected == 'emails' && modalService.show"
+  [entity]="'customers'"
+  [entityId]="customerSelected.id"
+  [customerEmail]="customerSelected.email"
+/>
+
+
+<facturas-modal 
+  *ngIf="modalSelected == 'facturas' && modalService.show"
+  [customerSelected]="customerSelected"
+/>
+
+<div class="container pt-4">
+
+    <h1>Clientes</h1>
+
+
+    <div *ngIf="create" class="text-end mb-4">
+        <a routerLink="/customers/new" class="btn btn-secondary"><i class="fa-solid fa-plus me-2"></i>Crear nuevo</a>
+    </div>
+
+
+    <div class="bg-light px-2 py-4 row">
+      <div class="col-md-8">
+        <input-search 
+          placeholder="Buscar cliente..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+      </div>
+      <div class="col-md-4 mt-2 mt-md-0">
+        <select 
+          type="text"
+          class="form-control"
+          [(ngModel)]="typeSelected"
+          (ngModelChange)="changeModel('typeId')"
+          >
+          <option *ngFor="let customersType of customersTypes" [ngValue]="customersType">{{customersType.value}}</option>
+        </select>
+      </div>
+    </div>
+
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateCustomers">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templateCustomers>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay clientes por mostrar.</p>
+      
+      <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+
+        <span class="fw-bold">Total de resultados: {{totalResults}}</span>
+
+        <table class="table table-light table-striped table-hover mt-3">
+          <thead>
+            <tr>
+              <th scope="col">Ver</th>
+              <th scope="col">Tipo</th>
+              <th scope="col">Nombre</th>
+              <th scope="col" 
+                *ngIf="typeSelected.key == 'particular'">Apellidos</th>
+              <th scope="col">Teléfono</th>
+              <th scope="col">Celular</th>
+              <th scope="col">Correo electrónico</th>
+              <th scope="col" *ngIf="invoice">Estado de cuenta</th>
+              <th scope="col" *ngIf="invoice">Facturas</th>
+              <th scope="col" *ngIf="edit">Herramientas</th>
+              <th scope="col" *ngIf="contact">Contacto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let customer of customers; let i = index;">
+              <td>
+                  <a class="user-avatar" style="font-size: 15px !important;" [routerLink]="['details', customer.id]">
+                     {{ customer.id.toString().padStart(5, '0')}}
+                  </a>
+              </td>
+              <td>{{customer.type.value}}</td>
+              <td>{{customer.name}} {{customer?.lastName}}</td>
+              <td *ngIf="typeSelected.key == 'particular'">{{customer.lastName}}</td>
+              <td>{{customer.phone}}</td>
+              <td>{{customer.cellPhone}}</td>
+              <td>{{customer.email}}</td>
+              <td *ngIf="invoice">
+                  <button (click)="sendEstadoDeCuenta( customer )" class="btn btn-sm btn-outline-secondary">Enviar</button>
+                  <button  (click)="downloadEstadoDeCuenta( customer )" class="btn btn-sm btn-outline-secondary">Descargar</button>
+              </td>
+              <td *ngIf="invoice"> <button   class="btn btn-sm btn-outline-secondary" (click)="showFacturas( customer )">Ver</button></td>
+              <td *ngIf="edit">
+                  <a [routerLink]="['edit', customer.id]" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-pen"></i> Editar</a>
+              </td>
+              <td style="width: 220px;">
+
+                <div *ngIf="contact" class="d-flex">
+                   
+                    <button class="btn btn-sm btn-outline-secondary me-2" (click)="agendar( customer )"><i class="fa-regular fa-calendar-days me-2"></i>Agendar</button>
+
+                    <div class="dropdown">
+                        <button 
+                            class="btn btn-sm btn-outline-secondary" 
+                        type="button" 
+                        data-bs-toggle="dropdown" 
+                        aria-expanded="false">
+                        <i class="fa-solid fa-phone me-2"></i>Contactar
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" [href]="'tel:' + customer.cellPhone" type="button">Llamar</a></li>
+                          <li><a class="dropdown-item" [href]="'https://wa.me/+52' + customer.cellPhone" target="_blank">Whatsapp</a></li>
+                          <li><a class="dropdown-item" [href]="'mailto:' + customer.email" type="button">Correo electrónico</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+
+    </ng-template>
+
+  
+
+</div>
+

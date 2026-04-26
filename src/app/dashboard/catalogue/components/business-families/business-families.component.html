@@ -1,0 +1,112 @@
+
+
+<business-family-form-modal 
+  *ngIf="modalService.show"
+  [businessFamily]="businessFamily"
+  (newFamily)="newFamily()"
+/>
+
+<div class="container pt-4">
+
+    <h2>Familias para esta línea de negocio</h2>
+
+
+    <div *ngIf="edited" class="text-end mb-4">
+        <button 
+          (click)="openModal()"
+          class="btn btn-secondary"><i class="fa-solid fa-plus me-2"></i>Crear familia</button>
+    </div>
+
+    <div class="bg-light px-2 py-4 row">
+      <div class="col-md-12">
+        <input-search 
+          placeholder="Buscar familia..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+      </div>
+    </div>
+
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateBusinessFamilies">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templateBusinessFamilies>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay familias para esta línea de negocio por mostar.</p>
+      
+
+        <div class="mt-4" *ngIf="totalResults > 0">
+
+            <div class="table-responsive mt-4">
+
+                <span span class="fw-bold">Total de resultados: {{totalResults}}</span>
+
+                <table class="table table-light table-striped table-hover mt-3">
+                  <thead>
+                    <tr>
+                      <th scope="col">Nombre</th>
+                      <th scope="col">Código</th>
+                      <th scope="col">Herramientas</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let businessFamily of businessFamilies">
+                      <td>{{ businessFamily.name }}</td>
+                      <td>{{ businessFamily.code }}</td>
+                      <td>
+                        <div class="d-flex">
+
+                            <a class="btn btn-sm btn-outline-secondary me-2"
+                              [routerLink]="['/catalogue', 'business_family', 'details', businessFamily.id]">
+                              Ver
+                            </a>
+    
+                            <button 
+                            *ngIf="edited"
+                              class="btn btn-sm btn-outline-secondary me-2"
+                              (click)="edit( businessFamily )">
+                              <i class="fa-solid fa-pen"></i> Editar
+                            </button>
+                            
+                            <div  *ngIf="edited" class="dropdown">
+                              <button 
+                                class="btn btn-sm btn-outline-secondary" 
+                                type="button" 
+                                data-bs-toggle="dropdown" 
+                                aria-expanded="false">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                              </button>
+                              <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" type="button" (click)="disableOrEnable( businessFamily )">{{!businessFamily.isActive ? 'Habilitar' : 'Deshabilitar'}}</a></li>
+                              </ul>
+                            </div>
+          
+                          </div>
+
+                        </td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+
+        </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+    </ng-template>
+
+  
+
+</div>
+

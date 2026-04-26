@@ -1,0 +1,36 @@
+
+<div class="back-modal">
+    <div class="modal" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+          <div class="modal-content shadow">
+            <div class="modal-header">
+              <h5 class="modal-title">Descripción {{ title }}</h5> 
+              <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="col-12">
+                  <label>Plantillas de descripciones / cláusulas / anexos</label>
+                  <select 
+                    class="form-control mb-3 mt-2"
+                    [(ngModel)]="htmlDescSelected"
+                    (ngModelChange)="onChange()"
+                  >
+                    <option [ngValue]="0">Selecciona una platilla</option>
+                    <option *ngFor="let htmlDesc of htmlDescriptions" [value]="htmlDesc.id">{{htmlDesc.title}}</option>
+                  </select>
+              </div>
+                <angular-editor 
+                    [placeholder]="'Escribe aquí...'" 
+                    [(ngModel)]="htmlDescription"
+                    [config]="editorConfig"
+                    [maxlength]="7291">
+                </angular-editor>
+            </div>
+            <div class="modal-footer">
+              <button type="button" (click)="saveText()" class="btn btn-primary" data-bs-dismiss="modal">Guardar</button>
+              <button type="button" (click)="closeModal()" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>

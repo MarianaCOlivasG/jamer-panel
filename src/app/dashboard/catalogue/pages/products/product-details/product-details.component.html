@@ -1,0 +1,158 @@
+
+
+
+<product-files-modal
+    *ngIf="modalService.show && modalSelected == 'files'"
+    [product]="product" 
+    (newFileEvent)="getProduct()"
+    (closeModalEvent)="closeModalEvent()"/>
+
+<product-modal 
+    *ngIf="modalService.show && modalSelected == 'image'"
+    [product]="product"
+    (newPictureEvent)="changeImage($event)" 
+    (closeModalEvent)="closeModalEvent()"/>
+
+
+<div class="container py-4 mb-5">
+
+        <ng-container *ngIf="isLoading; else productTemplate">
+            <div class="text-center">
+                <p class="text-muted mt-4">Cargando información del producto</p>
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </ng-container>
+    
+        <ng-template #productTemplate>
+    
+    
+    
+                <h1>Detalle de producto</h1>
+    
+    
+                <div class="d-flex justify-content-between my-4">
+                    <a class="btn btn-outline-success" routerLink="/catalogue/products"><i class="fa-solid fa-arrow-left me-2"></i>Atrás</a>
+                    <a *ngIf="edit" class="btn btn-secondary" [routerLink]="['/catalogue', 'products','edit', product.id]"><i class="fa-solid fa-pen me-2"></i>Editar</a>
+                </div>
+            
+                <div class="row mt-3 p-3">
+    
+                    <div class="col-md-4 d-flex justify-content-center align-items-center">
+                        <img 
+                            [ngClass]="{'user-img': authService.user.role.key == 'admin'}"
+                            [src]="product.image | image:'products'"
+                            [alt]="product.name"
+                            (click)="openModal(product, 'image')">
+                    </div>
+            
+            
+            
+                    <div class="col-md-8 mt-4 mt-md-0">
+    
+                        <h6 class="text-primary fw-bold">Datos Generales</h6>
+    
+                        <div class="row">
+                            <p class="col-md-4 d-flex flex-column"><small>Tipo</small><span>{{ product.productType.value }}</span></p>
+                            <p class="col-md-4 d-flex flex-column"><small>Nombre</small><span>{{ product.name }}</span></p>
+                            <p *ngIf="product.healthRegister" class="col-md-4 d-flex flex-column"><small>Registro sanitario</small><span>{{ product.healthRegister }}</span></p>
+                            <!-- <p *ngIf="product.supplier" class="col-md-4 d-flex flex-column"><small>Proveedor</small><span>{{ product.supplier.name }}</span></p> -->
+                            <p class="col-md-4 d-flex flex-column"><small>Línea de negocio</small><span>{{ product.businessLine.name }}</span></p>
+                            <p class="col-md-4 d-flex flex-column"><small>Familia</small><span>{{ product.businessFamily.name }}</span></p>
+                            <p class="col-md-12 d-flex flex-column"><small>Descripción</small><span>{{ product.description ? product.description : '-' }}</span></p>
+                            <p class="col-md-4 d-flex flex-column"><small>Costo</small><span>{{ product.cost ? '$ ' + (product.cost | number : '1.2-2' ) : 'No aplica' }}</span></p>
+                            <p class="col-md-4 d-flex flex-column"><small>¿Es vendible?</small><span>{{ product.onSale ? 'SI' : 'No aplica' }}</span></p>
+                            <p class="col-md-4 d-flex flex-column"><small>Precio de venta</small><span>{{ product.priceSale ? '$ ' + (product.priceSale | number : '1.2-2') : 'No aplica' }}</span></p>
+                            <p class="col-md-4 d-flex flex-column"><small>IEPS</small><span>{{ product.iepsPorcent }} % - {{ product.ieps ? '$ ' + ( product.ieps | number : '1.2-2' ) : 'No aplica' }}</span></p>
+                            <p class="col-md-4 d-flex flex-column"><small>IVA</small><span>16 % - {{ product.iva ? '$ ' + ( product.iva | number : '1.2-2' ): 'No aplica' }}</span></p>
+                            <p class="col-md-4 d-flex flex-column"><small>Total</small><span>{{ product.total ? '$ ' + ( product.total | number : '1.2-2' ) : 'No aplica' }}</span></p>
+                        </div>
+
+                        
+                    </div>
+            
+                </div>
+         
+                <hr>
+
+        <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button 
+              class="nav-link active" 
+              id="pills-files-tab" 
+              data-bs-toggle="pill" 
+              data-bs-target="#pills-files" 
+              type="button" 
+              role="tab" 
+              aria-controls="pills-files" 
+              aria-selected="true">Archivos</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button 
+              class="nav-link" 
+              id="pills-descriptions-tab" 
+              data-bs-toggle="pill" 
+              data-bs-target="#pills-descriptions" 
+              type="button" 
+              role="tab" 
+              aria-controls="pills-descriptions" 
+              aria-selected="true">Plantillas</button>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="pills-tabContent">
+          
+            <div 
+                class="tab-pane fade show active" 
+                id="pills-files" 
+                role="tabpanel" 
+                aria-labelledby="pills-files-tab" 
+                tabindex="0">
+                
+                <div class="text-end">
+                    <button class="btn btn-sm btn-secondary" (click)="openModal(product, 'files')"><i class="fa-solid fa-plus me-2"></i>Añadir archivos</button>
+                </div>
+
+                <div class="col-12 mt-4 mt-md-0"  *ngIf="product.productFiles.length == 0">
+                    <p class="text-muted text-center">No hay archivos por mostar.</p>
+                </div>
+
+                <div class="col-12 mt-4"  *ngIf="product.productFiles.length > 0">
+                    <div class="row">
+                        <div class="col-md-2 my-1" *ngFor="let file of product.productFiles">
+                            <a  class="nav-link"
+                                [href]="fileUrl + '/uploads/file/products/' + file.fileName"
+                                target="_blank"> 
+                                <img class="ico" src="assets/images/pdf-logo.svg" alt="LOGO PNG">
+                                <span>VER</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+          <div 
+            class="tab-pane fade" 
+            id="pills-descriptions" 
+            role="tabpanel" 
+            aria-labelledby="pills-descriptions-tab" 
+            tabindex="0">
+                <html-descriptions-product 
+                    [productId]="product.id"
+                />
+          </div>
+       
+        </div>
+
+                
+    
+    
+        </ng-template>
+    
+</div>
+    
+    
+    

@@ -1,0 +1,75 @@
+
+
+
+
+
+<div class="back-modal">
+    <div class="modal" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+          <div class="modal-content shadow">
+            <div class="modal-header">
+              <h5 class="modal-title">{{ isEdit ? 'Actualizar' : 'Crear'}} Incidencia</h5> 
+              <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+              <form class="row"
+                    [formGroup]="form">
+
+                <span class="text-danger"><small>Campos requeridos *</small></span>
+
+
+                <h6 class="text-primary fw-bold mt-2">Datos generales</h6>
+
+                <div class="col-md-6 my-2">
+                  <label>Titulo<span class="text-danger">*</span></label>
+                  <input 
+                    class="form-control mt-2"
+                    placeholder="Titulo de incidencia"
+                    formControlName="title" />
+                  <div *ngIf="inputInvalid('title')" class="text-danger">
+                      <span><small>{{ errorMessage('title') }}</small></span>
+                  </div> 
+                </div>
+
+                <div class="col-md-6 my-2">
+                    <label>Empleado<span class="text-danger">*</span></label>
+                    <select 
+                      class="form-control mt-2"
+                      formControlName="employeeId">
+                      <option value="">Selecciona un empleado</option>
+                      <option *ngFor="let employee of employees" [value]="employee.id">{{ employee.name }} {{ employee.lastName }}</option>
+                    </select>
+                    <div *ngIf="inputInvalid('employeeId')" class="text-danger">
+                        <span><small>{{ errorMessage('employeeId') }}</small></span>
+                    </div> 
+                </div>
+
+
+                <div class="col-md-12 my-2">
+                    <label>Descripción<span class="text-danger">*</span></label>
+                    <textarea 
+                      class="form-control mt-2"
+                      placeholder="Escribe aquí..."
+                      formControlName="description"></textarea>
+                    <div *ngIf="inputInvalid('description')" class="text-danger">
+                        <span><small>{{ errorMessage('description') }}</small></span>
+                    </div> 
+                </div>
+          
+
+              </form>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" (click)="closeModal()" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+              <button 
+                  type="button"
+                  (click)="handleSubmit()" 
+                  class="btn btn-primary"
+                  [disabled]="isLoading">{{ isLoading ? 'Guardando...' : 'Guardar'}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>

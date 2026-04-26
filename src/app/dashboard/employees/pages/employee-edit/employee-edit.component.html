@@ -1,0 +1,297 @@
+<div class="container pt-4">
+
+    <ng-container *ngIf="isLoading; else employeeTemplate">
+        <div class="text-center">
+            <p class="text-muted mt-4">Cargando información del empleado</p>
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-template #employeeTemplate>
+
+        <h1>Actualizar empleado</h1>
+
+
+        <div class="text-start my-4">
+            <a class="btn btn-outline-success" (click)="goToBack()"><i class="fa-solid fa-arrow-left me-2"></i>Atrás</a>
+        </div>
+
+
+        <div class="bg-light p-4">
+            <form autocomplete="off"
+                    [formGroup]="form"> 
+
+                <span class="text-danger"><small>Campos requeridos *</small></span>
+
+
+                <div class="row mt-3">
+                    <h6 class="text-primary fw-bold">Datos Personales</h6>
+
+                    <div class="col-md-6 mb-2">
+                        <label>Nombre(s)<span class="text-danger">*</span></label>
+                        <input 
+                            type="text"
+                            class="form-control mt-2"
+                            placeholder="Nombre(s)"
+                            formControlName="name">
+                        <div *ngIf="inputInvalid('name')" class="text-danger">
+                            <span><small>{{ errorMessage('name') }}</small></span>
+                        </div> 
+                    </div>
+
+                    <div class="col-md-6 mb-2">
+                        <label>Apellido(s)<span class="text-danger">*</span></label>
+                        <input 
+                            type="text"
+                            class="form-control mt-2"
+                            placeholder="Apellidos(s)"
+                            formControlName="lastName">
+                        <div *ngIf="inputInvalid('lastName')" class="text-danger">
+                            <span><small>{{ errorMessage('lastName') }}</small></span>
+                        </div> 
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label>Teléfono</label>
+                        <input 
+                            type="text"
+                            class="form-control mt-2"
+                            placeholder="(999) 999 9999"
+                            formControlName="phone">
+                        <div *ngIf="inputInvalid('phone')" class="text-danger">
+                            <span><small>{{ errorMessage('phone') }}</small></span>
+                        </div> 
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label>Celular<span class="text-danger">*</span></label>
+                        <input 
+                            type="text"
+                            class="form-control mt-2"
+                            placeholder="(999) 999 9999"
+                            formControlName="cellPhone">
+                        <div *ngIf="inputInvalid('cellPhone')" class="text-danger">
+                            <span><small>{{ errorMessage('cellPhone') }}</small></span>
+                        </div> 
+                    </div>
+
+                    <div class="col-md-4 mb-2">
+                        <label>Contacto de emergencia</label>
+                        <input 
+                            type="text"
+                            class="form-control mt-2"
+                            placeholder="(999) 999 9999"
+                            formControlName="emergencyPhone">
+                        <div *ngIf="inputInvalid('emergencyPhone')" class="text-danger">
+                            <span><small>{{ errorMessage('emergencyPhone') }}</small></span>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-5 mb-2">
+                        <label>Correo electrónico<span class="text-danger">*</span></label>
+                        <input 
+                            type="text"
+                            class="form-control mt-2"
+                            placeholder="ejemplo@mail.com"
+                            formControlName="email">
+                        <div *ngIf="inputInvalid('email')" class="text-danger">
+                            <span><small>{{ errorMessage('email') }}</small></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-7 mb-2">
+                        <label>Domicilio completo</label>
+                        <input 
+                            type="text"
+                            class="form-control mt-2"
+                            placeholder="Domicilio completo"
+                            formControlName="address">
+                        <div *ngIf="inputInvalid('address')" class="text-danger">
+                            <span><small>{{ errorMessage('address') }}</small></span>
+                        </div>
+                    </div> 
+
+                    <div class="col-md-4 mb-2">
+                        <label>CURP<span class="text-danger">*</span></label>
+                        <input 
+                            type="text"
+                            class="form-control mt-2"
+                            placeholder="CURP"
+                            formControlName="curp">
+                        <div *ngIf="inputInvalid('curp')" class="text-danger">
+                            <span><small>{{ errorMessage('curp') }}</small></span>
+                        </div> 
+                    </div>
+    
+                    <div class="col-md-4 mb-2">
+                        <label>RFC<span class="text-danger">*</span></label>
+                        <input 
+                            type="text"
+                            class="form-control mt-2"
+                            placeholder="RFC"
+                            formControlName="rfc">
+                        <div *ngIf="inputInvalid('rfc')" class="text-danger">
+                            <span><small>{{ errorMessage('rfc') }}</small></span>
+                        </div> 
+                    </div>
+    
+                    <div class="col-md-4 mb-2">
+                        <label>NSS<span class="text-danger">*</span></label>
+                        <input 
+                            type="text"
+                            class="form-control mt-2"
+                            placeholder="NSS"
+                            formControlName="nss">
+                        <div *ngIf="inputInvalid('nss')" class="text-danger">
+                            <span><small>{{ errorMessage('nss') }}</small></span>
+                        </div> 
+                    </div>
+
+                </div>
+
+                <div class="row mt-3">
+                    <h6 class="text-primary fw-bold">Datos Laborales</h6>
+
+                    <!-- <div class="col-md-3 mb-2">
+                        <label>No. ó folio<span class="text-danger">*</span></label>
+                        <input 
+                            type="text"
+                            class="form-control mt-2"
+                            placeholder="No. ó folio"
+                            formControlName="no">
+                        <div *ngIf="inputInvalid('no')" class="text-danger">
+                            <span><small>{{ errorMessage('no') }}</small></span>
+                        </div>
+                    </div> 
+     -->
+    
+                   <div class="col-md-4 mb-2">
+                        <label>Puesto<span class="text-danger">*</span></label>
+                        <select
+                            class="form-control mt-2"
+                            formControlName="workstation">
+                            <option value="">Selecciona una opción</option>
+                            <option *ngFor="let workStation of workStations" [value]="workStation.value">{{workStation.value}}</option>
+                        </select>
+                        <div *ngIf="inputInvalid('workstation')" class="text-danger">
+                            <span><small>{{ errorMessage('workstation') }}</small></span>
+                        </div>
+                    </div> 
+    
+                    <div class="col-md-3 mb-2">
+                        <label>Fecha de ingreso<span class="text-danger">*</span></label>
+                        <input 
+                            type="date"
+                            class="form-control mt-2"
+                            formControlName="admissionDate">
+                        <div *ngIf="inputInvalid('admissionDate')" class="text-danger">
+                            <span><small>{{ errorMessage('admissionDate') }}</small></span>
+                        </div>
+                    </div> 
+
+                    <div class="col-md-3 mb-2">
+                        <label>Fecha de baja</label>
+                        <input 
+                            type="date"
+                            class="form-control mt-2"
+                            formControlName="dismissalDate">
+                        <div *ngIf="inputInvalid('dismissalDate')" class="text-danger">
+                            <span><small>{{ errorMessage('dismissalDate') }}</small></span>
+                        </div>
+                    </div> 
+
+                    <div class="col-md-1 mb-2">
+                        <label>Color</label>
+                        <input 
+                            type="color"
+                            class="form-control mt-2"
+                            placeholder="Selecciona color"
+                            formControlName="color">
+                        <div *ngIf="inputInvalid('color')" class="text-danger">
+                            <span><small>{{ errorMessage('color') }}</small></span>
+                        </div>
+                    </div> 
+
+                </div>
+                <h6 class="text-primary fw-bold mt-4">Permisos</h6>
+                <form [formGroup]="form" (ngSubmit)="handleSubmit()">
+                  
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <label class="fw-bold">Permisos</label>
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="selectAllGlobal"
+                          (change)="toggleSelectAllGlobal($event)"
+                          [checked]="isAllSelectedGlobal()"
+                        />
+                        <label class="form-check-label" for="selectAllGlobal">
+                          Seleccionar/Deseleccionar Todo
+                        </label>
+                      </div>
+                    </div>
+                  
+                    <div formArrayName="permissions">
+                      <div
+                        *ngFor="let moduleGroup of permissionsFormArray.controls; let i = index"
+                        [formGroupName]="i"
+                        class="mb-4 border p-3 rounded"
+                      >
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                          <label class="fw-bold">{{ modules[i].label }}</label>
+                          <div class="form-check">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              [id]="'selectAll_' + modules[i].name"
+                              (change)="toggleSelectAllModule($event, i)"
+                              [checked]="isAllSelectedModule(i)"
+                            />
+                            <label class="form-check-label" [for]="'selectAll_' + modules[i].name">
+                              Seleccionar/Deseleccionar
+                            </label>
+                          </div>
+                        </div>
+                  
+                        <div class="d-flex flex-wrap">
+                          <div class="form-check me-3" *ngFor="let perm of modules[i].permissions">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              [formControlName]="perm.name"
+                              [id]="modules[i].name + '_' + perm.name"
+                            />
+                            <label class="form-check-label" [for]="modules[i].name + '_' + perm.name">
+                              {{ perm.label }}
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  
+
+                  </form>
+                  
+
+            </form>
+
+
+            <div class="text-end mt-4">
+                <button 
+                    class="btn btn-secondary" 
+                    type="button" 
+                    (click)="handleSubmit()"
+                    [disabled]="isUpdating">{{ isUpdating ? 'Guardando...' : 'Actualizar empleado'}}</button>
+            </div>
+
+
+        </div>
+
+
+    </ng-template>
+
+</div>

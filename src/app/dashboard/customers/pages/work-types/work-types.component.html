@@ -1,0 +1,58 @@
+
+<work-type-modal
+    *ngIf="modalService.show"
+    [workType]="workTypeSelected!"
+    (newWorkType)="newWorkTypeEvent()"
+/>
+
+
+
+<div class="container pt-4">
+
+    <h1>Tipos de trabajo</h1>
+
+    <div class="text-end mb-4">
+        <button (click)="handleCreate()" class="btn btn-secondary"><i class="fa-solid fa-plus me-2"></i>Crear nuevo</button>
+    </div>
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateWorkTypes">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+
+    <ng-template #templateWorkTypes>
+
+        <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay tipos de trabajo por mostar.</p>
+        
+        <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+  
+          <span class="fw-bold">Total de resultados: {{totalResults}}</span>
+  
+          <table class="table table-light table-striped table-hover mt-3">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Herramientas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let workType of workTypes; let idx = index;">
+                <td>{{ idx + 1 }}</td>
+                <td>{{workType.value}}</td>
+                <td>
+                    <button (click)="handleUpdate( workType )" class="btn btn-sm btn-outline-secondary me-2"><i class="fa-solid fa-pen"></i> Editar</button>
+                    <button (click)="handleDelete( workType.id, idx )" class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+  
+      </ng-template>
+  
+
+
+</div>

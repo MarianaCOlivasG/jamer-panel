@@ -1,0 +1,225 @@
+<div class="container pt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+    <div class="d-flex align-items-center">
+      <i class="fa-solid fa-warehouse fs-2 text-primary me-3"></i>
+      <div>
+        <h2 class="fw-bold mb-0">Mis Almacenes</h2>
+        <p class="text-muted mb-0">Gestión de almacenes y productos</p>
+      </div>
+    </div>
+    
+    <!-- Toggle para cambiar vistas -->
+    <div class="form-check form-switch">
+
+    </div>
+  </div>
+
+  <div *ngIf="!aggregatedViewEnabled">
+
+    <div class="card shadow-sm border-0 rounded-3 mb-4">
+      <div class="card-body p-0">
+        <div class="row g-0">
+          <div class="col-md-8 p-4 d-flex align-items-center">
+            <div class="d-flex align-items-center">
+              <i class="fa-solid fa-info-circle fs-4 text-primary me-3"></i>
+              <div>
+                <h5 class="mb-1">Gestión de almacenes</h5>
+                <p class="text-muted mb-0">Crea, visualiza y administra tus almacenes y productos</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 bg-light p-4 d-flex align-items-center justify-content-end">
+            <div *ngIf="create" class="btn-group shadow-sm">
+              <a routerLink="/catalogue/stores/new" class="btn btn-primary me-2 ">
+                <i class="fa-solid fa-plus me-2"></i>Crear nuevo
+              </a>
+              <a routerLink="/catalogue/storesProducts/" class="btn btn-info">
+                <i class="fa-solid fa-boxes-stacked me-2"></i>Productos Por Almacen
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card shadow-sm border-0 rounded-3 mb-4">
+      <div class="card-header bg-white border-0 pt-3">
+        <h5 class="text-muted mb-0">
+          <i class="fa-solid fa-filter me-2"></i>
+          Filtros de búsqueda
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-8">
+            <label class="form-label small text-muted">Buscar almacenes</label>
+            <div class="input-group shadow-sm rounded-3 overflow-hidden">
+          
+              <input-search 
+                placeholder="Buscar por nombre, ubicación o características..."
+                (onEnter)="search($event)"
+                (onDebounce)="search($event)"
+                class="w-100"
+              />
+            </div>
+          </div>
+          
+          <div class="col-md-4">
+            <label class="form-label small text-muted">Filtrar por empleado</label>
+            <div class="input-group shadow-sm rounded-3 overflow-hidden">
+              <span class="input-group-text bg-white border-end-0">
+                <i class="fa-solid fa-user text-primary"></i>
+              </span>
+              <select 
+                class="form-select border-start-0"
+                [(ngModel)]="employeeId"
+                (ngModelChange)="changeModel('employeeId')">
+                <option [value]="0">TODOS LOS EMPLEADOS</option>
+                <option *ngFor="let employee of employees" [value]="employee.id">
+                  {{ employee.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-center my-5" *ngIf="isLoading; else templateStoresTraditional">
+      <div class="spinner-grow text-primary" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+
+    <ng-template #templateStoresTraditional>
+      <div class="alert alert-info d-flex align-items-center rounded-3 shadow-sm" *ngIf="totalResults == 0">
+        <i class="fa-solid fa-info-circle me-3 fs-4"></i>
+        <div>No se encontraron almacenes con los filtros aplicados.</div>
+      </div>
+
+      <div class="card shadow-sm border-0 rounded-3 mt-4" *ngIf="totalResults > 0">
+        <div class="card-header bg-white pt-3 d-flex justify-content-between align-items-center">
+          <h5 class="mb-0 text-muted">
+            <i class="fa-solid fa-list me-2"></i>
+            Listado de Almacenes
+          </h5>
+          <span class="badge bg-primary rounded-pill">{{ totalResults }} almacenes</span>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col" class="border-0">Nombre</th>
+                  <th scope="col" class="border-0">Ubicación</th>
+                  <th scope="col" class="border-0">Empleado</th>
+                  <th scope="col" class="border-0">Estado</th>
+                  <th scope="col" class="border-0">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let store of stores" 
+                    [ngClass]="{ 'opacity-75': !store.isActive }"
+                    style="transition: all 0.2s ease;"
+                    onmouseover="this.style.backgroundColor='#f8f9fa'" 
+                    onmouseout="this.style.backgroundColor=''">
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="icon-box me-3 rounded-circle d-flex align-items-center justify-content-center" 
+                           [ngClass]="{'bg-primary text-white': store.id === 1, 'bg-light': store.id !== 1}" 
+                           style="width: 40px; height: 40px;">
+                        <i class="fa-solid" [ngClass]="store.id === 1 ? 'fa-building' : 'fa-warehouse'"></i>
+                      </div>
+                      <div>
+                        <div class="fw-medium">{{ store.name }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="fa-solid fa-location-dot text-secondary me-2"></i>
+                      <span>{{ store.ubication }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div *ngIf="store.employee; else noEmployee">
+                        <div class="d-flex align-items-center">
+                          <div class="avatar-circle bg-info text-white me-2">
+                            {{ store.employee.name.charAt(0).toUpperCase() }}
+                          </div>
+                          <span>{{ store.employee.name }}</span>
+                        </div>
+                      </div>
+                      <ng-template #noEmployee>
+                        <span class="badge bg-secondary">No asignado</span>
+                      </ng-template>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge" [ngClass]="store.isActive ? 'bg-success' : 'bg-danger'">
+                      <i class="fa-solid" [ngClass]="store.isActive ? 'fa-check-circle me-1' : 'fa-ban me-1'"></i>
+                      {{ store.isActive ? 'Activo' : 'Inactivo' }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="btn-group shadow-sm">
+                      <a [routerLink]="['details', store.id]" class="btn btn-sm btn-outline-primary me-2">
+                        <i class="fa-solid fa-eye me-1"></i> Ver
+                      </a>
+                      <a *ngIf="edit && store.id != 1"
+                         [routerLink]="['edit', store.id]"
+                         class="btn btn-sm btn-outline-secondary me-2">
+                        <i class="fa-solid fa-pen me-1"></i> Editar
+                      </a>
+                      
+                      <!-- Dropdown para acciones adicionales -->
+                      <div *ngIf="deleted && store.id != 1" class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                          <li>
+                            <a class="dropdown-item d-flex align-items-center" type="button" (click)="disableOrEnable(store)">
+                              <i class="fa-solid me-2" [ngClass]="!store.isActive ? 'fa-toggle-on text-success' : 'fa-toggle-off text-danger'"></i>
+                              {{ !store.isActive ? 'Habilitar' : 'Deshabilitar'}}
+                            </a>
+                          </li>
+                          <li><hr class="dropdown-divider"></li>
+                          <li>
+                            <a class="dropdown-item d-flex align-items-center" [routerLink]="['details', store.id]">
+                              <i class="fa-solid fa-boxes-stacked text-primary me-2"></i>
+                              Ver inventario
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Paginador mejorado -->
+        <div class="card-footer bg-white py-3" *ngIf="totalResults > limit">
+          <paginator 
+            [limit]="limit"
+            [totalResults]="totalResults"
+            [currentPage]="currentPage"
+            (chageCurrentPage)="changePage($event)"
+            class="d-block">
+          </paginator>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Vista agregada -->
+  <div *ngIf="aggregatedViewEnabled" class="card shadow-sm border-0 rounded-3 mt-4">
+    <div class="card-body">
+      <products-by-store-table></products-by-store-table>
+    </div>
+  </div>
+</div>

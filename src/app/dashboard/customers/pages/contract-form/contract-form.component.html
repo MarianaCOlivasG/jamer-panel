@@ -1,0 +1,292 @@
+
+
+<!-- <select-budget-modal 
+  *ngIf="modalService.show || (!budgetSelected && !isEdit)"
+/> -->
+
+<html-description-modal 
+    *ngIf="modalService.show && productSelected"
+    [title]="productSelected.name"
+    [productId]="productSelected.id"
+    [htmlCurrentDescription]="productSelected.htmlDescription"
+    (newHtmlDescription)="newHtmlDescription( $event )"
+/>
+
+<div class="container pt-4">
+
+    <ng-container *ngIf="isLoading; else contractTemplate">
+        <div class="text-center">
+            <p class="text-muted mt-4">Cargando información del contrato</p>
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-template #contractTemplate>
+
+        <h1>{{ isEdit ? 'Actualizar' : 'Crear' }} contrato</h1>
+
+
+        <div class="text-start my-4">
+            <a class="btn btn-outline-success" routerLink="/customers/contracts"><i class="fa-solid fa-arrow-left me-2"></i>Atrás</a>
+        </div>
+
+
+        <div class="bg-light p-4">
+            
+                <span class="text-danger"><small>Campos requeridos *</small></span>
+
+                <form 
+                    autocomplete="off"
+                    [formGroup]="form"  
+                    class="row mt-3" >
+                    <h6 class="text-primary fw-bold">Datos del contrato</h6>
+
+
+                    <div class="col-md-4 mb-2">
+                        <label>Método de pago<span class="text-danger">*</span></label>
+                        <select 
+                            class="form-control mt-2"
+                            formControlName="paymentMethod">
+                            <option value="">Seleccione método de pago</option>
+                            <option *ngFor="let paymentMethod of paymentMethods" [value]="paymentMethod">{{ paymentMethod }}</option>
+                        </select>
+                        <div *ngIf="inputInvalid('paymentMethod')" class="text-danger">
+                            <span><small>{{ errorMessage('paymentMethod') }}</small></span>
+                        </div> 
+                    </div>
+
+
+                    <!-- <div class="col-md-4 mb-2">
+                        <label>Tipo de trabajo<span class="text-danger">*</span></label>
+                        <input 
+                            type="text"
+                            class="form-control mt-2"
+                            placeholder="Tipo de trabajo"
+                            formControlName="typeWork">
+                        <div *ngIf="inputInvalid('typeWork')" class="text-danger">
+                            <span><small>{{ errorMessage('typeWork') }}</small></span>
+                        </div> 
+                    </div> -->
+
+
+                    <div class="col-md-4 mb-2">
+                        <label>Fecha expiración<span class="text-danger">*</span></label>
+                        <input 
+                            type="date"
+                            class="form-control mt-2"
+                            formControlName="expirationDate">
+                        <div *ngIf="inputInvalid('expirationDate')" class="text-danger">
+                            <span><small>{{ errorMessage('expirationDate') }}</small></span>
+                        </div> 
+                    </div>
+
+                    <div class="col-md-12 mb-2">
+                        <label>Sede(s)<span class="text-danger">*</span></label>
+                        <angular2-multiselect 
+                            [data]="addresses" 
+                            class="form-control p-0 "
+                            [settings]="dropdownSettingsSingle" 
+                            (onSelect)="onItemSelect($event)" 
+                            formControlName="addressesIds"
+                            (onDeSelect)="OnItemDeSelect($event)"
+                            (onSelectAll)="onSelectAll($event)"
+                            (onDeSelectAll)="onDeSelectAll($event)">
+                        </angular2-multiselect>
+                        <div class="text-danger" *ngIf="showNotAdreess">
+                            <span><small>Almenos una sede es requerida.</small></span>
+                        </div> 
+                    </div>
+
+                    
+
+                </form>
+
+
+                <div class="row">
+
+                    
+
+                    <span class="mt-4 fw-bold">Productos seleccionados</span>
+
+                    <!-- PRODUCTOS SELECCIONADOS -->
+                    <div *ngIf="productsSelected.length > 0">
+                    
+                        <div class="table-responsive">
+            
+                            <table class="table table-light table-striped table-hover">
+                            <thead>
+                              <tr>
+                                  <th scope="col">Seleccionar</th>
+                                  <th scope="col">Cantidad</th>
+                                  <th scope="col">Artículos / Tratamientos</th>
+                                  <!-- <th scope="col">Sede(s)</th> -->
+                                  <th scope="col">Precio unitario</th>
+                                  <th scope="col">Importe</th>
+                                  <th scope="col">Impuesto</th>
+                                  <th scope="col">Total</th>
+                                  <th scope="col">¿Mostar descripción?</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let product of productsSelected; let idx = index;">
+                                  <td style="min-width: 85px !important;">
+                                    <div class="form-check">
+                                      <input 
+                                        class="form-check-input" 
+                                        type="checkbox" 
+                                        id="flexCheckDefault"
+                                        [(ngModel)]="product['select']"
+                                        (ngModelChange)="onSelectProducts()">
+                                    </div>
+                                  </td>
+                                  <td style="min-width: 85px !important;">
+                                    <input 
+                                        type="number"
+                                        class="form-control mini"
+                                        placeholder="0"
+                                        min="0"
+                                        [(ngModel)]="product['amount']"
+                                    >
+                                  </td>
+                                  <td style="min-width: 300px !important;">{{ product.name }}</td>
+                                  <!-- <td style="min-width: 200px !important;">
+                                    <angular2-multiselect 
+                                        [data]="addresses" 
+                                        class="form-control p-0 "
+                                        [settings]="dropdownSettingsSingle" 
+                                        (onSelect)="onItemSelect($event)" 
+                                        [(ngModel)]="product.addresses"
+                                        (onDeSelect)="OnItemDeSelect($event)"
+                                        (onSelectAll)="onSelectAll($event)"
+                                        (onDeSelectAll)="onDeSelectAll($event)">
+                                    </angular2-multiselect>
+
+                                  </td> -->
+                                  <td style="min-width: 85px !important;">
+                                      <input 
+                                          type="number"
+                                          class="form-control mini"
+                                          placeholder="0"
+                                          min="0"
+                                          [(ngModel)]="product['priceSale']"
+                                      >
+                                  </td>
+                                  <td style="min-width: 100px !important;">$ {{ (+product.priceSale) * (+product.amount!)  | number : '1.2-2' }}</td>
+                                  <td style="min-width: 100px !important;">$ {{ (+product.priceSale) * (+product.amount!) * 0.16 | number : '1.2-2' }}</td>
+                                  <td style="min-width: 100px !important;">$ {{ ((+product.priceSale) * (+product.amount!)) + ((+product.priceSale) * (+product.amount!) * 0.16 )| number : '1.2-2' }}</td>
+                                  <td style="min-width: 100px !important;">
+                                      <div class="d-flex justify-content-center align-items-center">
+                                          <div class="form-check form-switch">
+                                              <input 
+                                                  class="form-check-input" 
+                                                  type="checkbox" 
+                                                  role="switch" 
+                                                  id="flexSwitchCheckDefault"
+                                                  [(ngModel)]="product.showDescription">
+                                              <label class="form-check-label" for="flexSwitchCheckDefault">{{product.showDescription ? 'SI' : 'NO'}}</label>
+                                          </div>
+                                          <button 
+                                            (click)="openHtmlDescriptionModal( product )"
+                                              class="btn btn-sm btn-outline-primary ms-2"
+                                              >
+                                              <i class="fa-solid fa-pencil"></i>
+                                          </button>
+                                      </div>
+                                  </td>
+                                </tr>
+                            </tbody>
+                            </table>
+                        </div>
+            
+                    </div> 
+
+                    <span class="text-danger" *ngIf="showNotProducts && formSubmitted"><small>Selecciona almenos un producto.</small></span>
+                    
+                </div>
+
+
+                <div class="col-12 mt-4">
+                    <label class="mb-2">Descripciones / Cláusulas / Anexos de la cotización</label>
+                    <select 
+                      class="form-control mb-3 mt-2"
+                      [(ngModel)]="htmlDescSelected"
+                      (ngModelChange)="onChangeHtmlDesc()"
+                    >
+                      <option [ngValue]="undefined">Selecciona una platilla</option>
+                      <option *ngFor="let htmlDesc of htmlDescriptions" [value]="htmlDesc.htmlDescription">{{htmlDesc.title}}</option>
+                    </select>
+                </div>
+
+                <form autocomplete="off"
+                    [formGroup]="form"  
+                    class="row mt-4">
+
+                    <div class="col-md-12 my-2">
+                        <angular-editor 
+                            [placeholder]="'Escribe aquí...'" 
+                            formControlName="htmlDescription"
+                            [config]="editorConfig"
+                            [maxlength]="7291">
+                        </angular-editor>
+                        <div *ngIf="inputInvalid('htmlDescription')" class="text-danger">
+                            <span><small>{{ errorMessage('htmlDescription') }}</small></span>
+                        </div> 
+                    </div>
+
+                    <!-- <div class="col-md-12 my-2">
+                        <label class="mb-2">Garantías</label>
+                        <angular-editor 
+                            [placeholder]="'Escribe aquí...'" 
+                            formControlName="htmlGuarantee"
+                            [config]="editorConfig"
+                            [maxlength]="7291">
+                        </angular-editor>
+                        <div *ngIf="inputInvalid('htmlGuarantee')" class="text-danger">
+                            <span><small>{{ errorMessage('htmlGuarantee') }}</small></span>
+                        </div> 
+                    </div> -->
+                    
+                </form>
+
+
+                <h6 class="fw-bold mt-3">Totales</h6>
+                <div class="table-responsive" >
+                    <table class="table table-light">
+                      <thead>
+                        <tr>
+                            <th scope="col">Impuestos</th>
+                            <th scope="col">Total sin IVA</th>
+                            <th scope="col">Impuesto(IVA)</th>
+                            <th scope="col">TOTAL</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                            <td>IVA Regular</td>
+                            <td>$ {{ getBaseGravable() | number : '1.2-2' }} </td>
+                            <td>$ {{ getImpuesto() | number : '1.2-2' }} </td>
+                            <td class="fw-bold">$ {{ getBaseGravable() + getImpuesto() | number : '1.2-2' }} </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                </div>
+                
+
+
+            <div class="text-end mt-4">
+                <button 
+                    class="btn btn-secondary" 
+                    type="button" 
+                    (click)="handleSubmit()"
+                    [disabled]="isSaving">{{ isSaving ? 'Guardando...' : 'Guardar'}}</button>
+            </div>
+
+
+        </div>
+
+
+    </ng-template>
+
+</div>

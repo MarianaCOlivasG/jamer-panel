@@ -1,0 +1,75 @@
+
+<div class="container pt-4">
+
+    <h5>Contratos</h5>
+
+
+    <div *ngIf="create" class="text-end mb-4">
+        <a routerLink="/customers/contracts/new" class="btn btn-secondary"><i class="fa-solid fa-plus me-2"></i>Crear nuevo</a>
+    </div>
+
+
+    <div class="bg-light px-2 py-4 row">
+      <div class="col-md-8">
+        <input-search 
+          placeholder="Buscar contratos..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+      </div>
+    </div>
+
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateContracts">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templateContracts>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay contratos por mostar.</p>
+      
+      <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+
+        <span class="fw-bold">Total de resultados: {{totalResults}}</span>
+
+        <table class="table table-light table-striped table-hover mt-3">
+          <thead>
+            <tr>
+              <th scope="col">Folio</th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Creado por</th>
+              <th scope="col">Herramientas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let contract of contracts">
+              <td>{{contract.folio}}</td>
+              <td>{{contract.createdAt | date: 	'dd-MMM-yy' }}</td>
+              <td>{{contract.createdBy.name}} {{contract.createdBy.lastName}}</td>
+              <td>
+                  <a [routerLink]="['/customers', 'contracts', 'details', contract.id]" class="btn btn-sm btn-outline-secondary me-2">Ver</a>
+                  <!-- <a [routerLink]="['/customers', 'contracts', 'edit', contract.id]" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-pen"></i> Editar</a> -->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+
+    </ng-template>
+
+  
+
+</div>
+

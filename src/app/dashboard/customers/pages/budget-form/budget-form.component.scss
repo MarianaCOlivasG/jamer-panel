@@ -1,0 +1,12 @@
+input.form-control.mini {
+    width: 100px;
+}
+
+input.form-control.mini2 {
+    width: 80px;
+}
+.customer-dropdown {
+    max-height: 500px;
+    overflow-y: auto;
+    z-index: 1000; /* Ensure the dropdown appears above other elements */
+  }

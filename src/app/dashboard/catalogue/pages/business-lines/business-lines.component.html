@@ -1,0 +1,65 @@
+
+<div class="container pt-4">
+
+    <h1>Mis líneas de negocio</h1>
+
+
+    <div *ngIf="create" class="text-end mb-4">
+        <a routerLink="/catalogue/business_lines/new" class="btn btn-primary"><i class="fa-solid fa-plus me-2"></i>Crear nuevo</a>
+    </div>
+
+
+    <div class="bg-light px-2 py-4 row">
+      <div class="col-md-12">
+        <input-search 
+          placeholder="Buscar línea de negocio..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+      </div>
+    </div>
+
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateBusinessLines">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templateBusinessLines>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay líneas de negocio por mostar.</p>
+    
+
+        <div class="mt-4" *ngIf="totalResults > 0">
+
+          <span class="fw-bold">Total de resultados: {{totalResults}}</span>
+
+
+            <div class="wrapper mt-3">
+                <a *ngFor="let businessLine of businessLines"
+                  [routerLink]="['/catalogue/business_lines/details/', businessLine.id]"
+                    class="businessLineCircule d-flex flex-column justify-content-center align-items-center">
+                    <i [class]="businessLine.icon + ' fa-xl'"></i>
+                    <img [src]="'/assets/ico/' + businessLine.icon"  alt="icon"  style="width: 35px; height: 35px;">
+                    <span class="text-center mt-3">{{ businessLine.name }}</span>
+                </a>
+            </div>
+
+        </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+    </ng-template>
+
+  
+
+</div>
+

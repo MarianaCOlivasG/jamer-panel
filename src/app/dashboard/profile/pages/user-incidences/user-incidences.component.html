@@ -1,0 +1,81 @@
+
+
+<incidence-confirm 
+  *ngIf="modalService.show && modalService.name == 'incidences'"
+  [incidenceSelected]="incidenceSelected"
+  (newIncidenceConfirm)="newIncidenceConfirm()"
+  (markAsRead)="markAsRead( $event )"
+/>
+
+<div class=" pt-4">
+
+    <h5>Mis incidencias</h5>
+
+
+    <div class="bg-light p-4">
+        <input-search 
+          placeholder="Buscar incidencia..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+    </div>
+
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateIncidences">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templateIncidences>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay incidencias por mostar.</p>
+      
+      <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+        <table class="table table-light table-striped table-hover mt-3">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Titulo</th>
+              <th scope="col">Descripción</th>
+              <th scope="col">Status</th>
+              <th scope="col">Herramientas</th>
+            </tr> 
+          </thead>
+          <tbody>
+            <tr *ngFor="let incidence of incidences"  [ngClass]="{ 'text-muted': !incidence.isActive }">
+              <td><i *ngIf="!incidence.isRead" style="font-size: 8px; color: #3298ec;" class="fa-solid fa-circle"></i></td>
+              <td>{{incidence.createdAt | date:'dd-MMM-yy' }}</td>
+              <td>{{ incidence.title }}</td>
+              <td>{{ incidence.description }}</td>
+              <td>{{ incidence.isValidated ? 'Confirmado' : 'Por confirmar'}}</td>
+              <td>
+                  <button 
+                    class="btn btn-sm btn-outline-secondary me-2"
+                    (click)="openModal( incidence )">
+                    {{incidence.isValidated ? 'Ver' : 'Confirmar'}}
+                  </button>
+                  
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+
+    </ng-template>
+
+  
+
+</div>
+

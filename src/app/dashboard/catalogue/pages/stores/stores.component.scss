@@ -1,0 +1,106 @@
+/* Estilos generales */
+:host {
+    display: block;
+    min-height: 100%;
+  }
+  
+  /* Animaciones y transiciones */
+  .btn, .card, .badge, .icon-box {
+    transition: all 0.3s ease;
+  }
+  
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+  }
+  
+  /* Estilos para tarjetas */
+  .card {
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+  
+  .card:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08) !important;
+  }
+  
+  .card-header {
+    background-color: transparent;
+  }
+  
+  /* Estilos para la tabla */
+  .table {
+    margin-bottom: 0;
+  }
+  
+  .table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+  }
+  
+  .table tr {
+    border-left: 3px solid transparent;
+  }
+  
+  .table tr:hover {
+    border-left: 3px solid var(--bs-primary);
+  }
+  
+  /* Avatar para empleados */
+  .avatar-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+  
+  /* Mejoras para botones e interacciones */
+  .icon-box {
+    transition: transform 0.3s ease;
+  }
+  
+  .icon-box:hover {
+    transform: scale(1.1);
+  }
+  
+  .dropdown-item {
+    padding: 0.5rem 1rem;
+    transition: background-color 0.2s ease;
+  }
+  
+  .dropdown-item:hover {
+    background-color: rgba(13, 110, 253, 0.1);
+  }
+  
+  /* Toggle switch personalizado */
+  .form-check-input {
+    width: 3em;
+    height: 1.5em;
+  }
+  
+  .form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+  }
+  
+  /* Spinner de carga */
+  .spinner-grow {
+    animation-duration: 1.5s;
+  }
+  
+  /* Personalización de badges */
+  .badge {
+    font-weight: 500;
+    padding: 0.5em 0.8em;
+  }
+  
+  /* Estado inactivo para filas */
+  .opacity-75 {
+    background-color: rgba(0,0,0,0.02);
+  }

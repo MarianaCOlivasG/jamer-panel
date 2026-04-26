@@ -1,0 +1,64 @@
+<div class="mb-3">
+    <input 
+      type="text" 
+      class="form-control" 
+      [placeholder]="placeholder"
+      [(ngModel)]="querySearch"
+      (input)="onInputChange(querySearch)" />
+  </div>
+  
+  <div class="text-center" *ngIf="isLoadingProducts">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  
+  <div class="table-responsive" *ngIf="products.length > 0">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>Imagen</th>
+          <th>Nombre</th>
+          <th>Línea de negocio</th>
+          <th>Familia</th>
+          <th>Cantidad</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products; let idx = index" [ngClass]="{'text-muted': !product.isActive}">
+          <td>
+            <img 
+              *ngIf="product.image" 
+              class="product-image" 
+              [src]="product.image | image:'products'" 
+              [alt]="product.name">
+            <img 
+              *ngIf="!product.image" 
+              class="product-image"
+              src="assets/images/no-image.jpeg"
+              [alt]="product.name">
+          </td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.businessLine.name }}</td>
+          <td>{{ product.businessFamily.name }}</td>
+          <td>
+            <input 
+              type="number" 
+              class="form-control mini" 
+              placeholder="0"
+              min="0"
+              [(ngModel)]="product.amount">
+          </td>
+          <td>
+            <button 
+              class="btn btn-sm btn-outline-success"
+              [disabled]="isLoadingProducts || (!product.amount || product.amount <= 0)"
+              (click)="addProductToList(idx)">
+              Agregar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>

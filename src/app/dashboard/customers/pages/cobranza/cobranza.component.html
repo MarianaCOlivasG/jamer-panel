@@ -1,0 +1,184 @@
+<div class="container pt-4">
+  <div class="d-flex justify-content-between mb-3">
+    <h1>Cobranza servicios por {{ documentType === 'F' ? 'Factura' : 'Remisión' }}</h1>
+    <a [routerLink]="'/customers/payments-sales/' + documentType" class="btn btn-primary">
+      Ir a cobranza ventas
+    </a>
+  </div>
+  <div class="mb-4">
+    <div class="row">
+      <div class="col-md-9">
+        <label>Selecciona un cliente</label>
+        <angular2-multiselect 
+          [data]="customers" 
+          class="form-control p-0 mt-2"
+          [(ngModel)]="customerSelected"
+          [settings]="dropdownSettingsSingle" 
+          (onSelect)="onItemSelect($event)" 
+          (onDeSelect)="OnItemDeSelect($event)"
+          (onSelectAll)="onSelectAll($event)"
+          (onDeSelectAll)="onDeSelectAll($event)">
+        </angular2-multiselect>
+      </div>
+      <div class="col-md-3">
+        <label>Selecciona un año</label>
+        <select 
+          class="form-control mt-2"
+          [(ngModel)]="yearSelected"
+          (ngModelChange)="onYearChange()">
+          <option value="0">TODOS</option>
+          <option *ngFor="let y of years.reverse()" [value]="y">{{ y }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+      
+  <div class="mt-4 text-center" *ngIf="isLoading; else templatePayments">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <ng-template #templatePayments>
+    <p class="text-center text-muted mt-4" *ngIf="balance.length === 0">
+      No hay pagos por mostrar.
+    </p>
+    
+    <div class="mb-3">
+      <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#paymentsCollapse" aria-expanded="true" aria-controls="paymentsCollapse">
+        Mostrar/Ocultar Pagos
+      </button>
+    </div>
+    
+    <div class="collapse show" id="paymentsCollapse">
+      <div class="table-responsive mt-5">
+        <div class="d-flex justify-content-between mb-3">
+          <span class="fw-bold">Total de resultados: {{ balance.length }}</span>
+          <button (click)="exportToExcel()" class="btn btn-outline-success btn-sm">
+            <i class="fa-regular fa-file-excel me-2"></i>Exportar Excel
+          </button>
+        </div>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Fecha de servicio</th>
+              <th>Folio servicio</th>
+              <th>Cliente</th>
+              <th>{{ documentType === 'F' ? 'No. Factura' : 'No. Remisión' }}</th>
+              <th>Importe</th>
+              <th>Acuenta</th>
+              <th>Saldo</th>
+              <th>Forma de pago</th>
+              <th>Fecha de pago</th>
+              <th>Cuenta Destino</th>
+              <th>Complemento</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of balance; let i = index" 
+                (click)="addPayment(item)" 
+                [ngClass]="{'cursor-pointer': true, 'bg-blue': item.concept === 'workOrder', 'bg-purple': item.isValidated}">
+              <td>{{ item.createdAt | date:'dd-MMM-yy' }}</td>
+              <td>{{ item.concept === 'workOrder' ? item.workOrder.folio : '' }}</td>
+              <td>{{ item.concept === 'workOrder' ? item.workOrder.customer.name + item.workOrder.customer?.lastName : '' }}</td>
+              <td>{{ item.concept === 'workOrder' ? item.workOrder?.noFactura : item.workOrder?.noFactura }}</td>
+              <td>{{ item.concept === 'workOrder' ? '$ ' + (item.amount | number:'1.2-2') : '' }}</td>
+              <td>{{ item.concept === 'payment' ? '$ ' + (item.amount | number:'1.2-2') : '' }}</td>
+              <td>$ {{ item.balance | number:'1.2-2' }}</td>
+              <td><span *ngIf="item.concept === 'payment'">{{ item.paymethod }}</span></td>
+              <td>{{ item.concept === 'payment' ? (item.paymentAt | date:'dd-MMM-yy') : '' }}</td>
+              <td>{{ item.concept === 'payment' ? item.destinationAccount : '' }}</td>
+              <td>{{ item.concept === 'payment' ? item.complement : '' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="mt-5">
+      <h2>Cortes Mensuales</h2>
+      <div class="row mb-3">
+        <div class="col-md-3">
+          <label>Mes de inicio</label>
+          <select class="form-control" [(ngModel)]="selectedStartMonth" (ngModelChange)="onRangeChange()">
+            <option *ngFor="let m of months" [value]="m.sigla">{{ m.label }}</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label>Mes de fin</label>
+          <select class="form-control" [(ngModel)]="selectedEndMonth" (ngModelChange)="onRangeChange()">
+            <option *ngFor="let m of months" [value]="m.sigla">{{ m.label }}</option>
+          </select>
+        </div>
+
+      </div>
+
+
+
+      <div class="collapse show" id="monthlyCutsCollapse">
+        <div class="card mb-3">
+          <div class="card-header">
+            Detalle de Cada Mes
+          </div>
+          <div class="card-body p-0">
+            <table class="table table-striped mb-0">
+              <thead>
+                <tr>
+                  <th>Mes</th>
+                  <th>Importe</th>
+                  <th>Acuenta</th>
+                  <th>Saldo</th>
+                  <th>Saldo Acumulado</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let corte of monthlyCuts" 
+                    [ngClass]="{'table-info': toNumber(corte.monthSigla) >= toNumber(selectedStartMonth) && toNumber(corte.monthSigla) <= toNumber(selectedEndMonth)}">
+                  <td>{{ corte.monthLabel }}</td>
+                  <td>{{ corte.totalWorkOrders | currency:'MXN':true:'1.2-2' }}</td>
+                  <td>{{ corte.totalPayments | currency:'MXN':true:'1.2-2' }}</td>
+                  <td>{{ (corte.totalWorkOrders - corte.totalPayments) | currency:'MXN':true:'1.2-2' }}</td>
+                  <td>
+                    {{ (corte.cumulativeRange !== null) ? (corte.cumulativeRange | currency:'MXN':true:'1.2-2') : '-' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          Resumen del rango seleccionado
+        </div>
+        <div class="card-body">
+          <p class="card-text">
+            Importe: <strong>{{ rangeTotals.totalWorkOrders | currency:'MXN':true:'1.2-2' }}</strong>
+          </p>
+          <p class="card-text">
+            Acuenta: <strong>{{ rangeTotals.totalPayments | currency:'MXN':true:'1.2-2' }}</strong>
+          </p>
+          <p class="card-text">
+            Saldo (Importe - Acuenta): <strong>{{ rangeTotals.netTotal | currency:'MXN':true:'1.2-2' }}</strong>
+          </p>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>
+
+<cobranza-modal
+  *ngIf="modalService.show && edit && !editingPayment"
+  [workOrderFolio]="workOrderFolioSelect"
+  [bWorkOrder]="bWorkOrderSelected!"
+  (newPayment)="newPaymentEvent()"
+  [saldo]="balanceSelected">
+</cobranza-modal>
+
+<edit-cobranza-modal
+  *ngIf="modalService.show && editingPayment"
+  [payment]="selectedPayment"
+  (paymentUpdated)="editPaymentEvent()">
+</edit-cobranza-modal>

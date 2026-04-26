@@ -1,0 +1,62 @@
+
+
+
+
+
+<div class="back-modal">
+    <div class="modal" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+          <div class="modal-content shadow">
+            <div class="modal-header">
+              <h5 class="modal-title">Enviar a correo electronico(s)</h5> 
+              <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+                <tag-input 
+                    [(ngModel)]='emails' 
+                    placeholder="+ Correo electrónico"
+                    [separatorKeys]="[' ']"
+                    secondaryPlaceholder="Agregar correo electrónico">
+                </tag-input>
+
+                <hr>
+
+                <h6>Adjuntar Facturas</h6>
+
+                <div *ngIf="facturas.length == 0; else elseBlock" class="text-center text-muted">
+                  <span>No hay facturas</span>
+                </div>
+  
+                <ng-template #elseBlock>
+                  <div class="row">
+  
+                    <div class="col-md-4" *ngFor="let factura of facturas">
+                      <div class="d-flex justify-content-center align-items-center mb-4">
+                        <a [href]="fileUrl + '/uploads/docs/facturas/' + factura.file">
+                          <img height="35" src="assets/images/pdf-logo.svg" alt="LOGO PDF">
+                          <span>{{ factura.file }}</span>
+                        </a>
+                        <button 
+                          (click)="onSelect( factura.id, factura.select )"
+                          [ngClass]="{ 'btn-primary': factura.select, 'btn-outline-primary': !factura.select }"
+                          class="ms-3 btn btn-sm "><i class="fa-solid fa-check"></i></button>
+                      </div>
+                    </div>
+  
+                  </div>
+                </ng-template>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" (click)="closeModal()" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+              <button 
+                  type="button"
+                  (click)="sendByCustomerEmail()" 
+                  class="btn btn-primary"
+                  [disabled]="isSending">{{ isSending ? 'Enviando...' : 'Enviar'}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>

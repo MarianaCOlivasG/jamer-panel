@@ -1,0 +1,60 @@
+
+
+<div class="back-modal">
+  <div class="modal" style="display: block;" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content shadow">
+          <div class="modal-header">
+            <h5 class="modal-title">Validar registro</h5> 
+           
+            <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+
+
+        <div class="row p-3" *ngIf="cashRegister">
+
+          <div class="col-md-12 mt-4 mt-md-0">
+
+              <h6 class="text-primary fw-bold">Datos Generales</h6>
+              <div class="row">
+                  <p class="col-md-3 d-flex flex-column"><small>Creado por</small><span>{{ cashRegister.employee.name }}</span></p>
+                  <p class="col-md-6 d-flex flex-column"><small>Fecha y hora de registro</small><span>{{ cashRegister.createdAt | date: 'dd-MMM-yy' }}</span></p>
+                  <p class="col-md-3 d-flex flex-column"><small>{{ cashRegister.movement == 'E' ? 'Abono/Entrada' : 'Cargo/Salida'}}</small><span>$ {{ cashRegister.amount | number : '1.2-2' }}</span></p>
+                  <p class="col-md-12 d-flex flex-column"><small>Concepto</small><span>{{ cashRegister.concept }}</span></p>
+              </div>
+
+          </div>
+
+          <div class="col-md-12 mt-4 mt-md-0" *ngIf="cashRegister.bWorkOrdersPay">
+
+            <h6 class="text-primary fw-bold">Datos Pago Servicio (Caja)</h6>
+            <div class="row">
+                <p class="col-md-3 d-flex flex-column"><small>Código pago (cobranza)</small><span>{{ cashRegister.bWorkOrdersPay.code }}</span></p>
+                <p class="col-md-3 d-flex flex-column"><small>Cantidad (cobranza)</small><span>$ {{ cashRegister.bWorkOrdersPay.amount | number : '1.2-2' }}</span></p>
+                <p class="col-md-3 d-flex flex-column"><small>Folio servicio</small><span>{{ cashRegister.workOrder.folio }}</span></p>
+                <p class="col-md-3 d-flex flex-column"><small>Cliente</small><span>{{ cashRegister.workOrder.customer.name  }} {{cashRegister.workOrder.customer.lastName }}</span></p>
+
+            </div>
+
+          </div>
+
+  
+        </div>
+
+       
+          
+          </div>
+          <div class="modal-footer">
+            <button type="button" (click)="closeModal()" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button 
+                  type="button"
+                  (click)="submit()" 
+                  class="btn btn-primary"
+                  [disabled]="isSaving">{{ isSaving ? 'Validando...' : 'Validar'}}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>

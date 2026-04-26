@@ -1,0 +1,110 @@
+/* Estilos generales */
+:host {
+    display: block;
+    min-height: 100%;
+  }
+  
+  /* Animaciones y efectos */
+  .card, .btn, .info-item, .icon-box, .avatar-circle {
+    transition: all 0.3s ease;
+  }
+  
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+  }
+  
+  .info-item:hover {
+    background-color: #f1f5ff !important;
+    transform: translateY(-2px);
+  }
+  
+  /* Tarjetas y contenedores */
+  .card {
+    overflow: hidden;
+    border-radius: 0.5rem;
+  }
+  
+  .card:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08) !important;
+  }
+  
+  /* Avatar y círculos */
+  .avatar-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    font-weight: bold;
+  }
+  
+  .icon-box {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  
+  /* Personalizaciones de las pestañas */
+  .nav-tabs-modern {
+    border-bottom: none;
+    border-top: none;
+    background-color: #f8f9fa;
+  }
+  
+  .nav-tabs-modern .nav-link {
+    border: none;
+    border-radius: 0;
+    color: #6c757d;
+    font-weight: 500;
+    position: relative;
+    margin-right: 5px;
+  }
+  
+  .nav-tabs-modern .nav-link.active {
+    color: #0d6efd;
+    background-color: white;
+    border-top: 2px solid #0d6efd;
+  }
+  
+  .nav-tabs-modern .nav-link:hover:not(.active) {
+    background-color: rgba(13, 110, 253, 0.05);
+    color: #495057;
+  }
+  
+  /* Breadcrumb personalizado */
+  .breadcrumb {
+    margin-bottom: 1rem;
+  }
+  
+  .breadcrumb-item a {
+    color: #0d6efd;
+  }
+  
+  /* Spinner de carga mejorado */
+  .loading-container {
+    height: 60vh;
+  }
+  
+  .spinner-grow {
+    animation-duration: 1.5s;
+  }
+  
+  /* Estilos para los elementos de información */
+  .info-item {
+    border-left: 3px solid #0d6efd;
+  }
+  
+  /* Mejoras para dispositivos móviles */
+  @media (max-width: 767.98px) {
+    .avatar-circle {
+      width: 60px;
+      height: 60px;
+      font-size: 1.25rem;
+    }
+    
+    .nav-tabs-modern .nav-link {
+      font-size: 0.9rem;
+      padding: 0.75rem 1rem;
+    }
+  }

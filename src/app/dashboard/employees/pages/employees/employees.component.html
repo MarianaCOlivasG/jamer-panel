@@ -1,0 +1,155 @@
+
+<!-- <zxing-scanner 
+    [torch]="torchEnabled" 
+    [device]="deviceCurrent" 
+    (deviceChange)="onDeviceChange($event)" 
+    (scanSuccess)="onCodeResult($event)"
+    [formats]="formatsEnabled" 
+    [tryHarder]="tryHarder" 
+    (permissionResponse)="onHasPermission($event)"
+    (camerasFound)="onCamerasFound($event)" 
+    (torchCompatible)="onTorchCompatible($event)">
+</zxing-scanner> -->
+
+
+<reset-password-modal 
+  *ngIf="modalService.show && modalSelected == 'password'"
+  [employee]="employeeSelected"
+/>
+
+<credentials-modal
+  *ngIf="modalService.show && modalSelected == 'credentials'"
+  [employee]="employeeSelected"
+  (newCredentials)="newCredentials()"
+/>
+
+
+<div class="container pt-4">
+
+    <h1>Empleados</h1>
+
+
+    <div class="text-end my-4" *ngIf="createUser">
+        <a routerLink="/employees/new" class="btn btn-primary"><i class="fa-solid fa-plus me-2"></i> Crear nuevo</a>
+    </div>
+
+
+    <div class="bg-light p-4">
+        <input-search 
+          placeholder="Buscar empleado..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+    </div>
+
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateEmployees">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templateEmployees>
+
+      
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay empleados por mostar.</p>
+      
+      <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+
+        <span class="fw-bold">Total de resultados: {{totalResults}}</span>
+
+        <table class="table table-light table-striped table-hover mt-3">
+          <thead>
+            <tr>
+              <th scope="col">Ver</th>
+              <th scope="col">No.</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Apellidos</th>
+              <th scope="col">Puesto</th>
+              <th scope="col">Usuario</th>
+              <th scope="col" *ngIf="calendaryUser" >Agenda</th>
+              <th scope="col" *ngIf="editUser || toolsUser">Herramientas</th>
+            </tr> 
+          </thead>
+          <tbody>
+            <tr *ngFor="let employee of employees"  [ngClass]="{ 'text-muted': employee?.user ? !employee.user.isActive : false }">
+              <td>
+                  <a *ngIf="!employee.picture" class="user-avatar" [routerLink]="['details', employee.id]">
+                    {{employee.name[0].toUpperCase()}}{{employee.lastName[0].toUpperCase()}}
+                  </a>
+
+                  <a *ngIf="employee.picture" [routerLink]="['details', employee.id]">
+                    <img class="user-image"
+                        [src]="employee.picture | image:'employees'"
+                        [alt]="employee.name">
+                  </a>
+              </td>
+              <td>{{employee.no}}</td>
+              <td>{{employee.name}}</td>
+              <td>{{employee.lastName}}</td>
+              <td>{{employee.workstation}}</td>
+              <td>{{employee.user ? employee.user.userName : '-'}}</td>
+              <td>
+                <a 
+                *ngIf="calendaryUser"
+                class="btn btn-outline-secondary btn-sm"
+                  [routerLink]="['/calendar', 'employee', employee.id]"><i class="fa-regular fa-calendar-days me-2"></i>Ir</a>
+              </td>
+              <td *ngIf="editUser || toolsUser">
+                <div class="d-flex justify-content-center">
+
+                  <a 
+                  *ngIf="editUser"
+                    class="btn btn-sm btn-outline-secondary me-2"
+                    [routerLink]="['edit', employee.id]">
+                    <i class="fa-solid fa-pen"></i> Editar
+                  </a>
+                  
+                  <div 
+                  *ngIf="toolsUser"
+                  class="dropdown"                    >
+                    <button 
+                      class="btn btn-sm btn-outline-secondary" 
+                      type="button" 
+                      data-bs-toggle="dropdown" 
+                      aria-expanded="false">
+                      <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu" *ngIf="employee.user">
+                      <li *ngIf="employee.user.isActive">
+                        <a 
+                          class="dropdown-item" 
+                          type="button" 
+                          (click)="openModal( employee, 'password')">Restablecer credenciales</a>
+                      </li>
+                      <li><a class="dropdown-item" type="button" (click)="disableOrEnable( employee )">{{!employee.user.isActive ? 'Habilitar' : 'Deshabilitar'}} cuenta</a></li>
+                    </ul>
+                    <ul class="dropdown-menu" *ngIf="!employee.user">
+                      <li><a class="dropdown-item" type="button" (click)="openModal( employee, 'credentials' )">Crear cuenta</a></li>
+                    </ul>
+                  </div>
+
+                </div>
+
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+
+    </ng-template>
+
+  
+
+</div>
+

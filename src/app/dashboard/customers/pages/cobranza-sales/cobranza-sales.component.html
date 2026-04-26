@@ -1,0 +1,138 @@
+
+
+
+
+<cobranza-sale-modal
+  *ngIf="modalService.show && edit"
+  [saleFolio]="saleFolioSelect"
+  [bSale]="bSaleSelected!"
+  (newPayment)="newPaymentEvent()"
+  [saldo]="balanceSelected"
+/>
+
+
+
+<div class="container pt-4">
+
+    <h1>Cobranza ventas por {{ documentType == 'F' ? 'Factura' : 'Remisión' }}</h1>
+
+
+    <div>
+
+      <div class="mt-5">
+        <div class="row">
+          <div class="col-md-9">
+            <label>Selecciona un cliente</label>
+            <angular2-multiselect 
+              [data]="customers" 
+              class="form-control p-0 mt-2"
+              [(ngModel)]="customerSelected"
+              [settings]="dropdownSettingsSingle" 
+              (onSelect)="onItemSelect($event)" 
+              (onDeSelect)="OnItemDeSelect($event)"
+              (onSelectAll)="onSelectAll($event)"
+              (onDeSelectAll)="onDeSelectAll($event)">
+            </angular2-multiselect>
+          </div>
+          <div class="col-md-3">
+            <label>Selecciona un año</label>
+            <select 
+              class="form-control mt-2"
+              [(ngModel)]="yearSelected"
+              (ngModelChange)="onYearChange()">
+              <option value="0">TODOS</option>
+              <option *ngFor="let y of years.reverse()" [value]="y">{{ y }}</option>
+            </select>
+          </div>
+         
+        </div>
+      </div>
+        
+      <div class="mt-4 text-center"  *ngIf="isLoading; else templatePayments">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+  
+      <ng-template #templatePayments>
+  
+        <p class="text-center text-muted mt-4" *ngIf="balance.length == 0">No hay pagos por mostar.</p>
+        
+        <div class="table-responsive mt-5" *ngIf="balance.length > 0">
+
+          <div class="d-flex justify-content-between">
+            <span span class="fw-bold">Total de resultados: {{balance.length}}</span>
+            <button (click)="exportToExcel()" class="btn btn-outline-success btn-sm"><i class="fa-regular fa-file-excel me-2"></i>Exportar Excel</button>
+          </div>
+  
+          
+          <table class="table table-hover mt-3">
+            <thead>
+              <tr>
+                <th scope="col">Fecha de venta</th>
+                <th scope="col">Folio venta</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">{{  documentType == 'F' ? 'No. Factura' : 'No. Remisión' }}</th>
+                <th scope="col">Importe</th>
+                <th scope="col">Acuenta</th>
+                <th scope="col">Saldo</th>
+                <th scope="col">Forma de pago</th>
+                <th scope="col">Fecha de pago</th>
+                <th scope="col">Cuenta Destino</th>
+                <!-- <th scope="col">Comprobante</th> -->
+                <th scope="col">Complemento de pago</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of balance; let i = index;" (click)="addPayment( item )" [ngClass]="{'cursor-pointer': item.concept == 'sale', 'bg-blue': item.concept == 'sale', 'bg-purple': item.isValidated}">
+                <td>{{ item.createdAt | date: 	'dd-MMM-yy' }}</td>
+                <td>{{ item.concept == 'sale' ? item.sale.folio: '' }}</td>
+                <td>{{ item.concept == 'sale' ? item.sale.customer.name + item.sale.customer?.lastName: '' }}</td>
+                <td>{{ item.concept == 'sale' ? item.sale?.noFactura : item.sale?.noFactura }}</td>
+                <td>{{ item.concept == 'sale' ? '$ ' + (item.amount | number : '1.2-2') : ''}}</td>
+                <td>{{ item.concept == 'payment' ? '$ ' + (item.amount | number : '1.2-2') : ''}}</td>
+                <td>$ {{ item.balance | number : '1.2-2' }}</td>
+                <td>
+                  <span *ngIf="item.concept == 'payment'">{{ item.paymethod }}</span>
+                </td>
+                <td>{{ item.concept == 'payment' ? ( item.paymentAt | date: 'dd-MMM-yy' ): ''}}</td>
+                <td>{{ item.concept == 'payment' ? item.destinationAccount : ''}}</td>
+                <td>{{ item.concept == 'payment' ? item.complement : ''}}</td>
+                <!-- <td>
+                  <span *ngIf="item.concept == 'payment'">
+                    <a *ngIf="item.file" [href]="fileUrl + '/uploads/file/cobranza/' + item.file" target="_blank" ><img src="assets/images/icon-file.png" width="30" alt=""> ver</a>
+                  </span>
+                </td> -->
+              </tr> 
+            </tbody>
+            <!-- <tfoot>
+              <tr>
+                <td></td>
+                <td></td>
+                <td class="fw-bold">Totales</td>
+                <td class="fw-bold">$ {{ getTotalImporte() | number : '1.2-2' }}</td>
+                <td class="fw-bold">$ {{ getTotalAcuenta() | number : '1.2-2' }}</td>
+                <td class="fw-bold">$ {{ balance[ balance.length - 1].balance | number : '1.2-2' }}</td>
+                <td></td>
+              </tr>
+            </tfoot> -->
+          </table>
+        </div>
+  
+        <ng-container *ngIf="totalResults > limit">
+          <!-- <paginator 
+            [limit]="limit"
+            [totalResults]="totalResults"
+            [currentPage]="currentPage"
+            (chageCurrentPage)="changePage( $event )"
+          /> -->
+        </ng-container>
+  
+  
+      </ng-template>
+
+    </div>
+
+
+</div>

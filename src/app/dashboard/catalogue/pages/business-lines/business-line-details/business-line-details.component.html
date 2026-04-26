@@ -1,0 +1,47 @@
+
+
+<div class="container pt-4">
+
+    <ng-container *ngIf="isLoading; else businessLineTemplate">
+        <div class="text-center">
+            <p class="text-muted mt-4">Cargando información de la línea de negocio</p>
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-template #businessLineTemplate>
+
+        <h1><i [class]="businessLine.icon"></i> {{ businessLine.name }}</h1>
+
+
+        <div class="d-flex justify-content-between my-4">
+            <a class="btn btn-outline-success" routerLink="/catalogue/business_lines"><i class="fa-solid fa-arrow-left me-2"></i>Atrás</a>
+            <button *ngIf="edit" class="btn btn-secondary" [routerLink]="['/catalogue/business_lines','edit', businessLine.id]"><i class="fa-solid fa-pen me-2"></i>Editar</button>
+        </div>
+    
+        <div class="row p-3">
+
+            <div class="col-md-8 mt-4 mt-md-0">
+
+                <h6 class="text-primary fw-bold">Datos Generales</h6>
+                <div class="row">
+                    <p class="col-md-2 d-flex flex-column"><small>Código</small><span>{{ businessLine.code }}</span></p>
+                    <p class="col-md-10 d-flex flex-column"><small>Descripción</small><span>{{ businessLine.description ? businessLine.description : '-' }}</span></p>
+                </div>
+                
+            </div>
+    
+        </div>
+        
+        <hr>
+
+        <business-families />
+ 
+    </ng-template>
+
+
+</div>
+
+

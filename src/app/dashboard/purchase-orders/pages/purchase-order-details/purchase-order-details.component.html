@@ -1,0 +1,153 @@
+
+
+
+
+<emails-modal 
+  [entityId]="purchaseOrder.id"
+  [entity]="'purchaseOrder'"
+  *ngIf="modalService.show"
+/>
+
+
+<div class="container py-4">
+
+    <ng-container *ngIf="isLoading; else purchaseTemplate">
+        <div class="text-center">
+            <p class="text-muted mt-4">Cargando información de la orden de compra</p>
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-template #purchaseTemplate>
+
+            <h1>Detalle de la orden de compra</h1>
+
+            <div class="d-flex justify-content-between my-4">
+                <a class="btn btn-outline-success" routerLink="/purchase-orders"><i class="fa-solid fa-arrow-left me-2"></i>Atrás</a>
+                <a *ngIf="edit" class="btn btn-secondary" [routerLink]="['/purchase-orders','edit', purchaseOrder.id]"><i class="fa-solid fa-pen me-2"></i>Editar</a>
+            </div>
+
+            <div class="row px-3">
+
+                <div class="col-12">
+                  <h6 class="text-secondary fw-bold">Herramientas</h6>
+                  <div>
+                    <!-- [href]="fileUrl + '/uploads/docs/purchaseOrders/' + purchaseOrder.file" -->
+                    <button 
+                    (click)="downloadPDF()"
+                      class="btn btn-outline-info me-3"><i class="fa-regular fa-file-pdf"></i> Descargar PDF</button>
+                    <button 
+                      class="btn btn-outline-info"
+                      (click)="openModal()"><i class="fa-regular fa-envelope"></i> Enviar</button>
+                  </div>
+                </div>
+                
+            </div>
+
+            <hr>
+        
+            <div class="row mt-3 p-3">
+        
+        
+                <div class="col-md-12 mt-4 mt-md-0">
+
+                    <h6 class="text-primary fw-bold">Datos Generales</h6>
+                    <div class="row">
+                        <p class="col-md-3 d-flex flex-column"><small>Folio</small><span>{{ purchaseOrder.folio }}</span></p>
+                        <p class="col-md-4 d-flex flex-column"><small>Creado por</small><span>{{ purchaseOrder.createdBy.name }} {{ purchaseOrder.createdBy.lastName }}</span></p>
+                        <p class="col-md-4 d-flex flex-column"><small>Fecha</small><span>{{ purchaseOrder.createdAt | date: 	'dd-MMM-yy' }}</span></p>
+                    </div>
+
+
+
+                    <h6 class="text-primary fw-bold">Datos del Proveedor</h6>
+                    <div class="row">
+                        <p class="col-md-6 d-flex flex-column"><small>Cliente</small><span>{{ purchaseOrder.supplier.name }}</span></p>
+                        <p class="col-md-6 d-flex flex-column"><small>Correo electrónico</small><span>{{ purchaseOrder.supplier.email }}</span></p>
+                        <p class="col-md-6 d-flex flex-column"><small>Celular</small><span>{{ purchaseOrder.supplier.cellPhone }}</span></p>
+                        <p class="col-md-6 d-flex flex-column"><small>Tipo</small><span>{{ purchaseOrder.supplier.type.value }}</span></p>
+                    </div>
+
+
+                    <h6 class="text-primary fw-bold">Productos</h6>
+                    <div class="table-responsive" >
+
+                        <table class="table table-light table-striped table-hover mt-3">
+                          <thead>
+                            <tr>
+                              <th scope="col">Imagen</th>
+                              <th scope="col">Cantidad</th>
+                              <th scope="col">Nombre</th>
+                              <th scope="col">Unidad</th>
+                              <th scope="col">Costo</th>
+                              <th scope="col">Total</th>
+                            </tr> 
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let ppo of purchaseOrder.productsPurchaseOrder">
+                              <td>
+                                <img *ngIf="ppo.product.image"
+                                    class="product-image"
+                                    [src]="ppo.product.image | image:'products'"
+                                    [alt]="ppo.product.name">
+                                <img 
+                                    *ngIf="!ppo.product.image"
+                                    class="product-image"
+                                    src="assets/images/no-image.jpeg"
+                                    [alt]="ppo.product.name">
+                              </td>
+                              <td>{{ ppo.amount }}</td>
+                              <td>{{ ppo.product.name }}</td>
+                              <td>{{ ppo.unit }}</td>
+                              <td>{{ ppo.cost | number : '1.2-2' }}</td>
+                              <td>{{ ppo.totalWithoutIva | number : '1.2-2' }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-8"></div>
+                        <div class="col-md-4">
+                            <table class="table table-light table-striped table-hover mt-3">
+                                <tbody>
+                                    <tr>
+                                        <th>Subtotal</th>
+                                        <td>$ {{ purchaseOrder.subTotal | number : '1.2-2'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Desc.</th>
+                                        <td>$ {{ purchaseOrder.subTotalWithDiscount | number : '1.2-2'}} ({{ purchaseOrder.discount | number : '1.2-2'}} %)</td>
+                                    </tr>
+                                    <tr>
+                                        <th>IEPS</th>
+                                        <td>$ {{ purchaseOrder.ieps | number : '1.2-2'}} ({{ purchaseOrder.iepsPorcent | number : '1.2-2'}} %)</td>
+                                    </tr>
+                                    <tr>
+                                        <th>IVA</th>
+        
+                                        <td> $ {{purchaseOrder.iva | number : '1.2-2'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total</th>
+                                        <th>$ {{purchaseOrder.totalWithIva | number : '1.2-2'}}</th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                        </div>
+                    </div>
+
+                </div>
+        
+            </div>
+
+
+    </ng-template>
+
+</div>
+
+

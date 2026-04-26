@@ -1,0 +1,65 @@
+
+
+
+
+
+<div class="back-modal">
+    <div class="modal" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+          <div class="modal-content shadow">
+            <div class="modal-header">
+              <h5 class="modal-title">{{ isEdit ? 'Actualizar' : 'Crear' }} familia de línea de negocio</h5> 
+              <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+              <form class="row"
+              [formGroup]="form">
+
+                <span class="text-danger"><small>Campos requeridos *</small></span>
+
+
+                <h6 class="text-primary fw-bold mt-2">Datos generales</h6>
+
+
+                <div class="col-md-6 mb-2">
+                  <label>Nombre<span class="text-danger">*</span></label>
+                  <input type="text"
+                    placeholder="Nombre"
+                    class="form-control mt-2"
+                    formControlName="name">
+                  <div *ngIf="inputInvalid('name')" class="text-danger">
+                    <span><small>{{ errorMessage('name') }}</small></span>
+                  </div>
+                </div>
+
+
+                <div class="col-md-12 mb-2">
+                  <label>Descripción<span class="text-danger">*</span></label>
+                  <input type="text"
+                    placeholder="Escribe aquí..."
+                    class="form-control mt-2"
+                    formControlName="description">
+                  <div *ngIf="inputInvalid('description')" class="text-danger">
+                    <span><small>{{ errorMessage('description') }}</small></span>
+                  </div>
+                </div>
+
+
+              </form>
+
+
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" (click)="closeModal()" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+              <button 
+                type="button"
+                (click)="handleSubmit()" 
+                class="btn btn-primary"
+                [disabled]="isLoading">{{ isLoading ? 'Guardando...' : 'Guardar'}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>

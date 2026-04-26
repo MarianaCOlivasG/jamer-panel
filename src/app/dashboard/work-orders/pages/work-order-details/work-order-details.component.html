@@ -1,0 +1,208 @@
+
+
+<emails-modal 
+  [customerEmail]="workOrder.customer.email"
+  [entityId]="workOrder.id"
+  [entity]="'nota-venta'"
+  [DesgloseIva]="desgloseIva"
+  *ngIf="modalService.show"
+/>
+
+
+<div class="container py-4">
+
+    <ng-container *ngIf="isLoading; else workOrderTemplate">
+        <div class="text-center">
+            <p class="text-muted mt-4">Cargando información de la orden de trabajo</p>
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-template #workOrderTemplate>
+
+            <h1 *ngIf="!workOrder.isBudget">Detalle de la orden de trabajo <span class="badge" [ngClass]="{'bg-pending': workOrder.statusId == 1, 'bg-cancelled': workOrder.statusId == 2, 'bg-finalized': workOrder.statusId == 3,'bg-in_progress': workOrder.statusId == 4,'bg-unassigned': workOrder.statusId == 5 }">{{ workOrder.status.value }}</span></h1>
+            <h1 *ngIf="workOrder.isBudget">Detalle de la venta <span class="badge" [ngClass]="{'bg-pending': workOrder.statusId == 1, 'bg-cancelled': workOrder.statusId == 2, 'bg-finalized': workOrder.statusId == 3,'bg-in_progress': workOrder.statusId == 4,'bg-unassigned': workOrder.statusId == 5 }">{{ workOrder.status.value }}</span></h1>
+
+            <div class="d-flex justify-content-between my-4">
+                <button class="btn btn-outline-success" (click)="goToBack()"><i class="fa-solid fa-arrow-left me-2"></i>Atrás</button>
+                <div>
+                    <button class="btn me-3 btn-danger" *ngIf="workOrder.statusId != 2 && edit" (click)="handleCancel()">CANCELAR</button>
+                    <a [routerLink]="['/work-orders', 'edit', workOrder.id]" class="btn me-3 btn-secondary" *ngIf="workOrder.statusId != 2 && edit" >EDITAR</a>
+                    <a [routerLink]="['/work-orders', 'reprogram', workOrder.id]" class="btn me-3 btn-info" *ngIf="workOrder.statusId != 2 && edit" >Reprogramar</a>
+
+                </div>
+            </div>
+
+
+            <!-- <div class="d-flex justify-content-center">
+                <a [routerLink]="['/work-orders', 'form', workOrder.id]" class="btn me-3 btn-primary">FINALIZAR</a>
+                <button class="btn me-3 btn-warning" (click)="handleOnClick( 'hola' )">PENDIENTE</button>
+            </div> -->
+        
+            <div class="row mt-3 p-0 bg-white">
+        
+        
+                <div class="col-md-12 mt-4 mt-md-0">
+
+                    <div class="row mb-2">
+                        <div class="col-md-3" *ngIf="workOrder.facturaOrRemision == 'R'">
+                          <h6 class="text-secondary fw-bold">Nota de venta</h6>
+                        </div>
+                        <div class="col-md-3">
+                          <h6 class="text-secondary fw-bold">Reporte</h6>
+                        </div>
+                      </div>
+                      <div class="row mb-4">  
+                        <div class="col-md-3" *ngIf="workOrder.facturaOrRemision == 'R'">
+                          <div class="form-check mb-2">
+                            <input 
+                              class="form-check-input" 
+                              type="checkbox" 
+                              [(ngModel)]="desgloseIva" 
+                              id="desglosarIvaCheckbox"
+                            />
+                            <label class="form-check-label" for="desglosarIvaCheckbox">
+                              Desglosar IVA
+                            </label>
+                          </div>
+                          <button class="btn me-3 btn-outline-secondary mb-2" (click)="generarNotaVenta(desgloseIva)">Descargar</button>
+                          <button class="btn me-3 btn-outline-secondary mb-2" (click)="sendNotaVenta(desgloseIva)">Enviar</button>
+                        </div>
+                        <div class="col-md-3">
+                          <button class="btn me-3 btn-outline-secondary mb-2" (click)="generatePDF()">Descargar</button>
+                          <!-- <button class="btn me-3 btn-outline-secondary mb-2" (click)="sendNotaVenta()">Enviar</button> -->
+                        </div>
+                      </div>
+
+                    <h6 class="text-primary fw-bold">Datos Generales</h6>
+                    <div class="row ">
+                        <p class="col-md-2 d-flex flex-column"><small>Folio</small><span>{{ workOrder.folio }}</span></p>
+                        <div class="col-md-3 d-flex flex-column" *ngIf="workOrder.facturaOrRemision == 'F'">
+                            <small>No. Factura</small>
+                            <div class="d-flex">
+                                <input type="text"
+                                    class="form-control me-2"
+                                    [(ngModel)]="workOrder.noFactura">
+                                <button *ngIf="edit" class="btn btn-sm btn-primary" (click)="updateNoFactura()"><i class="fa-regular fa-floppy-disk"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-md-8 d-flex flex-column"></div>
+                        <p class="col-md-3 d-flex flex-column"><small>Fecha inicio</small><span>{{ workOrder.startDate| date: 	'dd-MMM-yy' }}</span></p>
+                        <p class="col-md-3 d-flex flex-column"><small>Hora inicio</small><span>{{ workOrder.startTime  }}</span></p>
+                        <p class="col-md-3 d-flex flex-column"><small>Fecha termino</small><span>{{ workOrder.finalDate | date: 	'dd-MMM-yy' }}</span></p>
+                        <p class="col-md-3 d-flex flex-column"><small>Fecha termino</small><span>{{ workOrder.finalTime  }}</span></p>
+                    </div>
+
+
+
+                    <h6 class="text-primary fw-bold">Datos del Cliente</h6>
+                    <div class="row">
+                        <p class="col-md-6 d-flex flex-column"><small>Cliente</small><span>{{ workOrder.customer.name }} {{ workOrder.customer.lastName }}</span></p>
+                        <p class="col-md-6 d-flex flex-column" *ngIf="workOrder.customer.email"><small>Correo electrónico</small><span>{{ workOrder.customer.email }}</span></p>
+                    </div>
+
+
+                    <h6 class="text-primary fw-bold">Datos del (los) servicio(s)</h6>
+                    <div class="row mb-4">
+
+                        <div *ngFor="let item of workOrder.workOrdersContractProducts">
+                            <div class="card p-3 mb-3">
+                                <div class="row">
+                                    <p class="col-md-2 d-flex flex-column">
+                                      <small>Cantidad</small>
+                                      <span>{{ item.amount }}</span>
+                                    </p>
+                                    <p class="col-md-3 d-flex flex-column">
+                                      <small>Servicio</small>
+                                      <span>{{ item.contractProduct.product.name }}</span>
+                                    </p>
+                                    <p class="col-md-2 d-flex flex-column">
+                                      <small>Precio Unitario</small>
+                                      <span>${{ formatCurrency(item.contractProduct.unitPrice) | number : '1.2-2' }}</span>
+                                    </p>
+                                    <p class="col-md-2 d-flex flex-column">
+                                      <small>Impuesto (IVA)</small>
+                                      <span>{{ calculateTax(item) }}</span>
+                                    </p>
+                                    <p class="col-md-2 d-flex flex-column">
+                                      <small>Total</small>
+                                      <span>{{ calculateTotal(item) }}</span>
+                                    </p>
+                                  </div>
+                            </div>
+                        </div>
+                        
+                <!-- Sección de resumen con Totales -->
+                  <table class="table table-light table-striped table-hover mt-3" >
+                    <tbody>
+                      <tr>
+                        <th rowspan="2" colspan="2">Totales:</th>
+                        <th>Total sin IVA</th>
+                        <th>Impuesto(IVA)</th>
+                        <th>TOTAL</th>
+                      </tr>
+                      <tr>
+                        <th>$ {{ totalBaseGravable | number:'1.2-2' }}</th>
+                        <th>$ {{ totalImpuesto | number:'1.2-2' }}</th>
+                        <th>$ {{ total | number:'1.2-2' }}</th>
+                      </tr>
+                      <tbody>
+                      </table>
+
+                    </div>
+
+                    <h6 class="text-primary fw-bold">Sede</h6>
+                    <div class="row mb-4">
+                        <p class="col-md-4 d-flex flex-column"><small>Ubicación</small><span>{{ workOrder.address.name }}</span></p>
+                        <p class="col-md-4 d-flex flex-column" *ngIf="workOrder.customer.contactName"><small>Persona de contacto</small><span>{{ workOrder.address.contactName }}</span></p>
+                        <p class="col-md-4 d-flex flex-column"><small>Teléfono de contacto</small><span>{{ workOrder.address.phone }}</span></p>
+                        <p class="col-md-12 d-flex flex-column"><small>Dirección completa</small><span>{{ workOrder.address.address }}</span></p>
+                        <google-map-addresses [markers]="markers" />
+                    </div>
+
+                    <h6 *ngIf="workOrder.description" class="text-primary fw-bold">Detalles</h6>
+                    <div *ngIf="workOrder.description" class="row">
+                        <p>{{ workOrder.description }}</p>
+                    </div>
+
+
+                    <h6 class="text-primary fw-bold">Forma de pago</h6>
+                    <div class="row">
+                        <!-- <p class="col-md-4 d-flex flex-column"><small>Método de pago</small><span>{{ workOrder.contract.paymentMethod }}</span></p> -->
+                        <!-- <p class="col-md-4 d-flex flex-column fw-bold"><small>Total a cobrar</small><span>$ {{ workOrder?.contract?.totalWithIva | number : '1.2-2' }}</span></p> -->
+                        <p class="col-md-4 d-flex flex-column fw-bold"><small>Total a cobrar</small><span>{{ getTotalToPay() }}</span></p>
+                    </div>
+
+
+                  
+                    <h6 class="text-primary fw-bold" *ngIf="workOrder.statusId != 5">Técnico(s) asignado(s).</h6>
+                    <div class="row" *ngIf="workOrder.statusId != 5">
+                        <div class="col-md-3" *ngFor="let employee of workOrder.employees">
+                            <div class="bg-technical p-1 my-2">
+                              <img class="me-2" [src]=" employee.picture | image:'employees'" [alt]="employee.name">
+                              <span>{{ employee.name }} {{ employee.lastName }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+        
+            </div>
+
+            <hr>
+
+            <div class="row mt-3 p-0" *ngIf="workOrder.statusId == 3    || workOrder.statusId == 6">
+                <work-solution [workOrderId]="workOrder.id"/>
+            </div>
+
+
+
+    </ng-template>
+
+</div>
+
+

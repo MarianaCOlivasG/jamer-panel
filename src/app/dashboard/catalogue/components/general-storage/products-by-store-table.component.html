@@ -1,0 +1,197 @@
+<div class="container-fluid pt-4">
+  <!-- Encabezado mejorado con iconos e información -->
+  <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+    <div class="d-flex align-items-center">
+      <div class="icon-box rounded-circle bg-primary text-white me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+        <i class="fa-solid fa-warehouse fs-4"></i>
+      </div>
+      <div>
+        <h2 class="fw-bold mb-0">Productos por Almacén</h2>
+        <p class="text-muted mb-0">Distribución de inventario en todos los almacenes</p>
+      </div>
+    </div>
+    
+ 
+  </div>
+
+  <!-- Filtros y herramientas de análisis -->
+  <div class="card shadow-sm border-0 rounded-3 mb-4">
+    <div class="card-header bg-white border-0 pt-3">
+      <h5 class="text-muted mb-0">
+        <i class="fa-solid fa-filter me-2"></i>
+        Filtros y Búsqueda
+      </h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <!-- Búsqueda de productos -->
+        <div class="col-md-6">
+          <label class="form-label small text-muted">Buscar productos</label>
+          <div class="input-group shadow-sm rounded-3 overflow-hidden">
+            <span class="input-group-text bg-white border-end-0">
+              <i class="fa-solid fa-search text-primary"></i>
+            </span>
+            <input type="text" class="form-control border-start-0" 
+                  placeholder="Buscar por nombre de producto..." 
+                  [(ngModel)]="searchTerm"
+                  (keyup)="applyFilters()">
+          </div>
+        </div>
+        
+        <!-- Filtros adicionales -->
+        <div class="col-md-3">
+          <label class="form-label small text-muted">Filtrar por existencias</label>
+          <select class="form-select shadow-sm" [(ngModel)]="stockFilter" (change)="applyFilters()">
+            <option value="all">Todos los productos</option>
+            <option value="inStock">Solo con existencias</option>
+            <option value="lowStock">Stock bajo</option>
+          </select>
+        </div>
+        
+        <div class="col-md-3">
+          <label class="form-label small text-muted">Ver almacenes</label>
+          <select class="form-select shadow-sm" [(ngModel)]="storeVisibility" (change)="toggleAllStores()">
+            <option value="all">Mostrar todos</option>
+            <option value="active">Solo activos</option>
+            <option value="custom">Personalizar</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Selector de almacenes visible cuando se selecciona "personalizar" -->
+      <div class="mt-3" *ngIf="storeVisibility === 'custom'">
+        <label class="form-label small text-muted">Seleccionar almacenes específicos</label>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-2">
+          <div class="col" *ngFor="let store of allStores">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" 
+                    [id]="'store-' + store.id" 
+                    [(ngModel)]="store.visible" 
+                    (change)="applyFilters()">
+              <label class="form-check-label" [for]="'store-' + store.id">
+                {{ store.name }}
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado de carga mejorado -->
+  <div class="d-flex justify-content-center my-5" *ngIf="isLoading">
+    <div class="text-center">
+      <div class="spinner-grow text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="text-muted">Obteniendo datos de todos los almacenes...</p>
+    </div>
+  </div>
+
+  <!-- Mensaje cuando no hay datos -->
+  <div class="alert alert-info d-flex align-items-center rounded-3 shadow-sm" 
+       *ngIf="!isLoading && (aggregatedProducts.length === 0 || filteredProducts.length === 0)">
+    <i class="fa-solid fa-info-circle me-3 fs-4"></i>
+    <div>
+      <h5 class="mb-1">No hay productos disponibles</h5>
+      <p class="mb-0">
+        {{ aggregatedProducts.length === 0 ? 
+          'No se encontraron productos en ningún almacén.' : 
+          'No hay productos que coincidan con los filtros aplicados.' }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Tabla mejorada con estilo moderno -->
+  <div class="card shadow-sm border-0 rounded-3" 
+       *ngIf="!isLoading && filteredProducts.length > 0 && visibleStores.length > 0">
+    <div class="card-header bg-white pt-3 d-flex justify-content-between align-items-center">
+      <h5 class="mb-0 text-muted">
+        <i class="fa-solid fa-table me-2"></i>
+        Distribución de Productos
+      </h5>
+      <span class="badge bg-primary rounded-pill">{{ filteredProducts.length }} productos</span>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col" class="border-0 bg-light position-sticky start-0" style="z-index: 10; min-width: 200px;">
+                <div class="d-flex align-items-center">
+                  <i class="fa-solid fa-box text-primary me-2"></i>
+                  Producto
+                </div>
+              </th>
+              <th scope="col" class="border-0 text-center" *ngFor="let store of visibleStores">
+                <a [routerLink]="['/catalogue/stores/details', store.id]" class="text-decoration-none">
+                  <div class="store-header d-flex flex-column align-items-center p-1">
+                    <div class="icon-sm rounded-circle bg-light d-flex align-items-center justify-content-center mb-1">
+                      <i class="fa-solid" [ngClass]="store.id === 1 ? 'fa-building text-primary' : 'fa-warehouse text-secondary'"></i>
+                    </div>
+                    <span class="text-truncate" style="max-width: 100px;" [title]="store.name">{{ store.name }}</span>
+                  </div>
+                </a>
+              </th>
+              <th scope="col" class="border-0 text-center bg-light">
+                <div class="d-flex align-items-center justify-content-center">
+                  <i class="fa-solid fa-calculator text-primary me-2"></i>
+                  Total
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of filteredProducts; let even = even" 
+                [ngClass]="{'table-light': even}">
+              <td class="position-sticky start-0" [ngClass]="{'bg-white': !even, 'bg-light': even}" style="z-index: 5;">
+                <div class="d-flex align-items-center">
+                  <div class="product-img-wrapper me-2">
+                    <img [src]="product.image ? (product.image | image:'products') : 'assets/images/no-image.jpeg'" 
+                         [alt]="product.name" 
+                         class="product-thumbnail">
+                  </div>
+                  <div>
+                    <a [routerLink]="['/catalogue/products/details', product.id]" class="fw-medium text-decoration-none">
+                      {{ product.name }}
+                    </a>
+                    <small class="text-muted d-block">
+                      {{ product.businessFamily?.name || 'Sin categoría' }}
+                    </small>
+                  </div>
+                </div>
+              </td>
+              <td *ngFor="let store of visibleStores" class="text-center">
+                <div class="quantity-badge" [ngClass]="{
+                  'bg-danger-subtle text-danger': product.quantities[store.id] === 0,
+                  'bg-warning-subtle text-warning': product.quantities[store.id] > 0 && product.quantities[store.id] < 5,
+                  'bg-success-subtle text-success': product.quantities[store.id] >= 5
+                }">
+                  {{ product.quantities[store.id] || 0 }}
+                  <small>{{ formatUnit(product.unit, product.quantities[store.id] || 0) }}</small>
+                </div>
+              </td>
+              <td class="text-center fw-bold bg-light">
+                <span class="total-badge">
+                  {{ getTotal(product) }}
+                  <small>{{ formatUnit(product.unit, getTotal(product)) }}</small>
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer bg-white py-3 d-flex justify-content-between align-items-center">
+      <div>
+        <small class="text-muted">Mostrando {{ filteredProducts.length }} de {{ aggregatedProducts.length }} productos</small>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-sm btn-outline-primary" (click)="resetFilters()">
+          <i class="fa-solid fa-eraser me-1"></i>
+          Limpiar filtros
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

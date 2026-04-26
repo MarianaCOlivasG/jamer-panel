@@ -1,0 +1,181 @@
+<div class="col-md-12 mt-4 mt-md-0" *ngIf="!isLoading">
+  <div class="d-flex justify-content-between align-items-center">
+    <h6 class="text-primary fw-bold">Datos de la solución</h6>
+    <a *ngIf="edit" class="btn btn-secondary" [routerLink]="['/work-orders', 'edit-solution', workOrderId]">
+      <i class="fa-solid fa-pen me-2"></i>Editar
+    </a>
+
+  </div>
+  <a *ngIf="edit" [routerLink]="['/work-orders', 'formEv', workOrderId]"class="btn me-3 btn-primary">AGREGAR EVIDENCIAS</a>
+  
+  <div class="row">
+    <p class="col-md-4 d-flex flex-column">
+      <small>Fecha de resolución</small>
+      <span>{{ workOrderSolution.createdAt | date: 'dd-MMM-yy' }}</span>
+    </p>
+    <p class="col-md-12 d-flex flex-column">
+      <small>Descripción detallada trabajos realizados</small>
+      <span>{{ workOrderSolution.description }}</span>
+    </p>
+    <p class="col-md-12 d-flex flex-column">
+      <small>Evaluación de la instalación</small>
+      <span>{{ workOrderSolution.evaluation }}</span>
+    </p>
+    <p class="col-md-12 d-flex flex-column">
+      <small>Deficiencias</small>
+      <span>{{ workOrderSolution.deficiencies }}</span>
+    </p>
+    <p class="col-md-12 d-flex flex-column">
+      <small>Plaga detectada</small>
+      <span>{{ workOrderSolution.pest_detected }}</span>
+    </p>
+    <p class="col-md-12 d-flex flex-column">
+      <small>Recomendaciones para el cliente</small>
+      <span>{{ workOrderSolution.work_done }}</span>
+    </p>
+  </div>
+
+  <h6 class="text-primary fw-bold mt-4">Productos utilizados</h6>
+  <p class="text-center text-muted mt-4" *ngIf="workOrderSolution.workOrderSolutionsProducts.length === 0">
+    No hay productos por mostar.
+  </p>
+
+  <div class="mt-4" *ngIf="workOrderSolution.workOrderSolutionsProducts.length > 0">
+    <div class="table-responsive mt-4">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Imagen</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Línea de negocio</th>
+            <th scope="col">Familia</th>
+            <th scope="col">Unidad</th>
+            <th scope="col">Cantidad utilizada</th>
+            <th scope="col">Unidad utilizada</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let wp of workOrderSolution.workOrderSolutionsProducts">
+            <td>
+              <a *ngIf="wp.product.image" [routerLink]="['details', wp.product.id]">
+                <img
+                  class="product-image"
+                  [src]="wp.product.image | image:'products'"
+                  [alt]="wp.product.name"
+                />
+              </a>
+              <a *ngIf="!wp.product.image" [routerLink]="['details', wp.product.id]">
+                <img
+                  class="product-image"
+                  src="assets/images/no-image.jpeg"
+                  [alt]="wp.product.name"
+                />
+              </a>
+            </td>
+            <td>{{ wp.product.name }}</td>
+            <td>{{ wp.product.businessLine.name }}</td>
+            <td>{{ wp.product.businessFamily.name }}</td>
+            <td>{{ wp.product.unit }}</td>
+            <td>{{ wp.amount }}</td>
+            <td>{{ wp.unit }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h6 class="text-primary fw-bold mt-4">Evidencias</h6>
+  <lightgallery [settings]="settings" [onInit]="onInit">
+    <a *ngFor="let item of items" className="gallery-item" [attr.href]="item.src">
+      <img className="img-responsive" style="width: 200px;" [src]="item.thumb" />
+    </a>
+  </lightgallery>
+
+  <h6 class="text-primary fw-bold mt-4">Firma y calificación del cliente</h6>
+  <div class="row">
+    <p class="col-md-12 d-flex flex-column">
+      <small>Nombre completo de quien recibió servicio</small>
+      <span>{{ workOrderSolution.customer_name }}</span>
+    </p>
+    <div class="col-md-12 mb-2 d-flex flex-column">
+      <small>Firma</small>
+      <div>
+        <img
+          width="300"
+          height="250"
+          [src]="base64Image"
+          alt="Firma del cliente"
+        />
+      </div>
+    </div>
+    <div class="col-md-12 d-flex flex-column">
+      <small>Calificación</small>
+      <div class="text-center">
+        <star-rating
+          [starType]="'svg'"
+          [readOnly]="true"
+          [rating]="+workOrderSolution.rating"
+        ></star-rating>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div *ngIf="workOrderSolution.employee" class="col-md-6 col-12 mb-3">
+      <h6 class="text-primary fw-bold">Firma del trabajador</h6>
+      <p class="col-md-12 d-flex flex-column">
+
+        <span>{{ workOrderSolution.employee.name +  workOrderSolution.employee.lastName}}</span>
+      </p>
+      <div *ngIf="workerSignature" class="border p-2">
+        <img
+          class="img-fluid"
+          [src]="workerSignature"
+          alt="Firma del trabajador"
+        />
+      </div>
+    </div>
+  
+    <div class="col-md-6 col-12 mb-3">
+      <h6 class="text-primary fw-bold">Firma del encargado sanitario</h6>
+      <p class="col-md-12 d-flex flex-column">
+
+        <span>{{ workOrderSolution.sanitaryName }}</span>
+      </p>
+
+      <div *ngIf="sanitarySignature" class="border p-2">
+        <img
+          class="img-fluid"
+          [src]="sanitarySignature"
+          alt="Firma del encargado sanitario"
+        />
+      </div>
+    </div>
+  </div>
+
+  <h6 class="text-primary fw-bold mt-5">Pagos realizado por el cliente</h6>
+  <div class="text-center text-muted" *ngIf="pays.length === 0">
+    No hay pagos por mostrar
+  </div>
+
+  <div class="table-responsive" *ngIf="pays.length > 0">
+    <table class="table table-light table-striped table-hover mt-3">
+      <thead>
+        <tr>
+          <th scope="col">Fecha</th>
+          <th scope="col">Método de pago</th>
+          <th scope="col">Cantidad</th>
+          <th scope="col">Comentario</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pay of pays">
+          <td>{{ pay.createdAt | date: 'dd-MMM-yy' }}</td>
+          <td>{{ pay.paymethod }}</td>
+          <td>$ {{ pay.amount | number : '1.2-2' }}</td>
+          <td>{{ pay.comment }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

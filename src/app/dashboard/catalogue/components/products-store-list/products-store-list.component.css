@@ -1,0 +1,102 @@
+
+/* Mejoras generales de estilo */
+:host {
+    display: block;
+    min-height: 100%;
+  }
+  
+  /* Animaciones y efectos */
+  .btn, .card, .badge {
+    transition: all 0.3s ease;
+  }
+  
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+  }
+  
+  .card {
+    border-radius: 0.5rem;
+  }
+  
+  .card:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08) !important;
+  }
+  
+  /* Mejoras para la tabla */
+  .table {
+    margin-bottom: 0;
+  }
+  
+  .table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+  }
+  
+  .table tr {
+    border-left: 3px solid transparent;
+  }
+  
+  .table tr:hover {
+    border-left: 3px solid var(--bs-primary);
+  }
+  
+  /* Estilos para los estados de inventario */
+  .bg-danger-subtle {
+    background-color: rgba(220, 53, 69, 0.1);
+  }
+  
+  /* Mejoras para inputs y selects */
+  .form-control, .form-select {
+    padding: 0.6rem 1rem;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+  }
+  
+  /* Personalización de botones */
+  .btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+  }
+  
+  /* Personalización de badges */
+  .badge {
+    font-weight: 500;
+    padding: 0.5em 0.8em;
+  }
+  
+  /* Estilos para la imagen del producto */
+  .product-img-container {
+    transition: transform 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .product-img-container:hover {
+    transform: scale(1.05);
+  }
+  
+  .product-img-container img {
+    transition: transform 0.5s ease;
+  }
+  
+  .product-img-container:hover img {
+    transform: scale(1.1);
+  }
+  
+  /* Mejoras para el paginador */
+  paginator {
+    display: flex;
+    justify-content: center;
+  }

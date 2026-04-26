@@ -1,0 +1,73 @@
+<div class="back-modal">
+  <div class="modal" style="display: block;" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+      <div class="modal-content shadow">
+        <div class="modal-header">
+          <!-- Se muestra el folio de la orden de trabajo si está disponible en la propiedad payment -->
+          <h5 class="modal-title">Editar pago para Orden de trabajo {{ payment?.workOrderFolio || '' }}</h5>
+          <button type="button" (click)="closeModal()" class="btn btn-close" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form class="row" [formGroup]="form">
+            <span class="text-danger"><small>Campos requeridos *</small></span>
+            
+            <div class="col-md-6 my-2">
+              <label>Método de pago<span class="text-danger">*</span></label>
+              <select class="form-control mt-2" formControlName="paymethod">
+                <option value="">Seleccione método de pago</option>
+                <option *ngFor="let paymentMethod of paymentMethods" [value]="paymentMethod">
+                  {{ paymentMethod }}
+                </option>
+              </select>
+              <div *ngIf="inputInvalid('paymethod')" class="text-danger">
+                <small>{{ errorMessage('paymethod') }}</small>
+              </div>
+            </div>
+            
+            <div class="col-md-6 my-2">
+              <label>Cantidad<span class="text-danger">*</span></label>
+              <input type="number" class="form-control mt-2" placeholder="Cantidad" formControlName="amount" />
+              <div *ngIf="inputInvalid('amount')" class="text-danger">
+                <small>{{ errorMessage('amount') }}</small>
+              </div>
+            </div>
+            
+            <div class="col-md-6 my-2">
+              <label>Fecha de pago<span class="text-danger">*</span></label>
+              <input type="date" class="form-control mt-2" formControlName="paymentAt" />
+              <div *ngIf="inputInvalid('paymentAt')" class="text-danger">
+                <small>{{ errorMessage('paymentAt') }}</small>
+              </div>
+            </div>
+            
+            <div class="col-md-6 my-2">
+              <label>Destino<span class="text-danger">*</span></label>
+              <input type="text" class="form-control mt-2" placeholder="Destino" formControlName="destinationAccount" />
+              <div *ngIf="inputInvalid('destinationAccount')" class="text-danger">
+                <small>{{ errorMessage('destinationAccount') }}</small>
+              </div>
+            </div>
+            
+            <div class="col-md-6 my-2">
+              <label>Complemento de pago</label>
+              <input class="form-control mt-2" placeholder="Complemento de pago" formControlName="complement" />
+              <div *ngIf="inputInvalid('complement')" class="text-danger">
+                <small>{{ errorMessage('complement') }}</small>
+              </div>
+            </div>
+          </form>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" (click)="closeModal()" class="btn btn-secondary">Cerrar</button>
+          <button type="button" (click)="update()" class="btn btn-primary" [disabled]="isSaving">
+            {{ isSaving ? 'Actualizando...' : 'Actualizar' }}
+          </button>
+          <button type="button" (click)="delete()" class="btn btn-danger" [disabled]="isSaving">
+            {{ isSaving ? 'Eliminando...' : 'Eliminar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

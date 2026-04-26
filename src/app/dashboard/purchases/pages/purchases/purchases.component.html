@@ -1,0 +1,99 @@
+
+<div class="container pt-4">
+
+    <h1>Compras</h1>
+
+
+    <div *ngIf="create" class="text-end mb-4">
+        <a routerLink="new" class="btn btn-primary"><i class="fa-solid fa-plus me-2"></i>Crear nuevo</a>
+    </div>
+
+
+    <div class="bg-light px-2 py-4 row">
+      <div class="col-md-8">
+        <input-search 
+          placeholder="Buscar compra..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+      </div>
+      <div class="col-md-4 mt-2 mt-md-0">
+        <select 
+          type="text"
+          class="form-control"
+          [(ngModel)]="supplierSelected"
+          (ngModelChange)="changeModel('supplierId')"
+          >
+          <option [value]="undefined">Selecciona un proveedor</option>
+          <option *ngFor="let supplier of suppliers" [ngValue]="supplier">{{supplier.name}}</option>
+        </select>
+      </div>
+    </div>
+
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templatePurchases">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templatePurchases>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay compras por mostar.</p>
+      
+      <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+
+        <span class="fw-bold">Total de resultados: {{totalResults}}</span>
+
+        <table class="table table-light table-striped table-hover mt-3">
+          <thead>
+            <tr>
+              <th scope="col">Folio</th>
+              <th scope="col">Fecha de emisión</th>
+              <!-- <th scope="col">Status</th> -->
+              <th scope="col"><i class="fa-regular fa-clock"></i> Límite pago</th>
+              <th scope="col">Proveedor</th>
+              <th scope="col">Creado por</th>
+              <th scope="col">Herramientas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let purchase of purchases">
+              <td>{{purchase.folio}}</td>
+              <td>{{purchase.createdAt | date: 	'dd-MMM-yy' }}</td>
+              <!-- <td class="text-center"><span [class]="'badge ' + purchase.status ">
+                {{ purchase.status == 'late-payment' ? 'Pago tardío' :
+                    purchase.status == 'not-paid' ? 'No pagado' :
+                    purchase.status == 'pending' ? 'Pendiente' :
+                    purchase.status == 'paid' ? 'Pagado' :
+                    purchase.status == 'surplus' ? 'Saldo a favor' : purchase.status }}
+                </span>
+              </td> -->
+              <td>{{ purchase.expirationDate | date: 	'dd-MMM-yy'  }}</td>
+              <td>{{purchase.supplier.rfc}} | {{purchase.supplier.name}}</td>
+              <td>{{purchase.createdBy.name}} {{purchase.createdBy.lastName}}</td>
+              <td>
+                <a [routerLink]="['/purchases', 'details', purchase.id]" class="btn btn-sm btn-outline-secondary me-2">Ver</a>
+                <!-- <a [routerLink]="['edit', purchase.id]" class="btn btn-sm btn-outline-secondary"><i class="fa-solid fa-pen"></i> Editar</a> -->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+
+    </ng-template>
+
+  
+
+</div>
+

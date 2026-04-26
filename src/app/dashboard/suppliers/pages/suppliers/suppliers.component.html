@@ -1,0 +1,154 @@
+
+<div class="container pt-4">
+
+    <h1>Proveedores</h1>
+
+
+    <div *ngIf="create" class="text-end mb-4">
+        <a routerLink="/suppliers/new" class="btn btn-primary"><i class="fa-solid fa-plus me-2"></i>Crear nuevo</a>
+    </div>
+
+
+    <div class="bg-light px-2 py-4 row">
+      <div class="col-md-8">
+        <input-search 
+          placeholder="Buscar proveedor..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+      </div>
+      <div class="col-md-4 mt-2 mt-md-0">
+        <select 
+          type="text"
+          class="form-control"
+          [(ngModel)]="typeSelected"
+          (ngModelChange)="changeModel('typeId')"
+          >
+          <option *ngFor="let suppliersType of suppliersTypes" [ngValue]="suppliersType">{{suppliersType.value}}</option>
+        </select>
+      </div>
+    </div>
+
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateSuppliers">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templateSuppliers>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay proveedores por mostar.</p>
+      
+      <div class="table-responsive mt-4" *ngIf="totalResults > 0">
+
+        <span span class="fw-bold">Total de resultados: {{totalResults}}</span>
+
+        
+        <table class="table table-light table-striped table-hover mt-3">
+          <thead>
+            <tr>
+              <th scope="col">Ver</th>
+              <th scope="col">Tipo</th>
+              <th scope="col">RFC</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Celular</th>
+              <th scope="col">Correo electrónico</th>
+              <th *ngIf="edit||deleted" scope="col">Herramientas</th>
+              <th *ngIf="contact" scope="col">Contacto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let supplier of suppliers" [ngClass]="{ 'text-muted': !supplier.isActive }">
+              <td>
+                  <a class="user-avatar" [routerLink]="['details', supplier.id]">
+                    {{supplier.name[0].toUpperCase()}}{{supplier.name[1].toUpperCase()}}
+                  </a>
+              </td>
+              <td>{{supplier.type.value}}</td>
+              <td>{{supplier.rfc}}</td>
+              <td>{{supplier.name}}</td>
+              <td>{{supplier.cellPhone}}</td>
+              <td>{{supplier.email}}</td>
+              <td *ngIf="edit||deleted">
+            
+                    <div class="d-flex" >
+    
+                      <a  *ngIf="edit"
+                        class="btn btn-sm btn-outline-secondary me-2"
+                        [routerLink]="['edit', supplier.id]">
+                        <i class="fa-solid fa-pen"></i> Editar
+                      </a>
+                      
+                      <div *ngIf="deleted" class="dropdown">
+                        <button 
+                          class="btn btn-sm btn-outline-secondary" 
+                          type="button" 
+                          data-bs-toggle="dropdown" 
+                          aria-expanded="false">
+                          <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" type="button" (click)="disableOrEnable( supplier )">{{!supplier.isActive ? 'Habilitar' : 'Deshabilitar'}}</a></li>
+                        </ul>
+                      </div>
+    
+                    </div>
+    
+              </td>
+              <td *ngIf="contact" style="width: 220px;">
+
+                <div class="d-flex">
+                    <div class="dropdown">
+                        <button 
+                            class="btn btn-sm btn-outline-secondary me-2" 
+                        type="button" 
+                        data-bs-toggle="dropdown" 
+                        aria-expanded="false">
+                        <i class="fa-regular fa-calendar-days me-2"></i>Agendar
+                        </button>
+                        <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" type="button">Cita</a></li>
+                        <li><a class="dropdown-item" type="button">Llamada</a></li>
+                        <li><a class="dropdown-item" type="button">Envio correo electrónico</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="dropdown">
+                        <button 
+                            class="btn btn-sm btn-outline-secondary" 
+                        type="button" 
+                        data-bs-toggle="dropdown" 
+                        aria-expanded="false">
+                        <i class="fa-solid fa-phone me-2"></i>Contactar
+                        </button>
+                        <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" type="button">Llamadar</a></li>
+                        <li><a class="dropdown-item" type="button">Whatsapp</a></li>
+                        <li><a class="dropdown-item" type="button">Correo electrónico</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+
+    </ng-template>
+
+  
+
+</div>
+

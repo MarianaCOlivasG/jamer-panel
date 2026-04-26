@@ -1,0 +1,99 @@
+
+
+<lead-modal 
+  *ngIf="modalService.show"
+  [lead]="leadSelected"
+/>
+
+<div class="container pt-4">
+
+    <h1>Leads</h1>
+
+
+    <div class="bg-light p-4 my-4">
+        <input-search 
+          placeholder="Buscar lead..."
+          (onEnter)="search( $event )"
+          (onDebounce)="search( $event )"
+        />
+    </div>
+
+
+    <div class="mt-4 text-center"  *ngIf="isLoading; else templateLeads">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <ng-template #templateLeads>
+
+      <p class="text-center text-muted mt-4" *ngIf="totalResults == 0">No hay leads por mostrar.</p>
+      
+      <div class=" mt-4" *ngIf="totalResults > 0">
+
+        <span class="fw-bold">Total de resultados: {{totalResults}}</span>
+
+        <table class="table table-light table-striped table-hover mt-3">
+          <thead>
+            <tr>
+              <th scope="col">Nombre</th>
+              <th scope="col">Teléfono</th>
+              <th scope="col">Correo electrónico</th>
+              <th scope="col">Fecha</th>
+              <th scope="col">Herramientas</th>
+              <th *ngIf="contact" scope="col">Contacto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let lead of leads">
+              <td>{{ lead.fullName }}</td>
+              <td>{{ lead.phone }}</td>
+              <td>{{ lead.email }}</td>
+              <td>{{ lead.createdAt | date:'medium' }}</td>
+              <td>  
+                <button class="btn btn-sm btn-outline-secondary me-2" (click)="showMoreDetails( lead )">Ver más</button>
+                <button *ngIf="!lead.isCustomer && add" class="btn btn-sm btn-outline-secondary" (click)="convertirToCustomer( lead )">Añadir a clientes</button>
+              </td>
+              <td *ngIf="contact" style="width: 220px;">
+
+                <div class="d-flex">
+                   
+                    <div class="dropdown">
+                        <button 
+                          class="btn btn-sm btn-outline-secondary" 
+                          type="button" 
+                          data-bs-toggle="dropdown" 
+                          aria-expanded="false">
+                        <i class="fa-solid fa-phone me-2"></i>Contactar
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" [href]="'tel:' + lead.phone" type="button">Llamar</a></li>
+                            <li><a class="dropdown-item" [href]="'https://wa.me/+52' + lead.phone" target="_blank">Whatsapp</a></li>
+                            <li><a class="dropdown-item" [href]="'mailto:' + lead.email" type="button">Correo electrónico</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-container *ngIf="totalResults > limit">
+        <paginator 
+          [limit]="limit"
+          [totalResults]="totalResults"
+          [currentPage]="currentPage"
+          (chageCurrentPage)="changePage( $event )"
+        />
+      </ng-container>
+
+
+    </ng-template>
+
+  
+
+</div>
+

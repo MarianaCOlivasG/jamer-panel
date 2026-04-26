@@ -1,0 +1,16 @@
+
+<div class="d-flex justify-content-end mt-4">
+    <button 
+        class="btn btn-outline-secondary me-1"
+        *ngIf="currentPage != 1" 
+        (click)="changePage( currentPage - 1 )"><i class="fas fa-chevron-left"></i></button>
+    <button 
+        class="btn btn-outline-secondary mx-1"
+        *ngFor="let page of  (currentPage <= 2) ? pages.slice( 0, currentPage+4 ) : pages.slice( currentPage-3, currentPage+2 )"
+        (click)="changePage( page )"
+        [ngClass]="{'btn-secondary': currentPage == page}">{{ page }}</button>
+    <button 
+        class="btn btn-outline-secondary ms-1"
+        *ngIf="currentPage != lastPage"
+        (click)="changePage( currentPage + 1 )"><i class="fas fa-chevron-right"></i></button>
+</div>

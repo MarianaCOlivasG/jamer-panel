@@ -1,0 +1,41 @@
+
+
+<div class="container pt-4">
+
+    <h5>Inventario</h5>
+
+
+    <div class="d-flex justify-content-between align-items-center my-4">
+        <div class="d-flex flex-column">
+          <span>Total productos: {{ totalInStock.products }}</span>
+          <span>Total herramientas/equipos: {{ totalInStock.workTools }}</span>
+        </div>
+        <!-- <button  class="btn btn-secondary"><i class="fa-solid fa-plus me-2"></i>Agregar</button> -->
+    </div>
+
+
+
+        <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Productos</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Herramientas/Equipos</button>
+          </li>
+        </ul>
+        <div class="tab-content" id="pills-tabContent">
+          <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
+            <products-list />
+          </div>
+          <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">
+            <work-tools-list />
+          </div>
+        </div>
+
+
+    
+
+  
+
+</div>
+

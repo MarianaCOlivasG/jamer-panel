@@ -1,0 +1,48 @@
+
+
+
+
+
+<div class="back-modal">
+    <div class="modal" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
+          <div class="modal-content shadow">
+            <div class="modal-header">
+              <h5 class="modal-title">Puesto de trabajo</h5> 
+              <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+                <form autocomplete="off"
+                  [formGroup]="form"
+                  class="row">
+
+                  <span class="text-danger"><small>Campos requeridos *</small></span>
+
+                  <div class="col-md-12 my-2">
+                    <label>Nombre<span class="text-danger">*</span></label>
+                    <input 
+                      class="form-control mt-2"
+                      placeholder="Nombre del puesto de trabajo"
+                      formControlName="value" />
+                    <div *ngIf="inputInvalid('value')" class="text-danger">
+                        <span><small>{{ errorMessage('value') }}</small></span>
+                    </div> 
+                  </div>
+
+                </form>
+
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" (click)="closeModal()" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+              <button 
+                type="button"
+                (click)="handleSubmit()" 
+                class="btn btn-primary"
+                [disabled]="isLoading">{{ isLoading ? 'Guardando...' : 'Guardar'}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>

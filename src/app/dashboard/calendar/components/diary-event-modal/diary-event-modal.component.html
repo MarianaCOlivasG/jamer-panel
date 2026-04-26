@@ -1,0 +1,135 @@
+
+
+
+
+
+<div class="back-modal">
+    <div class="modal" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+          <div class="modal-content shadow">
+            <div class="modal-header">
+              <h5 class="modal-title">Agregar evento</h5> 
+              <button type="button" (click)="closeModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+                <form class="row"
+                    [formGroup]="form">
+
+                <span class="text-danger"><small>Campos requeridos *</small></span>
+
+
+                <h6 class="text-primary fw-bold mt-2">Datos generales</h6>
+
+                <div class="col-md-4 my-2">
+                  <label>Titulo<span class="text-danger">*</span></label>
+                  <input 
+                    class="form-control mt-2"
+                    placeholder="Titulo del evento"
+                    formControlName="title" />
+                  <div *ngIf="inputInvalid('title')" class="text-danger">
+                      <span><small>{{ errorMessage('title') }}</small></span>
+                  </div> 
+                </div>
+
+                <div class="col-md-4 my-2">
+                    <label>Tipo de evento<span class="text-danger">*</span></label>
+                    <select 
+                      class="form-control mt-2"
+                      formControlName="diaryEnventTypeId">
+                      <option value="">Selecciona un tipo</option>
+                      <option *ngFor="let eventType of types" [value]="eventType.id">{{ eventType.value }}</option>
+                    </select>
+                    <div *ngIf="inputInvalid('diaryEnventTypeId')" class="text-danger">
+                        <span><small>{{ errorMessage('diaryEnventTypeId') }}</small></span>
+                    </div> 
+                </div>
+
+                <div class="col-md-4 mb-2">
+                  <label>Cliente</label>
+                  <angular2-multiselect 
+                      [data]="customers" 
+                      class="form-control p-0 mt-2"
+                      formControlName="customerId"
+                      [settings]="dropdownSettingsSingle" 
+                      (onSelect)="onItemSelect($event)" 
+                      (onDeSelect)="OnItemDeSelect($event)"
+                      (onSelectAll)="onSelectAll($event)"
+                      (onDeSelectAll)="onDeSelectAll($event)">
+                  </angular2-multiselect>
+                  <div *ngIf="inputInvalid('customerId')" class="text-danger">
+                      <span><small>{{ errorMessage('customerId') }}</small></span>
+                  </div> 
+                </div>
+
+                <div class="col-md-4 my-2">
+                  <label>Fecha inicio<span class="text-danger">*</span></label>
+                  <input 
+                    type="date"
+                    class="form-control mt-2"
+                    formControlName="startDate" />
+                  <div *ngIf="inputInvalid('startDate')" class="text-danger">
+                      <span><small>{{ errorMessage('startDate') }}</small></span>
+                  </div> 
+                </div>
+
+                <div class="col-md-4 my-2">
+                  <label>Hora inicio</label>
+                  <input 
+                    type="time"
+                    class="form-control mt-2"
+                    formControlName="startTime" />
+                  <div *ngIf="inputInvalid('startTime')" class="text-danger">
+                      <span><small>{{ errorMessage('startTime') }}</small></span>
+                  </div> 
+                </div>
+
+                <div class="col-md-4"></div>
+
+                <div class="col-md-4 my-2">
+                  <label>Fecha final</label>
+                  <input 
+                    type="date"
+                    class="form-control mt-2"
+                    formControlName="finalDate" />
+                  <div *ngIf="inputInvalid('finalDate')" class="text-danger">
+                      <span><small>{{ errorMessage('finalDate') }}</small></span>
+                  </div> 
+                </div>
+
+                <div class="col-md-4 my-2">
+                  <label>Hora final</label>
+                  <input 
+                    type="time"
+                    class="form-control mt-2"
+                    formControlName="finalTime" />
+                  <div *ngIf="inputInvalid('finalTime')" class="text-danger">
+                      <span><small>{{ errorMessage('finalTime') }}</small></span>
+                  </div> 
+                </div>
+
+
+
+                <div class="col-md-12 my-2">
+                    <label>Observaciones<span class="text-danger">*</span></label>
+                    <textarea 
+                      class="form-control mt-2"
+                      placeholder="Escribe aquí..."
+                      formControlName="description"></textarea>
+                    <div *ngIf="inputInvalid('description')" class="text-danger">
+                        <span><small>{{ errorMessage('description') }}</small></span>
+                    </div> 
+                </div>
+          
+
+              </form>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" (click)="closeModal()" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+              <button type="button" [disabled]="isSaving" (click)="handleSubmit()" class="btn btn-primary" data-bs-dismiss="modal">{{ isSaving ? 'Guardar' : 'Agregar' }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
