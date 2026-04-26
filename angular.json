@@ -33,7 +33,13 @@
               "src/styles.scss",
               "src/assets/styles/custom.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "moment-timezone",
+              "sweetalert2",
+              "@tweenjs/tween.js",
+              "angular2-multiselect-dropdown"
+            ]
           },
           "configurations": {
             "production": {
@@ -49,7 +55,13 @@
                   "maximumError": "20kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "allowedCommonJsDependencies": [
+                "moment-timezone",
+                "sweetalert2",
+                "@tweenjs/tween.js",
+                "angular2-multiselect-dropdown"
+              ]
             },
             "development": {
               "buildOptimizer": false,

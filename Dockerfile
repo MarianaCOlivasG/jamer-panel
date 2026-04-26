@@ -1,5 +1,5 @@
 # Stage 1: Build the Angular application
-FROM node:20 AS build
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
@@ -17,6 +17,9 @@ ARG WS_SERVER
 # Run the replacement script
 RUN API_URL=${API_URL} WS_SERVER=${WS_SERVER} node replace-env.js
 
+# Aumentar la memoria para evitar que el build se congele
+ENV NODE_OPTIONS=--max-old-space-size=4096
+
 # Build the Angular app for production
 RUN npm run build -- --configuration production
 
@@ -28,10 +31,9 @@ RUN rm -rf /usr/share/nginx/html/*
 RUN rm -f /etc/nginx/conf.d/default.conf
 
 # Copy the build output from the first stage
-# Note: Check your angular.json "outputPath" - usually it's dist/<project-name>
 COPY --from=build /app/dist/jamer /usr/share/nginx/html
 
-# Copy custom Nginx configuration if it exists
+# Copy custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/
 
 EXPOSE 80
