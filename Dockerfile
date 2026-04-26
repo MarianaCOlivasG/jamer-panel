@@ -17,10 +17,12 @@ ARG WS_SERVER
 # Run the replacement script
 RUN API_URL=${API_URL} WS_SERVER=${WS_SERVER} node replace-env.js
 
-# Aumentar la memoria para evitar que el build se congele
+# Aumentar la memoria para evitar que el build se congele y desactivar analytics
 ENV NODE_OPTIONS=--max-old-space-size=4096
+ENV NG_CLI_ANALYTICS=false
 
 # Build the Angular app for production
+
 RUN npm run build -- --configuration production
 
 # Stage 2: Serve the application using Nginx
